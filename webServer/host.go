@@ -8,18 +8,17 @@ import (
 
 	"database/sql"
 
-	_ "github.com/go-sql-driver/mysql"
-
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // 全局对象db
 var db *sql.DB
 
 type noteInfo struct {
-	noteId    int
-	noteTitle string
-	noteCover string
+	NoteId    int    `JSON:"NoteId"`
+	NoteTitle string `JSON:"NoteTitle"`
+	NoteCover string `JSON:"NoteCover"`
 }
 
 var notes []noteInfo
@@ -43,7 +42,7 @@ func initDB() (err error) {
 
 // 查询多条数据示例
 func queryMultiRowDemo() {
-	sqlStr := "select id, name, age from user where id > ?"
+	sqlStr := "select noteId, title, cover from noteInfo where noteId > ?"
 	rows, err := db.Query(sqlStr, 0)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
@@ -55,7 +54,7 @@ func queryMultiRowDemo() {
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var nt noteInfo
-		err := rows.Scan(&nt.noteId, &nt.noteTitle, &nt.noteCover)
+		err := rows.Scan(&nt.NoteId, &nt.NoteTitle, &nt.NoteCover)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
 			return
@@ -66,6 +65,7 @@ func queryMultiRowDemo() {
 }
 
 func hostFunc(c *gin.Context) {
+	// gin.H 是map[string]interface{}的缩写
 	c.HTML(http.StatusOK, "host.html", gin.H{
 		"title": "标题",
 		"nt":    notes,
@@ -84,7 +84,7 @@ func main() {
 	router := gin.Default()
 
 	//加载HTML文件
-	router.LoadHTMLFiles("templates/host.html")
+	router.LoadHTMLGlob("templates/host.html")
 	router.GET("/host", hostFunc)
 	router.Run(":8080")
 }

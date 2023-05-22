@@ -5,5 +5,10 @@
     <h2>
         这是首页
     </h2>
-    <img id="{{.nt.noteTitle}}" src={{.nt.noteCover}}>
+
+<body>
+    {{ range $v := .nt}}
+    <a href="www.bilibili.com"><img id={{$v.NoteTitle}} src={{$v.NoteCover}}></a>
+    {{ end }}
+    </body>
 </html>
