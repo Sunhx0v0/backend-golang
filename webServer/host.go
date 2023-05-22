@@ -22,6 +22,8 @@ type noteInfo struct {
 	noteCover string
 }
 
+var notes []noteInfo
+
 // 初始化数据库
 func initDB() (err error) {
 	// DSN:Data Source Name
@@ -58,13 +60,15 @@ func queryMultiRowDemo() {
 			fmt.Printf("scan failed, err:%v\n", err)
 			return
 		}
-		fmt.Printf("id:%d name:%s age:%s\n", nt.noteId, nt.noteTitle, nt.noteCover)
+		notes = append(notes, nt)
+		//fmt.Printf("id:%d name:%s age:%s\n", nt.noteId, nt.noteTitle, nt.noteCover)
 	}
 }
 
 func hostFunc(c *gin.Context) {
 	c.HTML(http.StatusOK, "host.html", gin.H{
 		"title": "标题",
+		"nt":    notes,
 	})
 }
 
