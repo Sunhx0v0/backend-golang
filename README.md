@@ -1,5 +1,9 @@
 # backend-golang
 
+## GIN配置
+参考https://github.com/gin-gonic/gin和https://gin-gonic.com/zh-cn/docs/quickstart/
+
+
 :-)
 
 (ᗜ ˰ ᗜ)
