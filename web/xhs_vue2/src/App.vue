@@ -13,14 +13,31 @@
   </div>
 </template>
 
-<script>
+<!-- <script>
 import HelloWorld from './components/HelloWorld.vue'
+//import Personal from './views/PersonalView.vue'
 
 export default {
   name: 'app',
   components: {
     HelloWorld
   }
+}
+</script> -->
+
+<script>
+export default {
+  name: 'PersonalView',
+  data() {
+    return {
+      msg: ''
+    }
+  },
+  created() {
+        this.$axios.get('/api/host').then(result=>{            
+            this.msg = result.data;
+        })
+    }
 }
 </script>
 
