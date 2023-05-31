@@ -6,7 +6,7 @@
                     
                 </el-header>
                 <el-main>
-                    <div class="block"><el-avatar :size="180" :fit="fit" :src="require('../assets/head1.webp')"></el-avatar></div>
+                    <div class="block"><el-avatar :size="180" :fit="fit" :src="require('../assets/logo.png')"></el-avatar></div>
                     <h3 class="user_name">Avenir.</h3>
                     <span class="id">小红书号:</span>
                     <span class="id">xxx</span>
@@ -85,6 +85,23 @@
       }
     }
   }
+</script>
+
+<script>
+export default {
+  name: 'PersonalView',
+  data() {
+    return {
+      msg: ''
+    }
+    
+  },
+  created() {
+        this.$axios.get('/api/host').then(result=>{            
+            this.msg = result.data;
+        })
+    }
+}
 </script>
 
 <style>
