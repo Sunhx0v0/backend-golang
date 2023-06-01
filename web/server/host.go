@@ -73,6 +73,10 @@ func hostFunc(c *gin.Context) {
 	})
 }
 
+func index(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello golang http!")
+}
+
 func main() {
 	err := initDB() // 调用输出化数据库的函数
 	if err != nil {
@@ -88,4 +92,11 @@ func main() {
 	router.LoadHTMLGlob("templates/host.html")
 	router.GET("/host", hostFunc)
 	router.Run(":8080")
+
+	// 为前段提供api接口
+	http.HandleFunc("/hst", index)
+	err := http.ListenAndServe(":9090", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}
 }

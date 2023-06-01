@@ -87,23 +87,6 @@
   }
 </script>
 
-<script>
-export default {
-  name: 'PersonalView',
-  data() {
-    return {
-      msg: ''
-    }
-    
-  },
-  created() {
-        this.$axios.get('/api/host').then(result=>{            
-            this.msg = result.data;
-        })
-    }
-}
-</script>
-
 <style>
   .el-header, .el-footer {
     background-color: #FFFFFF;

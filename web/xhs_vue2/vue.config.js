@@ -13,7 +13,7 @@ module.exports = {
     port: '8081',
     proxy: {
       '/api': {
-        target: 'http://localhost:8080', // 要请求的地址
+        target: 'http://localhost:9090', // 要请求的地址
         ws: true,
         changeOrigin: true,
         pathRewrite: {

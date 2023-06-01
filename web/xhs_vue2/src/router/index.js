@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import PersonalView from '../components/PersonalView.vue'
+import Abc from '../components/AbcView.vue'
 
 Vue.use(VueRouter)
 
@@ -24,9 +24,9 @@ const routes = [
 export default new router({
   routes: [
     {
-      path: '/host',
-      name: 'host',
-      component: PersonalView
+      path: '/abc',
+      name: 'abc',
+      component: Abc
     }
   ]
 })
