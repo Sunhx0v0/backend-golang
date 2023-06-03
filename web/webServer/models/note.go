@@ -6,34 +6,21 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// type Article struct {
-// 	Model
-
-// 	State         int    `json:"state"`
-// 	TagId         int    `json:"tag_id"`
-// 	Title         string `json:"title"`
-// 	Desc          string `json:"desc"`
-// 	Content       string `json:"Content"`
-// 	CoverImageUrl string `json:"cover_image_url"`
-// 	CreatedBy     string `json:"created_by"`
-// 	Tag           Tag    `json:"tag"`
-// }
-
 type noteInfo struct {
 	NoteId    int    `JSON:"NoteId"`
 	NoteTitle string `JSON:"NoteTitle"`
 	NoteCover string `JSON:"NoteCover"`
 }
 
-var notes []noteInfo
+var Notes []noteInfo
 
 // 查询多条数据示例
-func queryNoteDemo() []noteInfo {
+func QueryNoteDemo() {
 	sqlStr := "select noteId, title, cover from noteInfo where noteId > ?"
 	rows, err := db.Query(sqlStr, 0)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
-		return nil
+		return
 	}
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
@@ -44,12 +31,11 @@ func queryNoteDemo() []noteInfo {
 		err := rows.Scan(&nt.NoteId, &nt.NoteTitle, &nt.NoteCover)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
-			return nil
+			return
 		}
-		notes = append(notes, nt)
+		Notes = append(Notes, nt)
 		//fmt.Printf("id:%d name:%s age:%s\n", nt.noteId, nt.noteTitle, nt.noteCover)
 	}
-	return notes
 }
 
 // func getNotes(PageNum int, PageSize int, maps interface{}) (article []Article) {

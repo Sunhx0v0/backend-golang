@@ -6,8 +6,6 @@ import (
 
 	"net/http"
 
-	"database/sql"
-
 	"github.com/gin-gonic/gin"
 
 	"webServer/models"
@@ -15,63 +13,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// 全局对象db
-var db *sql.DB
-
-type noteInfo struct {
-	NoteId    int    `JSON:"NoteId"`
-	NoteTitle string `JSON:"NoteTitle"`
-	NoteCover string `JSON:"NoteCover"`
-}
-
-var notes []noteInfo
-
-// // 初始化数据库
-// func initDB() (err error) {
-// 	// DSN:Data Source Name
-// 	dsn := "root:123456@tcp(127.0.0.1:3306)/webData"
-// 	// 不会校验账号密码是否正确
-// 	db, err = sql.Open("mysql", dsn)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	// 尝试与数据库建立连接（校验dsn是否正确）
-// 	err = db.Ping()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
-
-// // 查询多条数据示例
-// func queryMultiRowDemo() {
-// 	sqlStr := "select noteId, title, cover from noteInfo where noteId > ?"
-// 	rows, err := db.Query(sqlStr, 0)
-// 	if err != nil {
-// 		fmt.Printf("query failed, err:%v\n", err)
-// 		return
-// 	}
-// 	// 关闭rows释放持有的数据库链接
-// 	defer rows.Close()
-
-// 	// 循环读取结果集中的数据
-// 	for rows.Next() {
-// 		var nt noteInfo
-// 		err := rows.Scan(&nt.NoteId, &nt.NoteTitle, &nt.NoteCover)
-// 		if err != nil {
-// 			fmt.Printf("scan failed, err:%v\n", err)
-// 			return
-// 		}
-// 		notes = append(notes, nt)
-// 		//fmt.Printf("id:%d name:%s age:%s\n", nt.noteId, nt.noteTitle, nt.noteCover)
-// 	}
-// }
-
 func hostFunc(c *gin.Context) {
 	// gin.H 是map[string]interface{}的缩写
 	c.HTML(http.StatusOK, "host.html", gin.H{
 		"title": "标题",
-		"nt":    notes,
+		"nt":    models.Notes,
 	})
 }
 
@@ -80,13 +26,13 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	err := models.initDB() // 调用输出化数据库的函数
+	err := models.InitDB() // 调用输出化数据库的函数
 	if err != nil {
 		fmt.Printf("init db failed,err:%v\n", err)
 		return
 	}
 
-	notes := models.queryNoteDemo()
+	models.QueryNoteDemo()
 
 	router := gin.Default()
 

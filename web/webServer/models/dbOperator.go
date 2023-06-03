@@ -10,7 +10,7 @@ import (
 var db *sql.DB
 
 // 初始化数据库
-func initDB() (err error) {
+func InitDB() (err error) {
 	// DSN:Data Source Name
 	dsn := "root:123456@tcp(127.0.0.1:3306)/webData"
 	// 不会校验账号密码是否正确
