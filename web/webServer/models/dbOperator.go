@@ -25,3 +25,7 @@ func InitDB() (err error) {
 	}
 	return nil
 }
+
+func CloseDB() {
+	defer db.Close()
+}

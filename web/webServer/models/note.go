@@ -14,7 +14,7 @@ type noteInfo struct {
 
 var Notes []noteInfo
 
-// 查询多条数据示例
+// 获取笔记的封面标题等信息
 func QueryNoteDemo() {
 	sqlStr := "select noteId, title, cover from noteInfo where noteId > ?"
 	rows, err := db.Query(sqlStr, 0)
