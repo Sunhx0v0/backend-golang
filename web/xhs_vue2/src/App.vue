@@ -1,21 +1,21 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <!-- <img src="./assets/logo.png">
     <div>
       <p>
-        If Element is successfully added to this project, you'll see an
+        这一段来自APP。vue
         <code v-text="'<el-button>'"></code>
         below
       </p>
       <el-button>el-button</el-button>
-    </div>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    </div> -->
+    <HelloWorld msg="欢迎来到vue"/>
   </div>
 </template>
 
-<!-- <script>
-import HelloWorld from './components/HelloWorld.vue'
-//import Personal from './views/PersonalView.vue'
+<script>
+//import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from './views/PersonalView.vue'
 
 export default {
   name: 'app',
@@ -23,9 +23,9 @@ export default {
     HelloWorld
   }
 }
-</script> -->
+</script>
 
-<script>
+<!-- <script>
 export default {
   name: 'PersonalView',
   data() {
@@ -39,7 +39,7 @@ export default {
         })
     }
 }
-</script>
+</script> -->
 
 <style>
 #app {

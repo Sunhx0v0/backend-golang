@@ -65,11 +65,34 @@ func queryMultiRowDemo() {
 	}
 }
 
+// 用于处理Web应用程序中的跨源资源共享（CORS）请求的中间件，不用管，要看也行。模板写法来着，至于为什么，我也不是很懂
+func CORSMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		ctx.Writer.Header().Set("Access-Control-Max-Age", "86400")
+		ctx.Writer.Header().Set("Access-Control-Allow-Methods", "*")
+		ctx.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+		ctx.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		if ctx.Request.Method == http.MethodOptions {
+			ctx.AbortWithStatus(200)
+		} else {
+			ctx.Next()
+		}
+	}
+}
+
 func hostFunc(c *gin.Context) {
+	var b int
+	c.BindJSON(&b)
+	a := 222
+	if b == 16 {
+		a = 666
+	}
 	// gin.H 是map[string]interface{}的缩写
-	c.HTML(http.StatusOK, "host.html", gin.H{
-		"title": "标题",
-		"nt":    notes,
+	c.JSON(200, gin.H{
+		"guanzhu": a,
+		"fans":    "123",
+		"liked":   "10086",
 	})
 }
 
@@ -83,9 +106,9 @@ func main() {
 	queryMultiRowDemo()
 
 	router := gin.Default()
-
+	router.Use(CORSMiddleware()) // 一定要导入，我也不懂为什么
 	//加载HTML文件
-	router.LoadHTMLGlob("templates/host.html")
-	router.GET("/host", hostFunc)
-	router.Run(":8080")
+	router.POST("/host", hostFunc)
+	//router.GET("/host", hostFunc)
+	router.Run(":8085")
 }
