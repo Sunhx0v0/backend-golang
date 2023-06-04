@@ -10,6 +10,8 @@ import (
 
 	"webServer/models"
 
+	"webServer/routers"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -38,6 +40,6 @@ func main() {
 
 	//加载HTML文件
 	router.LoadHTMLGlob("templates/host.html")
-	router.GET("/host", hostFunc)
+	router.GET("/", hostFunc)
 	router.Run(":8080")
 }
