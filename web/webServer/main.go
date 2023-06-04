@@ -36,7 +36,7 @@ func main() {
 
 	models.QueryNoteDemo()
 
-	router := gin.Default()
+	router := routers.InitRouter()
 
 	//加载HTML文件
 	router.LoadHTMLGlob("templates/host.html")
