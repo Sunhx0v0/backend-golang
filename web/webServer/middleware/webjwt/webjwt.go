@@ -1,4 +1,4 @@
-package jwt
+package webjwt
 
 import (
 	"webServer/models"

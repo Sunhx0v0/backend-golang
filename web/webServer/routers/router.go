@@ -3,6 +3,7 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"webServer/middleware/cors"
+	"webServer/middleware/webjwt"
 )
 
 func InitRouter() *gin.Engine {
@@ -16,13 +17,13 @@ func InitRouter() *gin.Engine {
 	r.Use(cors.CorsMiddleware())
 
 	// gin.SetMode(setting.RunMode)
-	// var authMiddleware = myjwt.GinJWTMiddlewareInit(&myjwt.AllUserAuthorizator{})
-	// r.POST("/login", authMiddleware.LoginHandler)
-	// //404 handler
-	// r.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
-	// 	code := e.PAGE_NOT_FOUND
-	// 	c.JSON(404, gin.H{"code": code, "message": e.GetMsg(code)})
-	// })
+	var authMiddleware = jwt.GinJWTMiddlewareInit(&myjwt.AllUserAuthorizator{})
+	r.POST("/login", authMiddleware.LoginHandler)
+	//404 handler
+	r.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
+		code := e.PAGE_NOT_FOUND
+		c.JSON(404, gin.H{"code": code, "message": e.GetMsg(code)})
+	})
 
 	// auth := r.Group("/auth")
 	// {

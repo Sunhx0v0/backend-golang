@@ -167,6 +167,41 @@ export default {
 }
 </script>
 
+<script>
+import axios from 'axios';       // 需要先npm install 并且import进来
+export default {
+  data() {
+    return {
+      tableData: [{
+        noteId: '000',
+        title: '标题',
+        cover: 'https://pic.rmb.bdstatic.com/bjh/news/afbf38d8871da5a89ba4f9a8bef5def9.jpeg'
+      }],
+      activeName: "first",
+    }
+  },
+  created() {  // created方法：首次启动该界面时加载的
+    axios.get('http://localhost:8080/')       // 通过axios方法获取，get/post前后端需要保持一致
+      .then(response => {
+        this.tableData[0].noteId = response.data.NoteId;
+        this.tableData[0].title = response.data.NoteTitle;
+        this.tableData[0].cover = response.data.NoteCover;
+      }) // response是从后端接收到的报文的名字，可以任取；response中有很多字段，其中.data为接收到的数据；
+      // axios.post('http://localhost:8085/host')       // 通过axios方法获取，get/post前后端需要保持一致
+      // .then(response => {
+      //   this.tableData[0].guanzhu = response.data.guanzhu;
+      //   this.tableData[0].fans = response.data.fans;
+      //   this.tableData[0].liked = response.data.liked;
+      // })
+  },
+  methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    }
+  },
+}
+</script>
+
 <style>
 #home{
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

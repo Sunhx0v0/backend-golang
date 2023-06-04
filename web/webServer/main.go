@@ -23,10 +23,6 @@ func hostFunc(c *gin.Context) {
 	})
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello golang http!")
-}
-
 func main() {
 	err := models.InitDB() // 调用输出化数据库的函数
 	if err != nil {
