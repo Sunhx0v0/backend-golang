@@ -1,14 +1,17 @@
 package routers
 
-import(
-
+import (
+	"github.com/gin-gonic/gin"
 )
 
 func InitRouter() *gin.Engine {
+	// 新建一个没有任何默认中间件的路由
 	r := gin.New()
+
 	r.Use(gin.Logger())
 	r.Use(cors.CorsHandler())
 	r.Use(gin.Recovery())
+
 	gin.SetMode(setting.RunMode)
 	var authMiddleware = myjwt.GinJWTMiddlewareInit(&myjwt.AllUserAuthorizator{})
 	r.POST("/login", authMiddleware.LoginHandler)
