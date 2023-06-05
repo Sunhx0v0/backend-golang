@@ -3,7 +3,8 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"webServer/middleware/cors"
-	"webServer/middleware/webjwt"
+	//"webServer/middleware/webjwt"
+	"webServer/routers/api/v1"
 )
 
 func InitRouter() *gin.Engine {
@@ -14,16 +15,21 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	//r.Use(cors.CorsHandler())
 
+	// 使用CorsMiddleware()中间件来进行跨域连接
 	r.Use(cors.CorsMiddleware())
 
+	//加载HTML文件
+	r.LoadHTMLGlob("templates/host.html")
+	r.GET("/explore", v1.HostFunc)
+
 	// gin.SetMode(setting.RunMode)
-	var authMiddleware = jwt.GinJWTMiddlewareInit(&myjwt.AllUserAuthorizator{})
-	r.POST("/login", authMiddleware.LoginHandler)
-	//404 handler
-	r.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
-		code := e.PAGE_NOT_FOUND
-		c.JSON(404, gin.H{"code": code, "message": e.GetMsg(code)})
-	})
+	// var authMiddleware = jwt.GinJWTMiddlewareInit(&myjwt.AllUserAuthorizator{})
+	// r.POST("/login", authMiddleware.LoginHandler)
+	// //404 handler
+	// r.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
+	// 	code := e.PAGE_NOT_FOUND
+	// 	c.JSON(404, gin.H{"code": code, "message": e.GetMsg(code)})
+	// })
 
 	// auth := r.Group("/auth")
 	// {

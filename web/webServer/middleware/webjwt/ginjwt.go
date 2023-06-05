@@ -1,27 +1,26 @@
 package webjwt
 
 import (
-	"encoding/json"
-	"log"
-	"time"
+// "encoding/json"
+// "log"
+// "time"
 
-	jwt "github.com/appleboy/gin-jwt/v2"
-	"github.com/gin-gonic/gin"
-
-	"gin-vue/models"
-	"gin-vue/pkg/setting"
+// jwt "github.com/appleboy/gin-jwt/v2"
+// "github.com/gin-gonic/gin"
+// "gin-vue/models"
+// "gin-vue/pkg/setting"
 )
 
 // var identityKey = setting.IdentityKey
 
 // 初始化GIN的中间件
-func GinJWTMiddlewareInit(jwtAuthorizator IAuthorizator) (authMiddleware *jwt.GinJWTMiddleware) {
-	userMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{})
-	if err != nil {
-		log.Fatal("JWT Error:" + err.Error())
-	}
-	return
-}
+// func GinJWTMiddlewareInit(jwtAuthorizator IAuthorizator) (authMiddleware *jwt.GinJWTMiddleware) {
+// 	userMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{})
+// 	if err != nil {
+// 		log.Fatal("JWT Error:" + err.Error())
+// 	}
+// 	return
+// }
 
 // func GinJWTMiddlewareInit(jwtAuthorizator IAuthorizator) (authMiddleware *jwt.GinJWTMiddleware) {
 // 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
