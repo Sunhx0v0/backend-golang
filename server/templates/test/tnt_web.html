@@ -1,0 +1,202 @@
+{{define "test/tnt_web.html"}}
+<!DOCTYPE html>
+<!html控制网页的内容，css控制网页的布局,JavaScript主要是控制网页的行为>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="mystyle.css">
+<title>时代少年团TNT</title>
+<!添加搜索引擎关键字>
+<meta name="keywords" content="时代少年团，马嘉祺，丁程鑫，宋亚轩，刘耀文">
+<!添加web页面描述>
+<meta name="description" content="This is especially made for TNT">
+<!添加页面作者>
+<meta name="author" name="yaozt">
+<!没30秒刷新一下页面>
+<meta http-equiv="refresh" content="30">
+<!为了让图片居中>
+<!设置一些表格，块的属性>
+<style>
+.img-container {
+text-align: center;
+}
+
+[vice_title]
+{
+color:blue;
+text-align:right;
+}
+
+thead{color:red}
+
+tbody{color:green}
+
+table{
+text-align:center;
+margin:0px auto;
+}
+
+ul{
+width: 400px;
+margin:0 auto;
+overflow: auto;
+}
+
+</style>
+
+</head>
+
+<body>
+<!页面布局>
+<div id="container" style="width:100%;">
+
+<div id="header" style="background-color:rgb(220, 245, 227);text-align: center;">
+  <h1 style="margin: bottom 0;">时代少年团TNT</h1>
+</div>
+
+<div id="menu" style="background-color:beige;width:10%;height:100%;float: left;">
+  <b style="color: darkseagreen;">MENU</b><br>
+  <ul>
+    <li>马嘉祺</li>
+    <li>丁程鑫</li>
+    <li>宋亚轩</li>
+    <li><a href="ww.html" style="color: darkseagreen;">刘耀文</a></li>
+    <li>张真源</li>
+    <li>严浩翔</li>
+    <li>贺俊霖</li>
+  </ul>
+</div>
+
+<div id="content" style="background-color:antiquewhite;width: 80%;float: left;">
+  <h3 style="color:green;text-align:center">时代少年团成员基本信息介绍</h3>
+  <h4 vice_title="tnt together">——tnt together's record and especially Liu Yaowen</h4>
+  <h4 style="color:green">1.团队番位介绍：</h4>
+  
+  <table border="1" cellpadding="20" cellspacing="0" style="text-align: center;">
+     <caption>番位排序</caption>
+  <tr>
+  <thead>
+      <th>队长：</th>
+      <td><abbr title="时代少年团">马嘉祺</abbr></td>
+  </thead>
+  </tr>
+  <thbody>
+  <tr> 
+      <th>二番：</th>
+      <td>丁程鑫</td>
+  </tr>
+  <!单元格跨两行，跨两列的话用colspan>
+  <tr>
+       <th rowspan="2">三番：</th>
+       <td>宋亚轩</td>
+  </tr>
+  <tr>
+        <td>刘耀文</td>
+  </tr>
+  <tr>
+  <th>四番</th>
+  <td>
+  <ol type=i>
+  <li>张真源</li>
+  <li>严浩翔</li>
+  <li>贺俊霖</li>
+  </ol>
+  </td>
+  </tr>
+  </tbody>
+  </table>
+  
+  <ul style="margin:0px auto;">
+  <li>队长：马嘉祺<li>
+  <li>二番：丁程鑫</li>
+  <li>三番：
+  <ul>
+  <li>宋亚轩</li>
+  <li>刘耀文</li>
+  </ul>
+  </li>
+  <li>四番：
+  <ul>
+  <li>张真源</li>
+  <li>严浩翔</li>
+  <li>贺俊霖</li>
+  </ul>
+  </li>
+  </ul>
+  
+  <p1 id="p1" onmousedown="mouseDown()" onmouseup="mouseUp()">
+  点击人物查看单人图片
+  </p1>  
+   
+  <h4 style="color:green">2.时代少年团介绍</h4>
+  <p1>时代少年团（Teens in Times、TNT）是由时代峰峻推出的中国内地男子演唱组合，由马嘉祺、丁程鑫、宋亚轩、刘耀文、张真源、严浩翔、贺峻霖七人组成。
+    2019年11月23日，时代少年团组合举行出道暨新歌首唱会，从而正式出道；12月6日，获2020爱奇艺尖叫之夜年度潜力组合称号；12月8日，获TMEA腾讯音乐娱乐盛典年度新声代团体称号。
+    2020年7月19日，获第27届东方风云榜最佳新锐组合称号；12月20日，获腾讯视频星光大赏年度大势组合称号。2021年2月5日，参加录制的综艺《接招吧！前辈》播出；
+    2月11日，登上2021年中央广播电视总台春节联欢晚会的舞台，表演歌曲《奔跑的青春》；2月28日，获2020新浪微博之夜微博年度人气团体称号；12月11日，获第三届TMEA腾讯音乐娱乐盛典年度最佳团体。</p1>
+  <div class="img-container">
+  <img src="tnt.jpg" width="800px" height="400px" alt="时代少年团">
+  </div>
+
+  <h4 style="color:green">3.调查问卷</h4>
+  <ul style="margin-left: 0%;">
+  <li>请选择你最常关注时代少年团的路径：<br>
+  <form action="">
+  <input list="url_list" name="url_list">
+  <datalist id="url_list">
+    <option label="百度一下" value="http://www.baidu.com" />
+    <option label="哔哩哔哩" value="http://www.bilibili.com" />
+    <option label="爱奇艺" value="http://www.iqiyi.com" />
+ </datalist>
+ <input type="submit">
+  </form>
+  </li>
+<li>
+性别：<br>
+<form action="">
+  <input type="radio" name="sex" value="male">Male<br>
+  <input type="radio" name="sex" value="female">Female
+</form>
+</li>
+<li>
+选出最喜欢的成员：<br>
+<form action="">
+  <select name="fava">
+    <option value="刘耀文">刘耀文</option>
+    <option value="马嘉祺">马嘉祺</option>
+    <option value="丁程鑫">丁程鑫</option>
+    <option value="宋亚轩">宋亚轩</option>
+  </select>
+</form>
+</li>
+</ul>
+<h4 style="color:green">3.多个页面浏览并行</h4>
+<iframe src="https://baike.baidu.com/item/%E6%97%B6%E4%BB%A3%E5%B0%91%E5%B9%B4%E5%9B%A2/23799998" name="fram_tnt" style="width: 800px; margin:0 auto;height: 400px;text-align: center;"
+frameborder="10px">
+</iframe><br>
+<p1 style="color: darkseagreen;text-align: center;">点击切换<a href="https://www.bilibili.com/video/BV1Uq4y1C7mw/?uid=425631557134793143376D77" target="fram_tnt">时代少年团之dance with a stranger</a>页面</p1><br>
+<p1 style="color: darkseagreen;text-align: center;">点击切换<a href="https://m.weibo.cn/detail/4883317298827654" target="fram_tnt">时代少年团后援会官博</a>页面</p1>
+</div>
+
+<div id="footer" style="clear: both;text-align: center;background-color: rgb(220, 245, 227);">版权：@yzt.com
+</div>
+
+</div>
+
+<!程序所使用的脚本>
+<script>
+
+function mouseDown()
+{
+document.getElementById("p1").style.color="red";
+}
+function mouseUp()
+{
+document.getElementById("p1").style.color="green";
+}
+</script>
+
+</body>
+
+</html>
+{{end}}
