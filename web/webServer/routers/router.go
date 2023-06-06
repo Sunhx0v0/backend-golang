@@ -18,9 +18,7 @@ func InitRouter() *gin.Engine {
 	// 使用CorsMiddleware()中间件来进行跨域连接
 	r.Use(cors.CorsMiddleware())
 
-	//加载HTML文件
-	r.LoadHTMLGlob("templates/host.html")
-	r.GET("/explore", v1.HostFunc)
+	r.GET("/explore", v1.GetAllNotes)
 
 	// gin.SetMode(setting.RunMode)
 	// var authMiddleware = jwt.GinJWTMiddlewareInit(&myjwt.AllUserAuthorizator{})
