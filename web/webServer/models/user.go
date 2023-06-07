@@ -1,9 +1,22 @@
 package models
 
 import (
-	_ "github.com/go-sql-driver/mysql"
+	"fmt"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
+
+type LoginInfo struct {
+	Password string `json:"password"` // 密码
+	UserID   int64  `json:"userId"`   // 用户编号
+	UserName string `json:"userName"` // 用户名
+}
+
+type UserClaim struct {
+	UserName string
+	Claims   []LoginInfo
+}
 
 type userInfo struct {
 	userAccount  int       `JSON:"UserAc"`
@@ -26,4 +39,21 @@ type userInfo struct {
 
 func GetUserInfo(a int) {
 
+}
+
+func CheckUser(userName, password string) bool {
+	//用户的登录信息
+	var buser LoginInfo
+	sqlstr := "select userAccount from userInfo where userName=? and password=?"
+	err := db.QueryRow(sqlstr, userName, password).Scan(&buser.UserID)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return false
+	}
+	if buser.UserID > 0 {
+		// fmt.Print(buser.UserID)
+		return true
+	}
+
+	return false
 }

@@ -1,15 +1,15 @@
 package webjwt
 
-import (
+import "github.com/gin-gonic/gin"
+
 // "webServer/models"
 
 // "github.com/gin-gonic/gin"
-)
 
-// // IAuthorizator 授权规则接口
-// type IAuthorizator interface {
-// 	HandleAuthorizator(data interface{}, c *gin.Context) bool
-// }
+// IAuthorizator 授权规则接口
+type IAuthorizator interface {
+	HandleAuthorizator(data interface{}, c *gin.Context) bool
+}
 
 // // AdminAuthorizator 管理员授权规则
 // type AdminAuthorizator struct {
@@ -39,11 +39,11 @@ import (
 // 	return false
 // }
 
-// // AllUserAuthorizator 普通用户授权规则
-// type AllUserAuthorizator struct {
-// }
+// AllUserAuthorizator 普通用户授权规则
+type AllUserAuthorizator struct {
+}
 
-// // HandleAuthorizator 处理普通用户授权规则
-// func (*AllUserAuthorizator) HandleAuthorizator(data interface{}, c *gin.Context) bool {
-// 	return true
-// }
+// HandleAuthorizator 处理普通用户授权规则
+func (*AllUserAuthorizator) HandleAuthorizator(data interface{}, c *gin.Context) bool {
+	return true
+}
