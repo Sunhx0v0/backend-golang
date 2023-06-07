@@ -12,13 +12,23 @@ func web_testRegister(r *gin.Engine) {
 	// // 定义json函数接口
 	// r.GET("/mongo/find", find)
 	// // 定义json结构体函数接口
-	r.POST("/mongo/find_all", mysqldb.FindAll)
+	r.POST("/mongo/find_all", mysqldb.Findalldata)
 	// // 定义json结构体函数接口
 	// r.GET("/mongo/delete", delete)
 	// // 定义json结构体函数接口
 	// r.GET("/mongo/update", update)
 }
 
+// func indexHandler(c *gin.Context) {
+// 	c.JSON(http.StatusOK, gin.H{
+// 		// c.JSON：返回 JSON 格式的数据
+// 		"message": "Hello, this is user-index",
+// 	})
+// 	// c.HTML(http.StatusOK, "server/templates/users_test/index.html", gin.H{
+// 	// 	"title": "users/index",
+// 	// })
+// }
+// ctx.JSON(http.StatusOK, users)
 // // 插入数据
 // func insert(ctx *gin.Context) {
 // 	// 连接mongodb服务

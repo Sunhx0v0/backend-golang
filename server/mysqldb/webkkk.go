@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // 定义结构
@@ -14,9 +15,14 @@ type User struct {
 }
 
 // 查询全部数据
-func FindAll(ctx *gin.Context) {
+func Findalldata(ctx *gin.Context) {
+	err := InitDB() // 调用输出化数据库的函数
+	if err != nil {
+		fmt.Printf("init db failed,err:%v\n", err)
+		return
+	}
 	var users []User
-	sqlStr := "select username,password from easy"
+	sqlStr := "select username, password from easy"
 	rows, err := db.Query(sqlStr)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
