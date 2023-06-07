@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
-    "baseUrl": "./",
+    "baseUrl": "./xhs_vue2",
     "moduleResolution": "node",
     "paths": {
       "@/*": [

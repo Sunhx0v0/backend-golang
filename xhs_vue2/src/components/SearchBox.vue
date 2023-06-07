@@ -45,8 +45,8 @@
 </template>
 
 <script>
-import RandomUtil from "c:/Codelife/demo/xhs_modified_front/xhs_vue2/src/utils/randomUtil";
-import Store from "c:/Codelife/demo/xhs_modified_front/xhs_vue2/src/utils/store";
+import RandomUtil from "/src/utils/randomUtil";
+import Store from "/src/utils/store";
 export default {
 data() {
     return {
