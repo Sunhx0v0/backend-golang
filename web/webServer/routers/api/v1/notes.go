@@ -1,9 +1,10 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"webServer/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Data struct {
@@ -17,6 +18,19 @@ func GetAllNotes(c *gin.Context) {
 	data.IsLogin = false
 	data.Notes = models.GetBriefNtInfo()
 	// gin.H 是map[string]interface{}的缩写
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "success",
+		"data":    data,
+	})
+}
+
+func GetSpecificNotes(c *gin.Context) {
+	var data Data
+	//判断是否登录，还要再加判断的函数
+	data.IsLogin = false
+	keyword := c.Param("keyword")
+	data.Notes = models.GetSpBriefNtInfo(keyword)
 	c.JSON(http.StatusOK, gin.H{
 		"code":    200,
 		"message": "success",

@@ -45,7 +45,10 @@ func InitRouter() *gin.Engine {
 	//使用userAuthorizator中间件，只有user权限的用户才能获取到接口
 	apiv1.Use(userMiddleware.MiddlewareFunc())
 	{
+		//获取笔记（全部）
 		r.GET("/explore", v1.GetAllNotes)
+		//获取特定笔记（搜索/标签）
+		r.GET("/explore/:keyword", v1.GetSpecificNotes)
 		// //vue获取table信息
 		// apiv1.GET("/table/list", v1.GetArticles)
 		// //获取标签列表
