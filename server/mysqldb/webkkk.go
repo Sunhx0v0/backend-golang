@@ -16,11 +16,6 @@ type User struct {
 
 // 查询全部数据
 func Findalldata(ctx *gin.Context) {
-	err := InitDB() // 调用输出化数据库的函数
-	if err != nil {
-		fmt.Printf("init db failed,err:%v\n", err)
-		return
-	}
 	var users []User
 	sqlStr := "select username, password from easy"
 	rows, err := db.Query(sqlStr)
@@ -41,11 +36,24 @@ func Findalldata(ctx *gin.Context) {
 		}
 		users = append(users, nt)
 	}
-	// var usrs = gin.H{
-	// 	"username": users.username,
-	// 	"password": users.password,
-	// }
 	ctx.JSON(http.StatusOK, users)
+}
+
+func Insert(ctx *gin.Context) {
+	var user User
+	if err := ctx.BindJSON(&user); err != nil {
+		// 返回错误信息
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	username := user.Username
+	password := user.Password
+	sqlStr := "insert into easy(username,password) values(\"" + username + "\",\"" + password + "\")"
+	_, err := db.Exec(sqlStr) //执行sql语句
+	if err != nil {
+		fmt.Printf("insert failed,err:%v\n", err)
+		return
+	}
 }
 
 // // 查询全部数据

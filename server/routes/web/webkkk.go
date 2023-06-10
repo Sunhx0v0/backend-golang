@@ -8,7 +8,7 @@ import (
 
 func web_testRegister(r *gin.Engine) {
 	// // 定义路由，调用接口函数
-	// r.GET("/mongo/insert", insert)
+	r.POST("/mongo/insert", mysqldb.Insert)
 	// // 定义json函数接口
 	// r.GET("/mongo/find", find)
 	// // 定义json结构体函数接口
