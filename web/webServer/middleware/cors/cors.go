@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// 用于连接的中间件
 func CorsMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Writer.Header().Set("Access-Control-Allow-Origin", "*")
