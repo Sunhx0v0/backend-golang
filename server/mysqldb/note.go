@@ -2,37 +2,68 @@ package mysqldb
 
 import (
 	"fmt"
+	"server/models"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type NoteInfo struct {
-	NoteId    int    `JSON:"NoteId"`
-	NoteTitle string `JSON:"NoteTitle"`
-	NoteCover string `JSON:"NoteCover"`
+type NoteInfo models.NoteInfo
+type PictureInfo models.PictureInfo
+
+type Note struct {
+	NoteInfo   NoteInfo `JSON:"noteInfo"`
+	PicsOfNote []string `JSON:"pictures"`
 }
 
-// 查询多条数据示例
-func QueryNoteDemo() []NoteInfo {
-	var Notes []NoteInfo
-	sqlStr := "select noteId, title, cover from noteInfo where noteId > ?"
-	rows, err := db.Query(sqlStr, 0)
+// 查询特定笔记
+func SpecificNote(noteid int) Note {
+	var N Note
+	//先找笔记信息
+	sqlStr1 := "select Noteid,CreatorAccount,Title,Body,NumOfPic,Cover,CreateTime,UpdateTime,Tag,Location,AtUserid from noteInfo where noteId = ?"
+	rows, err := db.Query(sqlStr1, noteid)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
-		return nil
+		var err Note
+		return err
 	}
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
 
 	// 循环读取结果集中的数据
 	for rows.Next() {
-		var nt NoteInfo
-		err := rows.Scan(&nt.NoteId, &nt.NoteTitle, &nt.NoteCover)
+		var createTimestring string
+		var updateTimestring string
+		err := rows.Scan(&N.NoteInfo.Noteid, &N.NoteInfo.CreatorAccount, &N.NoteInfo.Title, &N.NoteInfo.Body, &N.NoteInfo.NumOfPic, &N.NoteInfo.Cover, &createTimestring, &updateTimestring, &N.NoteInfo.Tag, &N.NoteInfo.Location, &N.NoteInfo.AtUserid)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
-			return nil
+			var err Note
+			return err
 		}
-		Notes = append(Notes, nt)
+		N.NoteInfo.CreateTime, _ = time.Parse("2000-01-01 24:00:00", createTimestring)
+		N.NoteInfo.UpdateTime, _ = time.Parse("2000-01-01 24:00:00", updateTimestring)
 	}
-	return Notes
+	//再找图片信息
+	sqlStr2 := "select picUrl from pictureLibrary where noteID = ?"
+	rows2, err := db.Query(sqlStr2, noteid)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		var err Note
+		return err
+	}
+	for rows2.Next() {
+		var picurl string
+		err := rows.Scan(&picurl)
+		if err != nil {
+			fmt.Printf("scan failed, err:%v\n", err)
+			var err Note
+			return err
+		}
+		N.PicsOfNote = append(N.PicsOfNote, picurl)
+	}
+
+	// 关闭rows释放持有的数据库链接
+	defer rows2.Close()
+
+	return N
 }
