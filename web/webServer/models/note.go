@@ -53,9 +53,9 @@ func GetBriefNtInfo() (notes []Note) {
 
 // 获取特定内容的笔记
 func GetSpBriefNtInfo(keyword string) (notes []Note) {
-	sqlStr := `select n.noteId, n.title, n.cover,n.creatorAccount,n.likeNum, u.portrait
-	from noteInfo n,userInfo u
-	where n.creatorAccount = u.userAccount and (n.tag = ? OR n.title like CONCAT('%',#{keyword},'%'))`
+	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
+	FROM noteInfo n, userInfo u
+	WHERE n.creatorAccount = u.userAccount AND (n.tag = ? OR n.title LIKE CONCAT('%',#{keyword},'%'))`
 	rows, err := db.Query(sqlStr, keyword, keyword)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
@@ -67,13 +67,32 @@ func GetSpBriefNtInfo(keyword string) (notes []Note) {
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var nt Note
-		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait)
+		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait, &nt.CreatorName)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
 			return
 		}
-		fmt.Print(nt.NoteID)
+		fmt.Println(nt.NoteID)
 		notes = append(notes, nt)
 	}
 	return
 }
+
+// // 存入新上传的笔记信息
+// func NewNoteInfo(nn DetailNote) (int, bool) {
+// 	sqlstr := `INSERT INTO noteInfo
+// 	(creatorAccount, cover, title, body, createTime, updateTime, tag, location, atUserId, likeNum)
+// 	VALUES
+// 	(?,?,?,?,?,?,?,?,?,?)`
+// 	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Cover, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime, nn.Tag, nn.Location, nn.AtUserID, nn.LikedNum)
+// 	if err != nil {
+// 		fmt.Printf("insert failed, err:%v\n", err)
+// 		return -1, false
+// 	}
+// 	theID, err := ret.LastInsertId() // 新插入数据的id
+// 	if err != nil {
+// 		fmt.Printf("get lastinsert ID failed, err:%v\n", err)
+// 		return -1, false
+// 	}
+// 	return int(theID), true
+// }
