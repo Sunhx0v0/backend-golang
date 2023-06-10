@@ -20,26 +20,32 @@ type UserClaim struct { // 登录验证
 
 // 收藏的笔记
 type Collects struct {
-	Cover    string `json:"cover"`
-	LikedNum int64  `json:"likedNum"` // 点赞数
-	NoteID   int64  `json:"noteId"`   // 笔记编号
-	Title    string `json:"title"`
+	Cover     string `json:"cover"`
+	LikedNum  int64  `json:"likedNum"` // 点赞数
+	NoteID    int64  `json:"noteId"`   // 笔记编号
+	Title     string `json:"title"`
+	CreatorID int64  `json:"creatorID"`
+	Portrait  int64  `json:"portrait"`
 }
 
 // 点赞的笔记
 type Likes struct {
-	Cover    string `json:"cover"`
-	LikedNum int64  `json:"likedNum"` // 点赞数
-	NoteID   int64  `json:"noteId"`   // 笔记编号
-	Title    string `json:"title"`
+	Cover     string `json:"cover"`
+	LikedNum  int64  `json:"likedNum"` // 点赞数
+	NoteID    int64  `json:"noteId"`   // 笔记编号
+	Title     string `json:"title"`
+	CreatorID int64  `json:"creatorID"`
+	Portrait  int64  `json:"portrait"`
 }
 
 // 发布的笔记
 type Notes struct {
-	Cover    string `json:"cover"`
-	LikedNum int64  `json:"likedNum"` // 点赞数
-	NoteID   int64  `json:"noteId"`   // 笔记编号
-	Title    string `json:"title"`
+	Cover     string `json:"cover"`
+	LikedNum  int64  `json:"likedNum"` // 点赞数
+	NoteID    int64  `json:"noteId"`   // 笔记编号
+	Title     string `json:"title"`
+	CreatorID int64  `json:"creatorID"`
+	Portrait  int64  `json:"portrait"`
 }
 
 // 用户基本信息
