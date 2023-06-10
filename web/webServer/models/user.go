@@ -13,13 +13,38 @@ type LoginInfo struct {
 	UserName string `json:"userName"` // 用户名
 }
 
-type UserClaim struct {
+type UserClaim struct { // 登录验证
 	UserName string
 	Claims   []LoginInfo
 }
 
-type userInfo struct {
-	userAccount  int       `JSON:"UserAc"`
+// 收藏的笔记
+type Collects struct {
+	Cover    string `json:"cover"`
+	LikedNum int64  `json:"likedNum"` // 点赞数
+	NoteID   int64  `json:"noteId"`   // 笔记编号
+	Title    string `json:"title"`
+}
+
+// 点赞的笔记
+type Likes struct {
+	Cover    string `json:"cover"`
+	LikedNum int64  `json:"likedNum"` // 点赞数
+	NoteID   int64  `json:"noteId"`   // 笔记编号
+	Title    string `json:"title"`
+}
+
+// 发布的笔记
+type Notes struct {
+	Cover    string `json:"cover"`
+	LikedNum int64  `json:"likedNum"` // 点赞数
+	NoteID   int64  `json:"noteId"`   // 笔记编号
+	Title    string `json:"title"`
+}
+
+// 用户基本信息
+type UserInfo struct {
+	userID       int       `JSON:"UserID"`
 	userName     string    `JSON:"UserName"`
 	password     string    `JSON:"Password"`
 	gender       string    `JSON:"Gender"`
@@ -37,8 +62,28 @@ type userInfo struct {
 	mail         string    `JSON:"Mail"`
 }
 
-func GetUserInfo(a int) {
+func UserInfoDB(id int) UserInfo { // 从数据库获得用户信息
+	sqlStr := `select *
+	from userinfo
+	where userAccount = '"+id+"'`
+	rows, err := db.Query(sqlStr)
+	var ui UserInfo
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return ui
+	}
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
 
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		err := rows.Scan(&ui.userID, &ui.userName, &ui.gender, &ui.portrait, &ui.introduction, &ui.birthday, &ui.registTime, &ui.fansNum, &ui.noteNum, &ui.collectNum, &ui.followNum, &ui.collectedNum, &ui.likedNum, &ui.phoneNumber, &ui.mail, &ui.password)
+		if err != nil {
+			fmt.Printf("scan failed, err:%v\n", err)
+			return ui
+		}
+	}
+	return ui
 }
 
 func CheckUser(userName, password string) bool {
