@@ -47,24 +47,25 @@ func UploadNote(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Param("userId"))
 
 	form, err := c.MultipartForm()
-	files := form.File["files[]"]
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(200, gin.H{
 			"code":    400,
 			"message": "上传失败!",
 		})
 		return
 	} else {
+		files := form.File["files"]
 		//新声明新笔记的结构体
 		var newNote models.DetailNote
-		newNote.Title = c.Query("title")
-		newNote.Body = c.Query("body")
-		newNote.CreateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.Query("createtime"), time.Local)
-		newNote.UpdateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.Query("createtime"), time.Local)
-		newNote.Tag = c.Query("tag")
-		newNote.Location = c.Query("location")
-		newNote.AtUserID = com.StrTo(c.Query("atuserid")).MustInt()
-		newNote.LikedNum = com.StrTo(c.Query("likenum")).MustInt()
+		newNote.Title = c.PostForm("title")
+		newNote.Body = c.PostForm("body")
+		newNote.CreateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.PostForm("createtime"), time.Local)
+		newNote.UpdateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.PostForm("createtime"), time.Local)
+		newNote.Tag = c.PostForm("tag")
+		newNote.Location = c.PostForm("location")
+		newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
+		// newNote.LikedNum = com.StrTo(c.PostForm("likenum")).MustInt()
 
 		picNum := 0
 		newNote.CreatorID = userId
@@ -81,7 +82,7 @@ func UploadNote(c *gin.Context) {
 			var pc models.Pictures
 
 			log.Println(file.Filename)
-			dst := fmt.Sprintf("../images/%s_%d", file.Filename, index)
+			dst := fmt.Sprintf("images/%d_%s", index, file.Filename)
 
 			pc.NoteId = ntID
 			pc.Picurl = dst
