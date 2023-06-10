@@ -104,27 +104,29 @@ func UserInfoDB(id int) (uui []UserInfo) { // 从数据库获得用户信息
 }
 
 func NoteInfoDB(id int) (notes []Notes) { // 从数据库获得用户信息
-	// sqlStr := `select n.noteId, n.title, n.cover,n.creatorID,n.likeNum, u.portrait,n.creatorName
+	// sqlStr := `select n.noteId, n.title, n.cover,n.creatorAccount,n.likeNum, u.portrait
 	// from noteInfo n,userInfo u
-	// where n.creatorID = ? and u.userAccount = ?`
-	// rows, err := db.Query(sqlStr, id, id)
+	// where n.creatorAccount = u.userAccount`
+	// rows, err := db.Query(sqlStr)
 	// if err != nil {
 	// 	fmt.Printf("query failed, err:%v\n", err)
 	// 	return
 	// }
+	// // 关闭rows释放持有的数据库链接
 	// defer rows.Close()
 
+	// // 循环读取结果集中的数据
 	// for rows.Next() {
 	// 	var nt Notes
-	// 	err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait, &nt.CreatorName)
+	// 	err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait)
 	// 	if err != nil {
 	// 		fmt.Printf("scan failed, err:%v\n", err)
 	// 		return
 	// 	}
+	// 	fmt.Print(nt.NoteID)
 	// 	notes = append(notes, nt)
 	// }
 	// return
-
 	var nt Notes
 	nt.NoteID = 10001
 	nt.Title = "l就别"
