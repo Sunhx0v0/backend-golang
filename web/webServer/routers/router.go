@@ -49,6 +49,8 @@ func InitRouter() *gin.Engine {
 		r.GET("/explore", v1.GetAllNotes)
 		//获取特定笔记（搜索/标签）
 		r.GET("/explore/:keyword", v1.GetSpecificNotes)
+		//上传笔记
+		r.POST("/:userId/publish",v1.UploadNote)
 		// //vue获取table信息
 		// apiv1.GET("/table/list", v1.GetArticles)
 		// //获取标签列表
