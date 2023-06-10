@@ -15,19 +15,20 @@ import (
 // var Notes []noteInfo
 
 type Note struct {
-	Cover     string `json:"cover"`
-	CreatorID int    `json:"creatorId"` // 作者编号
-	LikedNum  int    `json:"likedNum"`  // 点赞数
-	NoteID    int    `json:"noteId"`    // 笔记编号
-	Portrait  string `json:"portrait"`  // 头像
-	Title     string `json:"title"`
+	Cover       string `json:"cover"`
+	CreatorID   int    `json:"creatorId"`   // 作者编号
+	CreatorName string `json:"creatorName"` // 作者姓名
+	LikedNum    int    `json:"likedNum"`    // 点赞数
+	NoteID      int    `json:"noteId"`      // 笔记编号
+	Portrait    string `json:"portrait"`    // 头像
+	Title       string `json:"title"`
 }
 
 // 获取笔记的封面标题等简要信息
 func GetBriefNtInfo() (notes []Note) {
-	sqlStr := `select n.noteId, n.title, n.cover,n.creatorAccount,n.likeNum, u.portrait
+	sqlStr := `select n.noteId, n.title, n.cover,n.creatorId,n.likedNum, u.portrait,n.creatorName
 	from noteInfo n,userInfo u
-	where n.creatorAccount = u.userAccount`
+	where n.creatorId = u.userAccount`
 	rows, err := db.Query(sqlStr)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
@@ -39,7 +40,7 @@ func GetBriefNtInfo() (notes []Note) {
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var nt Note
-		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait)
+		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait, &nt.CreatorName)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
 			return
