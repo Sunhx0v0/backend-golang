@@ -13,7 +13,7 @@ type UserInfo struct {
 	Notes    []models.Note   `json:"notes"`    // 笔记，简要信息
 	Collects []models.Note   `json:"collects"`
 	Likes    []models.Note   `json:"likes"`
-	isHost   bool            `json:"isHost"` //是否页面主人
+	IsHost   bool            `json:"isHost"` //是否页面主人
 }
 
 func GetUserInfo(c *gin.Context) { //显示用户界面全部信息
@@ -23,7 +23,7 @@ func GetUserInfo(c *gin.Context) { //显示用户界面全部信息
 	info.Notes = models.GetBriefNtInfo()
 	info.Collects = models.GetBriefNtInfo()
 	info.Likes = models.GetBriefNtInfo()
-	info.isHost = true
+	info.IsHost = true
 
 	c.JSON(http.StatusOK, gin.H{
 		"code":    200,
