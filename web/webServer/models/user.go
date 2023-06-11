@@ -72,159 +72,143 @@ type UserInfo struct {
 }
 
 func UserInfoDB(id int) UserInfo { // 从数据库获得用户信息
-	// fmt.Println("传入ID", id)
-	// var ui UserInfo
-	// sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password from userinfo where userAccount = ?`
-	// err := db.QueryRow(sqlStr, id).Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password)
-	// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
-	// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
-	// if err != nil {
-	// 	fmt.Printf("query failed, err:%v\n", err)
-	// 	return ui
-	// }
-	// return ui
 
-	// var ui UserInfo
-	// sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password from userinfo where userAccount = ?`
-	// rows, err := db.Query(sqlStr, id)
-	// if err != nil {
-	// 	fmt.Println("没有数据1")
-	// 	return ui
-	// }
-	// //defer rows.Close()
-	// // for rows.Next() {
-	// rows.Next()
-	// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
-	// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
-	// rows.Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password)
-	// //}
-	// defer rows.Close()
-	// fmt.Println("到最后了吗")
-	// return ui
-
+	sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password from userinfo where userAccount = ?`
 	var ui UserInfo
-	ui.UserID = 10001
-	ui.UserName = "zahgsad"
-	ui.Gender = "sha"
-	ui.Portrait = "/"
-	ui.Introduction = "jntm"
+	err := db.QueryRow(sqlStr, id).Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password)
 	ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
 	ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
-	ui.FansNum = 666
-	ui.NoteNum = 777
-	ui.CollectNum = 888
-	ui.FollowNum = 999
-	ui.CollectedNum = 1010
-	ui.LikedNum = 115
-	ui.PhoneNumber = "1233663"
-	ui.Mail = "1235"
-	ui.Password = "123456"
+	if err != nil {
+		fmt.Printf("scan failed, err:%v\n", err)
+		return ui
+	}
+	fmt.Println(ui.UserID, ui.UserName, ui.Gender, ui.Portrait, ui.Introduction, ui.Birthday, ui.RegistTime, ui.FansNum, ui.NoteNum, ui.CollectNum, ui.FollowNum, ui.CollectedNum, ui.LikedNum, ui.PhoneNumber, ui.Mail, ui.Password)
 	return ui
+
+	// var ui UserInfo
+	// ui.UserID = 10001
+	// ui.UserName = "zahgsad"
+	// ui.Gender = "sha"
+	// ui.Portrait = "/"
+	// ui.Introduction = "jntm"
+	// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
+	// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
+	// ui.FansNum = 666
+	// ui.NoteNum = 777
+	// ui.CollectNum = 888
+	// ui.FollowNum = 999
+	// ui.CollectedNum = 1010
+	// ui.LikedNum = 115
+	// ui.PhoneNumber = "1233663"
+	// ui.Mail = "1235"
+	// ui.Password = "123456"
+	// return ui
 }
 
 func NoteInfoDB(id int) []Notes { // 从数据库获得用户信息
-	// var notes []Notes
-	// sqlStr := `select noteId, title, cover,creatorAccount,likeNum, creatorName
-	// from noteInfo
-	// where creatorAccount = '"+id+"'`
-	// rows, err := db.Query(sqlStr)
-	// if err != nil {
-	// 	fmt.Printf("query failed, err:%v\n", err)
-	// 	return notes
-	// }
-	// // 关闭rows释放持有的数据库链接
-	// defer rows.Close()
-
-	// // 循环读取结果集中的数据
-	// for rows.Next() {
-	// 	var nt Notes
-	// 	err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.CreatorName)
-	// 	nt.Portrait = "/"
-	// 	if err != nil {
-	// 		fmt.Printf("scan failed, err:%v\n", err)
-	// 		return notes
-	// 	}
-	// 	notes = append(notes, nt)
-	// }
-	// return notes
-
 	var notes []Notes
-	var nt Notes
-	nt.NoteID = 10001
-	nt.Title = "l就别"
-	nt.Cover = "站发给"
-	nt.CreatorID = 10001
-	nt.LikedNum = 500
-	nt.Portrait = "/"
-	nt.CreatorName = "张菲"
-	notes = append(notes, nt)
+	sqlStr := `select noteId, title, cover,creatorAccount,likeNum, creatorName from noteInfo where creatorAccount = ?`
+	rows, err := db.Query(sqlStr, id)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return notes
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var nt Notes
+		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.CreatorName)
+		nt.Portrait = "/"
+		fmt.Println(nt.NoteID, nt.Title, nt.Cover, nt.CreatorID, nt.LikedNum, nt.CreatorName, nt.Portrait)
+		if err != nil {
+			fmt.Printf("scan failed, err:%v\n", err)
+			return notes
+		}
+		notes = append(notes, nt)
+	}
 	return notes
+
+	// var notes []Notes
+	// var nt Notes
+	// nt.NoteID = 10001
+	// nt.Title = "l就别"
+	// nt.Cover = "站发给"
+	// nt.CreatorID = 10001
+	// nt.LikedNum = 500
+	// nt.Portrait = "/"
+	// nt.CreatorName = "张菲"
+	// notes = append(notes, nt)
+	// return notes
 }
 
-func CollectInfoDB(id int) (notes []Collects) { // 从数据库获得用户信息
-	// sqlStr := `select n.noteId, n.title, n.cover,n.creatorAccount,n.likeNum, u.portrait
-	// from noteInfo n,userInfo u
-	// where n.creatorAccount = '"+id+"' and u.userAccount = '"+id+"'`
-	// rows, err := db.Query(sqlStr)
-	// if err != nil {
-	// 	fmt.Printf("query failed, err:%v\n", err)
-	// 	return
-	// }
-	// defer rows.Close()
+func CollectInfoDB(id int) []Collects { // 从数据库获得用户信息
+	var notes []Collects
+	sqlStr := `select noteId, title, cover,creatorAccount,likeNum, creatorName from noteInfo where creatorAccount = ?`
+	rows, err := db.Query(sqlStr, id)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return notes
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var nt Collects
+		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.CreatorName)
+		nt.Portrait = "/"
+		fmt.Println(nt.NoteID, nt.Title, nt.Cover, nt.CreatorID, nt.LikedNum, nt.CreatorName, nt.Portrait)
+		if err != nil {
+			fmt.Printf("scan failed, err:%v\n", err)
+			return notes
+		}
+		notes = append(notes, nt)
+	}
+	return notes
 
-	// for rows.Next() {
-	// 	var nt Collects
-	// 	err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait)
-	// 	if err != nil {
-	// 		fmt.Printf("scan failed, err:%v\n", err)
-	// 		return
-	// 	}
-	// 	notes = append(notes, nt)
-	// }
-	// return
-	var nt Collects
-	nt.NoteID = 10001
-	nt.Title = "l就别"
-	nt.Cover = "站发给"
-	nt.CreatorID = 10001
-	nt.LikedNum = 500
-	nt.Portrait = "/"
-	nt.CreatorName = "张菲"
-	notes = append(notes, nt)
-	return
+	// var notes []Collects
+	// var nt Collects
+	// nt.NoteID = 10001
+	// nt.Title = "l就别"
+	// nt.Cover = "站发给"
+	// nt.CreatorID = 10001
+	// nt.LikedNum = 500
+	// nt.Portrait = "/"
+	// nt.CreatorName = "张菲"
+	// notes = append(notes, nt)
+	// return notes
 }
 
-func LikeInfoDB(id int) (notes []Likes) { // 从数据库获得用户信息
-	// sqlStr := `select n.noteId, n.title, n.cover,n.creatorAccount,n.likeNum, u.portrait
-	// from noteInfo n,userInfo u
-	// where n.creatorAccount = '"+id+"' and u.userAccount = '"+id+"'`
-	// rows, err := db.Query(sqlStr)
-	// if err != nil {
-	// 	fmt.Printf("query failed, err:%v\n", err)
-	// 	return
-	// }
-	// defer rows.Close()
-
-	// for rows.Next() {
-	// 	var nt Likes
-	// 	err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait)
-	// 	if err != nil {
-	// 		fmt.Printf("scan failed, err:%v\n", err)
-	// 		return
-	// 	}
-	// 	notes = append(notes, nt)
-	// }
-	// return
+func LikeInfoDB(id int) []Likes { // 从数据库获得用户信息
+	var notes []Likes
 	var nt Likes
-	nt.NoteID = 10001
-	nt.Title = "l就别"
-	nt.Cover = "站发给"
-	nt.CreatorID = 10001
-	nt.LikedNum = 500
-	nt.Portrait = "/"
-	nt.CreatorName = "张菲"
-	notes = append(notes, nt)
-	return
+	sqlStr := `select noteId, title, cover,creatorAccount,likeNum, creatorName from noteInfo where creatorAccount = ?`
+	rows, err := db.Query(sqlStr, id)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return notes
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.CreatorName)
+		nt.Portrait = "/"
+		fmt.Println(nt.NoteID, nt.Title, nt.Cover, nt.CreatorID, nt.LikedNum, nt.CreatorName, nt.Portrait)
+		if err != nil {
+			fmt.Printf("scan failed, err:%v\n", err)
+			return notes
+		}
+		notes = append(notes, nt)
+	}
+	return notes
+
+	// var notes []Likes
+	// var nt Likes
+	// nt.NoteID = 10001
+	// nt.Title = "l就别"
+	// nt.Cover = "站发给"
+	// nt.CreatorID = 10001
+	// nt.LikedNum = 500
+	// nt.Portrait = "/"
+	// nt.CreatorName = "alsdkj"
+	// notes = append(notes, nt)
+	// fmt.Println(nt.NoteID, nt.Title, nt.Cover, nt.CreatorID, nt.LikedNum, nt.CreatorName, nt.Portrait, "对比下")
+	// return notes
 }
 
 func CheckUser(userName, password string) bool {
