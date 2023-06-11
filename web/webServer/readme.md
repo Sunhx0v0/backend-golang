@@ -18,3 +18,5 @@
 v1文件夹中的文件定义了路由的处理函数，其中有关数据库的在models里面。
 
 参考博客： https://www.liwenzhou.com/posts/Go/gin/#autoid-0-8-3 
+
+参考框架：https://github.com/Bingjian-Zhu/gin-vue-admin 
