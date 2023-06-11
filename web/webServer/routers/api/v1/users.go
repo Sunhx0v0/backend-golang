@@ -10,11 +10,11 @@ import (
 )
 
 type UsersInfo struct {
-	Infos    models.UserInfo   `json:"userInfo"` // 用户信息，只有一条，不用数组
-	Notes    []models.Notes    `json:"notes"`    // 笔记，简要信息
-	Collects []models.Collects `json:"collects"`
-	Likes    []models.Likes    `json:"likes"`
-	IsHost   bool              `json:"isHost"` //是否页面主人
+	Infos    models.UserInfo `json:"userInfo"` // 用户信息，只有一条，不用数组
+	Notes    []models.Notes  `json:"notes"`    // 笔记，简要信息
+	Collects []models.Notes  `json:"collects"`
+	Likes    []models.Notes  `json:"likes"`
+	IsHost   bool            `json:"isHost"` //是否页面主人
 }
 
 func GetUserInfo(c *gin.Context) { //显示用户界面全部信息
