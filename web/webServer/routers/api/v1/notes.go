@@ -17,7 +17,8 @@ type Data struct {
 	Notes   []models.Note `json:"notes"`   // 笔记，简要信息
 }
 
-func GetAllNotes(c *gin.Context) { //获取笔记（全部）
+// 获取笔记（全部）
+func GetAllNotes(c *gin.Context) {
 	var data Data
 	//判断是否登录，还要再加判断的函数
 	data.IsLogin = false
@@ -30,7 +31,8 @@ func GetAllNotes(c *gin.Context) { //获取笔记（全部）
 	})
 }
 
-func GetSpecificNotes(c *gin.Context) { //获取特定笔记（搜索/标签）
+// 获取特定笔记（搜索/标签）
+func GetSpecificNotes(c *gin.Context) {
 	var data Data
 	//判断是否登录，还要再加判断的函数
 	data.IsLogin = false
@@ -43,6 +45,7 @@ func GetSpecificNotes(c *gin.Context) { //获取特定笔记（搜索/标签）
 	})
 }
 
+// 上传笔记
 func UploadNote(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Param("userId"))
 
@@ -51,7 +54,7 @@ func UploadNote(c *gin.Context) {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
-			"message": "上传失败!",
+			"message": "读取失败!",
 		})
 		return
 	} else {
@@ -67,9 +70,9 @@ func UploadNote(c *gin.Context) {
 		newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
 		// newNote.LikedNum = com.StrTo(c.PostForm("likenum")).MustInt()
 
-		picNum := 0
+		// picNum := 0
 		newNote.CreatorID = userId
-		newNote.Picnum = picNum
+		// newNote.Picnum = picNum
 		ntID, success := models.NewNoteInfo(newNote)
 		if !success {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -97,28 +100,10 @@ func UploadNote(c *gin.Context) {
 			"code":    200,
 			"message": fmt.Sprintf("%d files uploaded!", len(files)),
 		})
-		// fileExt := strings.ToLower(path.Ext(f.Filename))
-		// if fileExt != ".png" && fileExt != ".jpg" && fileExt != ".gif" && fileExt != ".jpeg" {
-		// 	c.JSON(200, gin.H{
-		// 		"code":    400,
-		// 		"message": "上传失败!只允许png,jpg,gif,jpeg文件",
-		// 	})
-		// 	return
-		// }
-		// fileName := tools.Md5(fmt.Sprintf("%s%s", f.Filename, time.Now().String()))
-		// fildDir := fmt.Sprintf("%s%d%s/", config.Upload, time.Now().Year(), time.Now().Month().String())
-		// isExist, _ := tools.IsFileExist(fildDir)
-		// if !isExist {
-		// 	os.Mkdir(fildDir, os.ModePerm)
-		// }
-		// filepath := fmt.Sprintf("%s%s%s", fildDir, fileName, fileExt)
-		// c.SaveUploadedFile(f, filepath)
-		// c.JSON(200, gin.H{
-		// 	"code":    200,
-		// 	"message": "上传成功!",
-		// 	"result": gin.H{
-		// 		"path": filepath,
-		// 	},
-		// })
 	}
+}
+
+// 删除笔记
+func DeleteNote(c *gin.Context) {
+
 }

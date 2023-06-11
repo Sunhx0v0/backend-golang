@@ -7,14 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// type noteInfo struct {
-// 	NoteId    int    `JSON:"NoteId"`
-// 	NoteTitle string `JSON:"NoteTitle"`
-// 	NoteCover string `JSON:"NoteCover"`
-// }
-
-// var Notes []noteInfo
-
+// 要返回给前端的数据对应的结构体
 type Note struct {
 	Cover       string `json:"cover"`
 	CreatorID   int    `json:"creatorId"`   // 作者编号

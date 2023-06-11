@@ -37,8 +37,8 @@ func main() {
 	s := &http.Server{
 		Addr:           fmt.Sprintf(":%d", 8080),
 		Handler:        router,
-		ReadTimeout:    120,
-		WriteTimeout:   120,
+		ReadTimeout:    60,
+		WriteTimeout:   60,
 		MaxHeaderBytes: 1 << 23,
 	}
 

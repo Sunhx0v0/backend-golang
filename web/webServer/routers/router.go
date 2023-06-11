@@ -53,6 +53,9 @@ func InitRouter() *gin.Engine {
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)
 		//上传笔记
 		r.POST("/:userId/publish", v1.UploadNote)
+		//用户删除笔记
+		r.DELETE("/:userId/publish/:noteId", v1.DeleteNote)
+
 		// //vue获取table信息
 		// apiv1.GET("/table/list", v1.GetArticles)
 		// //获取标签列表
