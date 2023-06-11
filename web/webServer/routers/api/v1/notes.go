@@ -17,7 +17,7 @@ type Data struct {
 	Notes   []models.Note `json:"notes"`   // 笔记，简要信息
 }
 
-func GetAllNotes(c *gin.Context) {
+func GetAllNotes(c *gin.Context) { //获取笔记（全部）
 	var data Data
 	//判断是否登录，还要再加判断的函数
 	data.IsLogin = false
@@ -30,7 +30,7 @@ func GetAllNotes(c *gin.Context) {
 	})
 }
 
-func GetSpecificNotes(c *gin.Context) {
+func GetSpecificNotes(c *gin.Context) { //获取特定笔记（搜索/标签）
 	var data Data
 	//判断是否登录，还要再加判断的函数
 	data.IsLogin = false
