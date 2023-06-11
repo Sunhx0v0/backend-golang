@@ -21,9 +21,13 @@ func GetUserInfo(c *gin.Context) { //显示用户界面全部信息
 	var info UserInfo
 	userID, _ := strconv.Atoi(c.Param("userId"))
 	fmt.Println("用户ID:", userID)
-	info.Infos = models.UserInfoDB(userID) // 通过用户ID去数据库获取信息
+	// 通过用户ID去数据库获取信息
+	info.Infos = models.UserInfoDB(userID)
+	// 获取某用户发布的笔记
 	info.Notes = models.NoteInfoDB(userID)
+	// 获取某用户收藏的笔记
 	info.Collects = models.CollectInfoDB(userID)
+	// 获取某用户点赞的笔记
 	info.Likes = models.LikeInfoDB(userID)
 	info.IsHost = true
 

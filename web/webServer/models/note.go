@@ -17,8 +17,8 @@ import (
 
 type Note struct {
 	Cover       string `json:"cover"`
-	CreatorID   int    `json:"creatorId"`
-	CreatorName string `json:"creatorName"` // 作者编号
+	CreatorID   int    `json:"creatorId"`   // 作者编号
+	CreatorName string `json:"creatorName"` // 作者姓名
 	LikedNum    int    `json:"likedNum"`    // 点赞数
 	NoteID      int    `json:"noteId"`      // 笔记编号
 	Portrait    string `json:"portrait"`    // 头像
@@ -43,9 +43,9 @@ type DetailNote struct {
 
 // 获取笔记的封面标题等简要信息
 func GetBriefNtInfo() (notes []Note) {
-	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
+	sqlStr := `select n.noteId, n.title, n.cover,n.creatorId,n.likedNum, u.portrait,n.creatorName
 	from noteInfo n,userInfo u
-	where n.creatorAccount = u.userAccount`
+	where n.creatorId = u.userAccount`
 	rows, err := db.Query(sqlStr)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
@@ -95,13 +95,13 @@ func GetSpBriefNtInfo(keyword string) (notes []Note) {
 	return
 }
 
-// 存入新上传的笔记信息
+// // 存入新上传的笔记信息
 func NewNoteInfo(nn DetailNote) (int, bool) {
 	sqlstr := `INSERT INTO noteInfo
-	(creatorAccount, cover, title, body, createTime, updateTime, tag, location, atUserId, likeNum)
+	(creatorAccount, cover, title, body, createTime, updateTime, tag, location, atUserId)
 	VALUES
-	(?,?,?,?,?,?,?,?,?,?)`
-	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Cover, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime, nn.Tag, nn.Location, nn.AtUserID, nn.LikedNum)
+	(?,?,?,?,?,?,?,?,?)`
+	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Cover, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime, nn.Tag, nn.Location, nn.AtUserID)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
 		return -1, false
