@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -70,72 +71,66 @@ type UserInfo struct {
 	UserName     string `json:"userName "`
 }
 
-func UserInfoDB(id int) []UserInfo { // 从数据库获得用户信息
+func UserInfoDB(id int) UserInfo { // 从数据库获得用户信息
+	// fmt.Println("传入ID", id)
 	// var ui UserInfo
-	// sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password
-	// from userinfo
-	// where userAccount = ?`
+	// sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password from userinfo where userAccount = ?`
 	// err := db.QueryRow(sqlStr, id).Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password)
 	// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
 	// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
 	// if err != nil {
 	// 	fmt.Printf("query failed, err:%v\n", err)
-	// 	return uui
+	// 	return ui
 	// }
-	// uui = append(uui, ui)
-	// return uui
-
-	var uui []UserInfo
-	sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password
-	from userinfo
-	where userAccount = ?`
-	rows, err := db.Query(sqlStr, id)
-	if err != nil {
-		return uui
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var ui UserInfo
-		err := rows.Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password)
-		if err != nil {
-			return uui
-		}
-		// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
-		// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
-		uui[0] = ui
-		//uui = append(uui, ui)
-	}
-	return uui
+	// return ui
 
 	// var ui UserInfo
-	// ui.UserID = 10001
-	// ui.UserName = "zahgsad"
-	// ui.Gender = "sha"
-	// ui.Portrait = "/"
-	// ui.Introduction = "jntm"
+	// sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password from userinfo where userAccount = ?`
+	// rows, err := db.Query(sqlStr, id)
+	// if err != nil {
+	// 	fmt.Println("没有数据1")
+	// 	return ui
+	// }
+	// //defer rows.Close()
+	// // for rows.Next() {
+	// rows.Next()
 	// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
 	// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
-	// ui.FansNum = 666
-	// ui.NoteNum = 777
-	// ui.CollectNum = 888
-	// ui.FollowNum = 999
-	// ui.CollectedNum = 1010
-	// ui.LikedNum = 115
-	// ui.PhoneNumber = "1233663"
-	// ui.Mail = "1235"
-	// ui.Password = "123456"
-	// uui = append(uui, ui)
-	// return uui
+	// rows.Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password)
+	// //}
+	// defer rows.Close()
+	// fmt.Println("到最后了吗")
+	// return ui
+
+	var ui UserInfo
+	ui.UserID = 10001
+	ui.UserName = "zahgsad"
+	ui.Gender = "sha"
+	ui.Portrait = "/"
+	ui.Introduction = "jntm"
+	ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
+	ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
+	ui.FansNum = 666
+	ui.NoteNum = 777
+	ui.CollectNum = 888
+	ui.FollowNum = 999
+	ui.CollectedNum = 1010
+	ui.LikedNum = 115
+	ui.PhoneNumber = "1233663"
+	ui.Mail = "1235"
+	ui.Password = "123456"
+	return ui
 }
 
-func NoteInfoDB(id int) (notes []Notes) { // 从数据库获得用户信息
-	// sqlStr := `select n.noteId, n.title, n.cover,n.creatorAccount,n.likeNum, u.portrait
-	// from noteInfo n,userInfo u
-	// where n.creatorAccount = u.userAccount`
+func NoteInfoDB(id int) []Notes { // 从数据库获得用户信息
+	// var notes []Notes
+	// sqlStr := `select noteId, title, cover,creatorAccount,likeNum, creatorName
+	// from noteInfo
+	// where creatorAccount = '"+id+"'`
 	// rows, err := db.Query(sqlStr)
 	// if err != nil {
 	// 	fmt.Printf("query failed, err:%v\n", err)
-	// 	return
+	// 	return notes
 	// }
 	// // 关闭rows释放持有的数据库链接
 	// defer rows.Close()
@@ -143,15 +138,17 @@ func NoteInfoDB(id int) (notes []Notes) { // 从数据库获得用户信息
 	// // 循环读取结果集中的数据
 	// for rows.Next() {
 	// 	var nt Notes
-	// 	err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait)
+	// 	err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.CreatorName)
+	// 	nt.Portrait = "/"
 	// 	if err != nil {
 	// 		fmt.Printf("scan failed, err:%v\n", err)
-	// 		return
+	// 		return notes
 	// 	}
-	// 	fmt.Print(nt.NoteID)
 	// 	notes = append(notes, nt)
 	// }
-	// return
+	// return notes
+
+	var notes []Notes
 	var nt Notes
 	nt.NoteID = 10001
 	nt.Title = "l就别"
@@ -161,7 +158,7 @@ func NoteInfoDB(id int) (notes []Notes) { // 从数据库获得用户信息
 	nt.Portrait = "/"
 	nt.CreatorName = "张菲"
 	notes = append(notes, nt)
-	return
+	return notes
 }
 
 func CollectInfoDB(id int) (notes []Collects) { // 从数据库获得用户信息

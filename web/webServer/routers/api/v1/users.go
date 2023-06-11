@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"webServer/models"
@@ -9,7 +10,7 @@ import (
 )
 
 type UserInfo struct {
-	Infos    []models.UserInfo `json:"userInfo"` // 用户信息，只有一条，不用数组
+	Infos    models.UserInfo   `json:"userInfo"` // 用户信息，只有一条，不用数组
 	Notes    []models.Notes    `json:"notes"`    // 笔记，简要信息
 	Collects []models.Collects `json:"collects"`
 	Likes    []models.Likes    `json:"likes"`
@@ -18,7 +19,8 @@ type UserInfo struct {
 
 func GetUserInfo(c *gin.Context) { //显示用户界面全部信息
 	var info UserInfo
-	userID, _ := strconv.Atoi(c.Param("userID"))
+	userID, _ := strconv.Atoi(c.Param("userId"))
+	fmt.Println("用户ID:", userID)
 	info.Infos = models.UserInfoDB(userID) // 通过用户ID去数据库获取信息
 	info.Notes = models.NoteInfoDB(userID)
 	info.Collects = models.CollectInfoDB(userID)
