@@ -62,7 +62,7 @@ func GetBriefNtInfo() (notes []Note) {
 			fmt.Printf("scan failed, err:%v\n", err)
 			return
 		}
-		fmt.Print(nt.NoteID)
+		// fmt.Printf("笔记编号：%d ", nt.NoteID)
 		notes = append(notes, nt)
 	}
 	return
@@ -70,10 +70,10 @@ func GetBriefNtInfo() (notes []Note) {
 
 // 获取特定内容的笔记
 func GetSpBriefNtInfo(keyword string) (notes []Note) {
-	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
-	FROM noteInfo n, userInfo u
-	WHERE n.creatorAccount = u.userAccount AND (n.tag = ? OR n.title LIKE CONCAT('%',#{keyword},'%'))`
-	rows, err := db.Query(sqlStr, keyword, keyword)
+	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName 
+	FROM noteInfo n, userInfo u 
+	WHERE n.creatorAccount = u.userAccount AND (n.tag=? OR n.title LIKE CONCAT('%', '#{keyword}', '%'))`
+	rows, err := db.Query(sqlStr, keyword)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
 		return nil

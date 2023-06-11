@@ -49,7 +49,7 @@ func UploadNote(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
 			"message": "上传失败!",
 		})
@@ -72,7 +72,7 @@ func UploadNote(c *gin.Context) {
 		newNote.Picnum = picNum
 		ntID, success := models.NewNoteInfo(newNote)
 		if !success {
-			c.JSON(200, gin.H{
+			c.JSON(http.StatusBadRequest, gin.H{
 				"code":    400,
 				"message": "上传失败!",
 			})
