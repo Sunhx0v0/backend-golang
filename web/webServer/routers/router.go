@@ -49,11 +49,13 @@ func InitRouter() *gin.Engine {
 		r.GET("/explore", v1.GetAllNotes)
 		//获取特定笔记（搜索/标签）
 		r.GET("/explore/:keyword", v1.GetSpecificNotes)
-
-		r.GET("/:userId/PersonalView", v1.GetUserInfo) // 获取用户界面的信息
-
+		// 获取用户界面的信息
+		r.GET("/:userId/PersonalView", v1.GetUserInfo)
 		//上传笔记
-		//r.POST("/:userId/publish", v1.UploadNote)
+		r.POST("/:userId/publish", v1.UploadNote)
+		//用户删除笔记
+		r.DELETE("/:userId/publish/:noteId", v1.DeleteNote)
+
 		// //vue获取table信息
 		// apiv1.GET("/table/list", v1.GetArticles)
 		// //获取标签列表

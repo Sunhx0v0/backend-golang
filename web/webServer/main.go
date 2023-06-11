@@ -39,7 +39,7 @@ func main() {
 		Handler:        router,
 		ReadTimeout:    60,
 		WriteTimeout:   60,
-		MaxHeaderBytes: 1 << 20,
+		MaxHeaderBytes: 1 << 23,
 	}
 
 	s.ListenAndServe()
