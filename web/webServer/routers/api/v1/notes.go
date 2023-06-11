@@ -41,25 +41,25 @@ func GetSpecificNotes(c *gin.Context) { //获取特定笔记（搜索/标签）
 // func UploadNote(c *gin.Context) {
 // 	userId, _ := strconv.Atoi(c.Param("userId"))
 
-// 	form, err := c.MultipartForm()
-// 	files := form.File["files[]"]
-// 	if err != nil {
-// 		c.JSON(200, gin.H{
-// 			"code":    400,
-// 			"message": "上传失败!",
-// 		})
-// 		return
-// 	} else {
-// 		//新声明新笔记的结构体
-// 		var newNote models.DetailNote
-// 		newNote.Title = c.Query("title")
-// 		newNote.Body = c.Query("body")
-// 		newNote.CreateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.Query("createtime"), time.Local)
-// 		newNote.UpdateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.Query("createtime"), time.Local)
-// 		newNote.Tag = c.Query("tag")
-// 		newNote.Location = c.Query("location")
-// 		newNote.AtUserID = com.StrTo(c.Query("atuserid")).MustInt()
-// 		newNote.LikedNum = com.StrTo(c.Query("likenum")).MustInt()
+	form, err := c.MultipartForm()
+	files := form.File["files[]"]
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code":    400,
+			"message": "上传失败!",
+		})
+		return
+	} else {
+		//新声明新笔记的结构体
+		var newNote models.DetailNote
+		newNote.Title = c.Query("title")
+		newNote.Body = c.Query("body")
+		newNote.CreateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.Query("createtime"), time.Local)
+		newNote.UpdateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.Query("createtime"), time.Local)
+		newNote.Tag = c.Query("tag")
+		newNote.Location = c.Query("location")
+		newNote.AtUserID = com.StrTo(c.Query("atuserid")).MustInt()
+		newNote.LikedNum = com.StrTo(c.Query("likenum")).MustInt()
 
 // 		picNum := 0
 // 		newNote.CreatorID = userId
@@ -75,8 +75,8 @@ func GetSpecificNotes(c *gin.Context) { //获取特定笔记（搜索/标签）
 // 		for index, file := range files {
 // 			var pc models.Pictures
 
-// 			log.Println(file.Filename)
-// 			dst := fmt.Sprintf("../images/%s_%d", file.Filename, index)
+			log.Println(file.Filename)
+			dst := fmt.Sprintf("../images/%s_%d", file.Filename, index)
 
 // 			pc.NoteId = ntID
 // 			pc.Picurl = dst
