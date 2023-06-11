@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -71,36 +70,62 @@ type UserInfo struct {
 	UserName     string `json:"userName "`
 }
 
-func UserInfoDB(id int) (uui []UserInfo) { // 从数据库获得用户信息
+func UserInfoDB(id int) []UserInfo { // 从数据库获得用户信息
 	// var ui UserInfo
-	// sqlStr := `select userAccount, userName, gender, portrait, introduction, birthday, registTime, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password
+	// sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password
 	// from userinfo
 	// where userAccount = ?`
-	// err := db.QueryRow(sqlStr, id).Scan(&ui.userID, &ui.userName, &ui.gender, &ui.portrait, &ui.introduction, &ui.birthday, &ui.registTime, &ui.fansNum, &ui.noteNum, &ui.collectNum, &ui.followNum, &ui.collectedNum, &ui.likedNum, &ui.phoneNumber, &ui.mail, &ui.password)
+	// err := db.QueryRow(sqlStr, id).Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password)
+	// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
+	// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
 	// if err != nil {
 	// 	fmt.Printf("query failed, err:%v\n", err)
-	// 	return ui
+	// 	return uui
 	// }
-	// return ui
-	var ui UserInfo
-	ui.UserID = 10001
-	ui.UserName = "zahgsad"
-	ui.Gender = "sha"
-	ui.Portrait = "/"
-	ui.Introduction = "jntm"
-	ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
-	ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
-	ui.FansNum = 666
-	ui.NoteNum = 777
-	ui.CollectNum = 888
-	ui.FollowNum = 999
-	ui.CollectedNum = 1010
-	ui.LikedNum = 115
-	ui.PhoneNumber = "1233663"
-	ui.Mail = "1235"
-	ui.Password = "123456"
-	uui = append(uui, ui)
+	// uui = append(uui, ui)
+	// return uui
+
+	var uui []UserInfo
+	sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password
+	from userinfo
+	where userAccount = ?`
+	rows, err := db.Query(sqlStr, id)
+	if err != nil {
+		return uui
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var ui UserInfo
+		err := rows.Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password)
+		if err != nil {
+			return uui
+		}
+		// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
+		// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
+		uui[0] = ui
+		//uui = append(uui, ui)
+	}
 	return uui
+
+	// var ui UserInfo
+	// ui.UserID = 10001
+	// ui.UserName = "zahgsad"
+	// ui.Gender = "sha"
+	// ui.Portrait = "/"
+	// ui.Introduction = "jntm"
+	// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
+	// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
+	// ui.FansNum = 666
+	// ui.NoteNum = 777
+	// ui.CollectNum = 888
+	// ui.FollowNum = 999
+	// ui.CollectedNum = 1010
+	// ui.LikedNum = 115
+	// ui.PhoneNumber = "1233663"
+	// ui.Mail = "1235"
+	// ui.Password = "123456"
+	// uui = append(uui, ui)
+	// return uui
 }
 
 func NoteInfoDB(id int) (notes []Notes) { // 从数据库获得用户信息
