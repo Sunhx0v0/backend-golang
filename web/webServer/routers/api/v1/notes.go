@@ -54,7 +54,7 @@ func UploadNote(c *gin.Context) {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
-			"message": "读取失败!",
+			"message": fmt.Sprintf("读取失败! err:%s", err),
 		})
 		return
 	} else {
@@ -77,7 +77,7 @@ func UploadNote(c *gin.Context) {
 		if !success {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"code":    400,
-				"message": "上传失败!",
+				"message": "表单内容获取失败!",
 			})
 			return
 		}
