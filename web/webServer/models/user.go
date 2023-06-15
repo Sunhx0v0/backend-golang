@@ -163,7 +163,6 @@ func CollectInfoDB(id int) []Notes {
 }
 
 func LikeInfoDB(id int) []Notes { // 从数据库获得用户信息
-
 	// var notes []Likes
 	// var nt Likes
 	// nt.NoteID = 10001

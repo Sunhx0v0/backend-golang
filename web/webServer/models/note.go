@@ -106,3 +106,19 @@ func NewNoteInfo(nn DetailNote) (int, bool) {
 	}
 	return int(theID), true
 }
+
+func DeleteNote(ntid int) bool {
+	sqlstr := "DELETE FROM noteInfo WHERE noteID = ?"
+	ret, err := db.Exec(sqlstr, ntid)
+	if err != nil {
+		fmt.Printf("delete failed, err:%v\n", err)
+		return false
+	}
+	n, err := ret.RowsAffected() // 操作影响的行数
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("delete success, affected rows:%d\n", n)
+	return true
+}
