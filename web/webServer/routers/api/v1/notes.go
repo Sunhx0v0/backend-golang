@@ -23,15 +23,25 @@ type Data struct {
 // 获取笔记（全部）
 func GetAllNotes(c *gin.Context) {
 	var data Data
+	var ok bool
 	//判断是否登录，还要再加判断的函数
 	data.IsLogin = false
-	data.Notes = models.GetBriefNtInfo()
+	data.Notes, ok = models.GetBriefNtInfo()
 	// gin.H 是map[string]interface{}的缩写
-	c.JSON(http.StatusOK, gin.H{
-		"code":    200,
-		"message": "success",
-		"data":    data,
-	})
+	if ok {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    data,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+			"data":    data,
+		})
+	}
+
 }
 
 // 获取特定笔记（搜索/标签）
@@ -62,25 +72,22 @@ func UploadNote(c *gin.Context) {
 		return
 	} else {
 		files := form.File["files"]
+
 		//新声明新笔记的结构体
 		var newNote models.DetailNote
-		newNote.Title = c.PostForm("title")
-		newNote.Body = c.PostForm("body")
 		newNote.CreateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.PostForm("createtime"), time.Local)
 		newNote.UpdateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.PostForm("createtime"), time.Local)
-		newNote.Tag = c.PostForm("tag")
-		newNote.Location = c.PostForm("location")
-		newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
 		// newNote.LikedNum = com.StrTo(c.PostForm("likenum")).MustInt()
-
 		// picNum := 0
-		newNote.CreatorID = userId
 		// newNote.Picnum = picNum
+		newNote.CreatorID = userId
+
+		//先创建一个不含内容的笔记信息，后面再填上信息
 		ntID, success := models.NewNoteInfo(newNote)
 		if !success {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"code":    400,
-				"message": "表单内容获取失败!",
+				"message": "笔记上传失败（数据库创建失败）",
 			})
 			return
 		}
@@ -91,10 +98,10 @@ func UploadNote(c *gin.Context) {
 			".jpeg": true,
 			".gif":  true,
 		}
-		for _, file := range files {
+		for index, file := range files {
+			fmt.Print(index)
 			extName := path.Ext(file.Filename)
 			_, b := fileType[extName]
-
 			if !b {
 				c.JSON(http.StatusBadRequest, gin.H{
 					"code":    400,
@@ -108,6 +115,9 @@ func UploadNote(c *gin.Context) {
 			log.Println(file.Filename)
 			dst := fmt.Sprintf("images/%d_%d_%s_%s", userId, ntID, strconv.Itoa(int(timeStamp)), file.Filename)
 
+			if index == 0 {
+				newNote.Cover = dst
+			}
 			pc.NoteId = ntID
 			pc.Picurl = dst
 			// 上传文件到指定的目录
@@ -116,17 +126,32 @@ func UploadNote(c *gin.Context) {
 			models.NewPicInfo(pc)
 			// picNum++
 		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"code":    200,
-			"message": fmt.Sprintf("%d files uploaded!", len(files)),
-		})
+		newNote.NoteID = ntID
+		newNote.Title = c.PostForm("title")
+		newNote.Body = c.PostForm("body")
+		newNote.Tag = c.PostForm("tag")
+		newNote.Location = c.PostForm("location")
+		newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
+		ok := models.ModifyNote(newNote)
+		if ok {
+			c.JSON(http.StatusOK, gin.H{
+				"code":    200,
+				"message": fmt.Sprintf("笔记上传成功，共%d张图片", len(files)),
+			})
+		} else {
+			//如果上传失败，就把空的信息删掉
+			models.DeleteNote(userId)
+			models.DeletePic(ntID)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code":    400,
+				"message": "笔记上传失败（数据库写入失败）",
+			})
+		}
 	}
 }
 
 // 删除笔记
 func DeleteNote(c *gin.Context) {
-
 	userId, _ := strconv.Atoi(c.Param("userId"))
 	noteId, _ := strconv.Atoi(c.Param("noteId"))
 	files, err := Getfile(userId, noteId)
@@ -160,6 +185,7 @@ func DeleteNote(c *gin.Context) {
 	}
 }
 
+// 获取笔记对应的图片文件
 func Getfile(userid, noteid int) ([]string, error) {
 	var files []string
 	f, err := os.Open("images")
@@ -179,15 +205,3 @@ func Getfile(userid, noteid int) ([]string, error) {
 	}
 	return files, nil
 }
-
-// func walkFunc(path string, info os.FileInfo, err error) error {
-//     if err != nil {
-//         // 错误处理
-//         return err
-//     }
-//     if !info.IsDir() && strings.Contains(path, ".txt") {
-//         // 处理符合条件的文件
-//         fmt.Println(path)
-//     }
-//     return nil
-// }

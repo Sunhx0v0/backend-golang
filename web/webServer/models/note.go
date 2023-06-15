@@ -35,13 +35,15 @@ type DetailNote struct {
 }
 
 // 获取笔记的封面标题等简要信息
-func GetBriefNtInfo() (notes []Note) {
-	sqlStr := `select n.noteId, n.title, n.cover,n.creatorId,n.likedNum, u.portrait,n.creatorName
-	from noteInfo n,userInfo u
-	where n.creatorId = u.userAccount`
+func GetBriefNtInfo() (notes []Note, ok bool) {
+	ok = true
+	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
+	from noteInfo n, userInfo u
+	where n.creatorAccount = u.userAccount`
 	rows, err := db.Query(sqlStr)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
+		ok = false
 		return
 	}
 	// 关闭rows释放持有的数据库链接
@@ -53,6 +55,7 @@ func GetBriefNtInfo() (notes []Note) {
 		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait, &nt.CreatorName)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
+			ok = false
 			return
 		}
 		// fmt.Printf("笔记编号：%d ", nt.NoteID)
@@ -65,8 +68,8 @@ func GetBriefNtInfo() (notes []Note) {
 func GetSpBriefNtInfo(keyword string) (notes []Note) {
 	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName 
 	FROM noteInfo n, userInfo u 
-	WHERE n.creatorAccount = u.userAccount AND (n.tag=? OR n.title LIKE CONCAT('%', '#{keyword}', '%'))`
-	rows, err := db.Query(sqlStr, keyword)
+	WHERE n.creatorAccount = u.userAccount AND ( n.tag=? OR n.title LIKE CONCAT('%',?,'%'))`
+	rows, err := db.Query(sqlStr, keyword, keyword)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
 		return nil
@@ -88,13 +91,10 @@ func GetSpBriefNtInfo(keyword string) (notes []Note) {
 	return
 }
 
-// // 存入新上传的笔记信息
+// 存入新上传的笔记信息
 func NewNoteInfo(nn DetailNote) (int, bool) {
-	sqlstr := `INSERT INTO noteInfo
-	(creatorAccount, cover, title, body, createTime, updateTime, tag, location, atUserId)
-	VALUES
-	(?,?,?,?,?,?,?,?,?)`
-	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Cover, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime, nn.Tag, nn.Location, nn.AtUserID)
+	sqlstr := `INSERT INTO noteInfo (creatorAccount, title, body, createTime, updateTime) VALUES (?,?,?,?,?)`
+	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
 		return -1, false
@@ -107,6 +107,27 @@ func NewNoteInfo(nn DetailNote) (int, bool) {
 	return int(theID), true
 }
 
+// 更新某笔记的信息
+func ModifyNote(mn DetailNote) bool {
+	sqlstr := `UPDATE noteInfo SET
+	cover=?, title=?, body=?, createTime=?, updateTime=?, tag=?, location=?, atUserId=?
+	WHERE
+	noteId=?`
+	ret, err := db.Exec(sqlstr, mn.Cover, mn.Title, mn.Body, mn.CreateTime, mn.UpdateTime, mn.Tag, mn.Location, mn.AtUserID, mn.NoteID)
+	if err != nil {
+		fmt.Printf("insert failed, err:%v\n", err)
+		return false
+	}
+	theID, err := ret.LastInsertId() // 修改的行数
+	if err != nil {
+		fmt.Printf("get lastinsert ID failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("笔记更新成功！，影响行数：%d\n", theID)
+	return true
+}
+
+// 删除笔记
 func DeleteNote(ntid int) bool {
 	sqlstr := "DELETE FROM noteInfo WHERE noteID = ?"
 	ret, err := db.Exec(sqlstr, ntid)
