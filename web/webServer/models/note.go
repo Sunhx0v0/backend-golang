@@ -65,14 +65,14 @@ func GetBriefNtInfo() (notes []Note, ok bool) {
 }
 
 // 获取特定内容的笔记
-func GetSpBriefNtInfo(keyword string) (notes []Note) {
+func GetSpBriefNtInfo(keyword string) (notes []Note, ok bool) {
 	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName 
 	FROM noteInfo n, userInfo u 
 	WHERE n.creatorAccount = u.userAccount AND ( n.tag=? OR n.title LIKE CONCAT('%',?,'%'))`
 	rows, err := db.Query(sqlStr, keyword, keyword)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
-		return nil
+		return nil, false
 	}
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
@@ -83,12 +83,12 @@ func GetSpBriefNtInfo(keyword string) (notes []Note) {
 		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait, &nt.CreatorName)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
-			return
+			return nil, false
 		}
 		fmt.Println(nt.NoteID)
 		notes = append(notes, nt)
 	}
-	return
+	return notes, true
 }
 
 // 存入新上传的笔记信息

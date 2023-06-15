@@ -47,15 +47,25 @@ func GetAllNotes(c *gin.Context) {
 // 获取特定笔记（搜索/标签）
 func GetSpecificNotes(c *gin.Context) {
 	var data Data
+	var OK bool
 	//判断是否登录，还要再加判断的函数
 	data.IsLogin = false
 	keyword := c.Param("keyword")
-	data.Notes = models.GetSpBriefNtInfo(keyword)
-	c.JSON(http.StatusOK, gin.H{
-		"code":    200,
-		"message": "success",
-		"data":    data,
-	})
+	data.Notes, OK = models.GetSpBriefNtInfo(keyword)
+	if OK {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    data,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+			"data":    data,
+		})
+	}
+
 }
 
 // 上传笔记
