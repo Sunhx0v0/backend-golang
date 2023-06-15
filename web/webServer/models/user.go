@@ -66,25 +66,6 @@ func UserInfoDB(id int) UserInfo { // 从数据库获得用户信息
 	}
 	fmt.Println(ui.UserID, ui.UserName, ui.Gender, ui.Portrait, ui.Introduction, ui.Birthday, ui.RegistTime, ui.FansNum, ui.NoteNum, ui.CollectNum, ui.FollowNum, ui.CollectedNum, ui.LikedNum, ui.PhoneNumber, ui.Mail, ui.Password)
 	return ui
-
-	// var ui UserInfo
-	// ui.UserID = 10001
-	// ui.UserName = "zahgsad"
-	// ui.Gender = "sha"
-	// ui.Portrait = "/"
-	// ui.Introduction = "jntm"
-	// ui.Birthday = time.Now().Format("2006-01-02 15:04:05")
-	// ui.RegistTime = time.Now().Format("2006-01-02 15:04:05")
-	// ui.FansNum = 666
-	// ui.NoteNum = 777
-	// ui.CollectNum = 888
-	// ui.FollowNum = 999
-	// ui.CollectedNum = 1010
-	// ui.LikedNum = 115
-	// ui.PhoneNumber = "1233663"
-	// ui.Mail = "1235"
-	// ui.Password = "123456"
-	// return ui
 }
 
 // 从数据库获得某用户发布的笔记信息
@@ -110,34 +91,10 @@ func NoteInfoDB(id int) []Notes {
 		notes = append(notes, nt)
 	}
 	return notes
-
-	// var notes []Notes
-	// var nt Notes
-	// nt.NoteID = 10001
-	// nt.Title = "l就别"
-	// nt.Cover = "站发给"
-	// nt.CreatorID = 10001
-	// nt.LikedNum = 500
-	// nt.Portrait = "/"
-	// nt.CreatorName = "张菲"
-	// notes = append(notes, nt)
-	// return notes
 }
 
 // 从数据库获得某用户收藏的笔记信息
 func CollectInfoDB(id int) []Notes {
-
-	// var notes []Collects
-	// var nt Collects
-	// nt.NoteID = 10001
-	// nt.Title = "l就别"
-	// nt.Cover = "站发给"
-	// nt.CreatorID = 10001
-	// nt.LikedNum = 500
-	// nt.Portrait = "/"
-	// nt.CreatorName = "张菲"
-	// notes = append(notes, nt)
-	// return notes
 
 	var collects []Notes
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
@@ -163,18 +120,6 @@ func CollectInfoDB(id int) []Notes {
 }
 
 func LikeInfoDB(id int) []Notes { // 从数据库获得用户信息
-	// var notes []Likes
-	// var nt Likes
-	// nt.NoteID = 10001
-	// nt.Title = "l就别"
-	// nt.Cover = "站发给"
-	// nt.CreatorID = 10001
-	// nt.LikedNum = 500
-	// nt.Portrait = "/"
-	// nt.CreatorName = "alsdkj"
-	// notes = append(notes, nt)
-	// fmt.Println(nt.NoteID, nt.Title, nt.Cover, nt.CreatorID, nt.LikedNum, nt.CreatorName, nt.Portrait, "对比下")
-	// return notes
 
 	var collects []Notes
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
