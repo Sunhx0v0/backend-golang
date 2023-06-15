@@ -56,6 +56,9 @@ func InitRouter() *gin.Engine {
 		//用户删除笔记
 		r.DELETE("/:userId/publish/:noteId", v1.DeleteNote)
 
+		//发布评论
+		r.POST("/explore/:noteId/comment", v1.PostComment)
+
 		// //vue获取table信息
 		// apiv1.GET("/table/list", v1.GetArticles)
 		// //获取标签列表
