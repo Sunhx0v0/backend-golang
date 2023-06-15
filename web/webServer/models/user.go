@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -45,6 +46,18 @@ type UserInfo struct {
 	Portrait     string `json:"portrait"` // 头像
 	RegistTime   string `json:"registTime"`
 	UserID       int64  `json:"userAccount"`
+	UserName     string `json:"userName "`
+}
+
+// 用户可修改信息
+type ModifiableInfo struct {
+	Birthday     string `json:"birthday"`
+	Gender       string `json:"gender "`      // 性别
+	Introduction string `json:"introduction"` // 简介
+	Mail         string `json:"mail"`
+	Password     string `json:"password"`
+	PhoneNumber  string `json:"phoneNumber"`
+	Portrait     string `json:"portrait"` // 头像
 	UserName     string `json:"userName "`
 }
 
@@ -142,6 +155,24 @@ func LikeInfoDB(id int) []Notes { // 从数据库获得用户信息
 		collects = append(collects, ct)
 	}
 	return collects
+}
+
+func ModifyInfo(beforeInfo ModifiableInfo, id int) bool { // 修改用户的信息并存放到数据库中
+	sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, mail = ?, password = ?, phoneNumber = ?, portrait = ?, userName = ? 
+	where userAccount = ?`
+	birTime, _ := time.ParseInLocation("2006-01-02", beforeInfo.Birthday, time.Local) // string转time
+	result, err := db.Exec(sqlStr, birTime, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Mail, beforeInfo.Password, beforeInfo.PhoneNumber, beforeInfo.Portrait, beforeInfo.UserName, id)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return false
+	}
+	idAff, err := result.RowsAffected()
+	if err != nil {
+		fmt.Println("RowsAffected failed:", err)
+		return false
+	}
+	fmt.Println("id:", idAff)
+	return true
 }
 
 func CheckUser(userName, password string) bool {
