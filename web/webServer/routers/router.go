@@ -64,6 +64,8 @@ func InitRouter() *gin.Engine {
 		r.GET("/comment/:noteId", v1.GetComments)
 		//发表评论
 		r.POST("/comment/:noteId", v1.PostComment)
+		//删除评论
+		r.DELETE("/comment/:noteId", v1.CancleComment)
 
 		//点赞某篇笔记
 		r.POST("/explore/:noteId/like", v1.LikeNote)
