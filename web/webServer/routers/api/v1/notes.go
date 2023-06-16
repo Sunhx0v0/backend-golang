@@ -65,7 +65,6 @@ func GetSpecificNotes(c *gin.Context) {
 			"data":    data,
 		})
 	}
-
 }
 
 // 上传笔记
@@ -87,8 +86,6 @@ func UploadNote(c *gin.Context) {
 		var newNote models.DetailNote
 		newNote.CreateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.PostForm("createtime"), time.Local)
 		newNote.UpdateTime, _ = time.ParseInLocation("2006-01-02 15:04:05", c.PostForm("createtime"), time.Local)
-		// newNote.LikedNum = com.StrTo(c.PostForm("likenum")).MustInt()
-		// picNum := 0
 		// newNote.Picnum = picNum
 		newNote.CreatorID = userId
 
@@ -134,16 +131,17 @@ func UploadNote(c *gin.Context) {
 			c.SaveUploadedFile(file, dst)
 			//将路径等信息更新到数据库
 			models.NewPicInfo(pc)
-			// picNum++
 		}
 		newNote.NoteID = ntID
 		newNote.Title = c.PostForm("title")
 		newNote.Body = c.PostForm("body")
 		newNote.Tag = c.PostForm("tag")
+		newNote.Picnum = len(files)
 		newNote.Location = c.PostForm("location")
 		newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
 		ok := models.ModifyNote(newNote)
 		if ok {
+			models.ChangeNoteNum(userId, 1)
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
 				"message": fmt.Sprintf("笔记上传成功，共%d张图片", len(files)),
@@ -168,7 +166,7 @@ func DeleteNote(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
-			"message": "获取对应信息失败",
+			"message": "要删除的笔记/图片不存在！",
 		})
 		return
 	}
@@ -183,14 +181,15 @@ func DeleteNote(c *gin.Context) {
 		}
 	}
 	if models.DeletePic(noteId) && models.DeleteNote(noteId) {
+		models.ChangeNoteNum(userId, 0)
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
 			"message": "删除成功！",
 		})
 	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    200,
-			"message": "数据库删除成功！",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "数据库删除失败！",
 		})
 	}
 }

@@ -110,10 +110,10 @@ func NewNoteInfo(nn DetailNote) (int, bool) {
 // 更新某笔记的信息
 func ModifyNote(mn DetailNote) bool {
 	sqlstr := `UPDATE noteInfo SET
-	cover=?, title=?, body=?, createTime=?, updateTime=?, tag=?, location=?, atUserId=?
+	cover=?, title=?, body=?, numOfPic=?, createTime=?, updateTime=?, tag=?, location=?, atUserId=?
 	WHERE
 	noteId=?`
-	ret, err := db.Exec(sqlstr, mn.Cover, mn.Title, mn.Body, mn.CreateTime, mn.UpdateTime, mn.Tag, mn.Location, mn.AtUserID, mn.NoteID)
+	ret, err := db.Exec(sqlstr, mn.Cover, mn.Title, mn.Body, mn.Picnum, mn.CreateTime, mn.UpdateTime, mn.Tag, mn.Location, mn.AtUserID, mn.NoteID)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
 		return false
@@ -142,4 +142,28 @@ func DeleteNote(ntid int) bool {
 	}
 	fmt.Printf("delete success, affected rows:%d\n", n)
 	return true
+}
+
+// 修改笔记的获赞数
+func ChangeNoteLikes(noteId, option int) {
+	var sqlstr string
+	addnum := `UPDATE noteInfo set likeNum =likeNum+1 WHERE noteId = ?`
+	reducenum := `UPDATE noteInfo set likeNum =likeNum-1 WHERE noteId = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, noteId)
+	if err != nil {
+		fmt.Printf("update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("笔记编号：%d\n", n)
 }

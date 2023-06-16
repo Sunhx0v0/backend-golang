@@ -132,7 +132,8 @@ func CollectInfoDB(id int) []Notes {
 	return collects
 }
 
-func LikeInfoDB(id int) []Notes { // 从数据库获得用户信息
+// 从数据库获得某用户点赞的笔记信息
+func LikeInfoDB(id int) []Notes {
 
 	var collects []Notes
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
@@ -175,6 +176,32 @@ func ModifyInfo(beforeInfo ModifiableInfo, id int) bool { // 修改用户的信�
 	return true
 }
 
+// 修改用户发布笔记数
+func ChangeNoteNum(userId, option int) {
+	var sqlstr string
+	addnum := `UPDATE userInfo set noteNum =noteNum+1 WHERE userAccount = ?`
+	reducenum := `UPDATE userInfo set noteNum =noteNum-1 WHERE userAccount = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("用户编号：%d\n", n)
+	// return
+}
+
+// 登录验证（简易版）
 func CheckUser(userName, password string) bool {
 	//用户的登录信息
 	var buser LoginInfo
@@ -190,4 +217,29 @@ func CheckUser(userName, password string) bool {
 	}
 
 	return false
+}
+
+// 修改用户获赞数
+func ChangeUserLikes(noteId, option int) {
+	var sqlstr string
+	userId := NoteToUser(noteId)
+	addnum := `UPDATE userInfo set likedNum =likedNum+1 WHERE userAccount = ? `
+	reducenum := `UPDATE userInfo set likedNum =likedNum-1 WHERE userAccount = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("用户编号：%d\n", n)
 }
