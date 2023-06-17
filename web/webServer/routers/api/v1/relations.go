@@ -141,3 +141,9 @@ func CancleCollect(c *gin.Context) {
 		})
 	}
 }
+
+// 获取关注用户
+func GetFollowUser(c *gin.Context) {
+	// var success bool
+
+}

@@ -41,7 +41,6 @@ func GetAllNotes(c *gin.Context) {
 			"data":    data,
 		})
 	}
-
 }
 
 // 获取特定笔记（搜索/标签）
@@ -52,6 +51,29 @@ func GetSpecificNotes(c *gin.Context) {
 	data.IsLogin = false
 	keyword := c.Param("keyword")
 	data.Notes, OK = models.GetSpBriefNtInfo(keyword)
+	if OK {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    data,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+			"data":    data,
+		})
+	}
+}
+
+// 获取关注的人的笔记
+func GetFollowedNotes(c *gin.Context) {
+	var data Data
+	var OK bool
+	//判断是否登录，还要再加判断的函数
+	data.IsLogin = false
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	data.Notes, OK = models.GetFlwedNotes(userId)
 	if OK {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,

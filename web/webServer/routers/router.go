@@ -18,7 +18,7 @@ func InitRouter() *gin.Engine {
 	r.Use(cors.CorsMiddleware())
 
 	// gin.SetMode(setting.RunMode)
-	var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.AllUserAuthorizator{})
+	var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{})
 	r.POST("/login", userMiddleware.LoginHandler)
 	//404 handler
 	r.NoRoute(userMiddleware.MiddlewareFunc(), func(c *gin.Context) {
@@ -48,7 +48,9 @@ func InitRouter() *gin.Engine {
 		//获取笔记（全部）
 		r.GET("/explore", v1.GetAllNotes)
 		//获取特定笔记（搜索/标签）
-		r.GET("/explore/:keyword", v1.GetSpecificNotes)
+		r.GET("/search/:keyword", v1.GetSpecificNotes)
+		//获取关注人的笔记
+		r.GET("/:userId/follow", v1.GetFollowedNotes)
 
 		// 获取用户界面的信息
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)

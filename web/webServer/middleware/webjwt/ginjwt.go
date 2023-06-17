@@ -3,6 +3,7 @@ package webjwt
 import (
 	// "encoding/json"
 	// "log"
+
 	"time"
 
 	"log"
@@ -24,17 +25,30 @@ func GinJWTMiddlewareInit(jwtAuthorizator IAuthorizator) (userMiddleware *jwt.Gi
 		Key:        []byte("secret key"),
 		Timeout:    time.Minute * 5,
 		MaxRefresh: time.Hour,
+		// PayloadFunc: func(data interface{}) jwt.MapClaims {
+		// 	if v, ok := data.(*models.UserClaim); ok {
+		// 		//get claims from username
+		// 		v.Claims = models.GetUserClaims(v.UserName)
+		// 		jsonClaim, _ := json.Marshal(v.UserClaims)
+		// 		//maps the claims in the JWT
+		// 		return jwt.MapClaims{
+		// 			"userName":   v.UserName,
+		// 			"userClaims": string(jsonClaim),
+		// 		}
+		// 	}
+		// 	return jwt.MapClaims{}
+		// },
 		Authenticator: func(c *gin.Context) (interface{}, error) {
 			//登录的处理函数
 			var loginVals models.LoginInfo
 			if err := c.ShouldBind(&loginVals); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
-			userName := loginVals.UserName
+			userName := loginVals.Username
 			password := loginVals.Password
 
 			if models.CheckUser(userName, password) {
-				return &models.UserClaim{
+				return &models.User{
 					UserName: userName,
 				}, nil
 			}
