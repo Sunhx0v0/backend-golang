@@ -35,6 +35,8 @@ type userInfo struct {
 	likedNum     int       `JSON:"LikedNum"`     // 被点赞数量
 	phoneNumber  string    `JSON:"PhoneNumber"`
 	mail         string    `JSON:"Mail"`
+}
+
 // 发布的笔记
 type Notes struct {
 	Cover       string `json:"cover"`
