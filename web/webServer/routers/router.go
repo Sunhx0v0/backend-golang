@@ -52,7 +52,7 @@ func InitRouter() *gin.Engine {
 		// 获取用户界面的信息
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)
 		// 用户修改个人信息
-		r.POST("/:userId/PersonalView", v1.ModifyUserInfo)
+		r.PUT("/:userId/PersonalView", v1.ModifyUserInfo)
 		//上传笔记
 		r.POST("/:userId/publish", v1.UploadNote)
 		//用户删除笔记
