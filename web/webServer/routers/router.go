@@ -48,13 +48,12 @@ func InitRouter() *gin.Engine {
 		//获取笔记（全部）
 		r.GET("/explore", v1.GetAllNotes)
 		//获取特定笔记（搜索/标签）
-		r.GET("/explore/:keyword", v1.GetSpecificNotes)
+		r.GET("/search/:keyword", v1.GetSpecificNotes)
 
 		// 获取用户界面的信息
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)
 		// 用户修改个人信息
-		r.POST("/:userId/PersonalView", v1.ModifyUserInfo)
-
+		r.PUT("/:userId/PersonalView", v1.ModifyUserInfo)
 		//上传笔记
 		r.POST("/:userId/publish", v1.UploadNote)
 		//用户删除笔记
@@ -71,11 +70,15 @@ func InitRouter() *gin.Engine {
 		r.POST("/explore/:noteId/like", v1.LikeNote)
 		//取消点赞
 		r.DELETE("/explore/:noteId/like", v1.CancelLike)
+		//获取笔记详细内容
+		r.GET("/explore/:noteid", v1.NoteDetailHandler)
 		//收藏某篇笔记
 		r.POST("/explore/:noteId/collect", v1.CollectNote)
 		//取消收藏某篇笔记
 		r.DELETE("/explore/:noteId/collect", v1.CancleCollect)
 
+		// 关注用户
+		r.POST("/:userId/PersonalView/follow", v1.FollowHandler)
 		// //vue获取table信息
 		// apiv1.GET("/table/list", v1.GetArticles)
 		// //获取标签列表
