@@ -1,12 +1,54 @@
 package mysqldb
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
-// 网站用户登录
-func login(ctx *gin.Context) {
+type LoginRequest struct {
+	Password string `json:"password"` // 密码
+	UserName string `json:"userName"` // 用户名
+}
 
+// 网站用户登录
+func Login(ctx *gin.Context) {
+	// 传入并获取前端数据
+	var form LoginRequest
+	if err := ctx.ShouldBind(&form); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if form.UserName == "" {
+		ctx.JSON(400, gin.H{"message": "请输入用户名"})
+		return
+	}
+	if form.Password == "" {
+		ctx.JSON(400, gin.H{"message": "请输入密码"})
+		return
+	}
+	// 在数据库中查找用户
+	username := form.UserName
+	sqlstr := "select password from easy where username = ?"
+	rows, err := db.Query(sqlstr, username)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		ctx.JSON(400, gin.H{"message": "没有该用户"})
+		return
+	}
+	var password string
+	for rows.Next() {
+		err := rows.Scan(&password)
+		if err != nil {
+			fmt.Printf("scan failed, err:%v\n", err)
+			ctx.JSON(400, gin.H{"message": "用户解析失败"})
+			return
+		}
+	}
+
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
 }
 
 // // 定义结构

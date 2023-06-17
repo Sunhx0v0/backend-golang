@@ -24,14 +24,15 @@ func indexHandler(c *gin.Context) {
 	// })
 }
 
-type Request struct {
+// 关注  临时
+type followRequest struct {
 	FollowID string `json:"followID"` // 关注的人的id
 }
 
 func followHandler(c *gin.Context) {
 	var success bool
 	userId, _ := strconv.Atoi(c.Param("userId"))
-	var account Request
+	var account followRequest
 	//用shouldBind获取前端传来的json数据，只要json名相同就能读取
 	if err := c.ShouldBind(&account); err == nil {
 		id, _ := strconv.Atoi(account.FollowID)
@@ -56,15 +57,16 @@ func followHandler(c *gin.Context) {
 	}
 }
 
-// 取消收藏
+// 取消关注  临时
 func cancelFollowHandler(c *gin.Context) {
 	var success bool
 	userId, _ := strconv.Atoi(c.Param("userId"))
-	var account int
+	var account followRequest
 	//用shouldBind获取前端传来的json数据，只要json名相同就能读取
 	if err := c.ShouldBind(&account); err == nil {
+		id, _ := strconv.Atoi(account.FollowID)
 		//向数据库中插入关注信息
-		success = mysqldb.DelFollowInfo(userId, account)
+		success = mysqldb.DelFollowInfo(userId, id)
 		if success {
 			//将用户关注数加一
 			mysqldb.ChangeUserFollows(userId, -1)
@@ -72,7 +74,7 @@ func cancelFollowHandler(c *gin.Context) {
 			mysqldb.ChangeUserFans(userId, -1)
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
-				"message": "关注成功！",
+				"message": "取关成功！",
 			})
 		}
 	} else {
