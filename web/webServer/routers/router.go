@@ -48,7 +48,9 @@ func InitRouter() *gin.Engine {
 		//获取笔记（全部）
 		r.GET("/explore", v1.GetAllNotes)
 		//获取特定笔记（搜索/标签）
-		r.GET("/explore/:keyword", v1.GetSpecificNotes)
+		r.GET("/search/:keyword", v1.GetSpecificNotes)
+		//获取笔记详细内容
+		// r.GET("/explore/:noteid", v1.GetSpecificNotes)
 
 		// 获取用户界面的信息
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)
