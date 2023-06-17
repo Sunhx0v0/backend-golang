@@ -99,6 +99,18 @@ func GetFollowedNotes(c *gin.Context) {
 			"data":    data,
 		})
 	}
+
+func NoteDetailHandler(c *gin.Context) {
+	noteid, _ := strconv.Atoi(c.Param("noteid"))
+	data := models.SpecificNote(noteid)
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "success",
+		"data":    data,
+	})
+	// c.HTML(http.StatusOK, "server/templates/users_test/index.html", gin.H{
+	// 	"title": "users/index",
+	// })
 }
 
 // 上传笔记
