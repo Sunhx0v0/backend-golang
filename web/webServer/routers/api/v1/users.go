@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 	"webServer/models"
 
@@ -60,11 +62,22 @@ func ModifyUserInfo(c *gin.Context) {
 	info.Infos.UserName = c.PostForm("userName")
 	info.IsHost, _ = strconv.ParseBool(c.PostForm("isHost"))
 
+	files, err := GetHeadfile(userID) // 获取头像文件信息
+	if err != nil {
+		fmt.Println("用户没有以前的头像")
+	}
+	for _, file := range files {
+		err := os.Remove(file) // 删除以前的头像
+		if err != nil {
+			return
+		}
+	}
+
 	file, _ := c.FormFile("file")
-	log.Println(file.Filename)                                                           //输出文件名
-	timeStamp := time.Now().Unix()                                                       // 时间戳
-	name := fmt.Sprintf("%d_%s_%s", userID, strconv.Itoa(int(timeStamp)), file.Filename) // 文件名
-	dst := fmt.Sprintf("images/%s", name)                                                //路径
+	log.Println(file.Filename)                                                                //输出文件名
+	timeStamp := time.Now().Unix()                                                            // 时间戳
+	name := fmt.Sprintf("head_%d_%s_%s", userID, strconv.Itoa(int(timeStamp)), file.Filename) // 文件名
+	dst := fmt.Sprintf("images/%s", name)                                                     //路径
 	// 上传文件至指定的完整文件路径
 	c.SaveUploadedFile(file, dst) // 图片
 	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
@@ -84,4 +97,25 @@ func ModifyUserInfo(c *gin.Context) {
 		"message": "success",
 		"data":    info, // 将修改的数据发送回前端
 	})
+}
+
+// 获取用户头像文件
+func GetHeadfile(userid int) ([]string, error) {
+	var files []string
+	f, err := os.Open("images")
+	if err != nil {
+		return files, err
+	}
+	fileInfo, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		return files, err
+	}
+	filter := fmt.Sprintf("head_%d", userid)
+	for _, file := range fileInfo {
+		if strings.Contains(file.Name(), filter) {
+			files = append(files, fmt.Sprintf("%s%s", "images/", file.Name()))
+		}
+	}
+	return files, nil
 }

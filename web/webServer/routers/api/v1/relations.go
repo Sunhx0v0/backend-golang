@@ -152,3 +152,10 @@ func GetFollowUser(c *gin.Context) {
 // 	var success bool
 // 	userId, _ := strconv.Atoi(c.Param("userId"))
 // }
+
+func FollowHandler(c *gin.Context) {
+	//数据库修改是否成功
+	var success bool
+	userId, _ := strconv.Atoi(c.Param("userId"))
+
+}
