@@ -4,8 +4,6 @@ package main
 import (
 	"fmt"
 
-	"net/http"
-
 	//"github.com/gin-gonic/gin"
 
 	"webServer/models"
@@ -34,15 +32,16 @@ func main() {
 
 	router := routers.InitRouter()
 
-	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", 8080),
-		Handler:        router,
-		ReadTimeout:    60,
-		WriteTimeout:   60,
-		MaxHeaderBytes: 1 << 20,
-	}
+	router.Run(":8080")
 
-	s.ListenAndServe()
+	// s := &http.Server{
+	// 	Addr:           fmt.Sprintf(":%d", 8080),
+	// 	Handler:        router,
+	// 	ReadTimeout:    60,
+	// 	WriteTimeout:   60,
+	// 	MaxHeaderBytes: 8 << 20,
+	// }
+	// s.ListenAndServe()
 
 	// //加载HTML文件
 	// router.LoadHTMLGlob("templates/host.html")

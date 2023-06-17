@@ -49,8 +49,27 @@ func InitRouter() *gin.Engine {
 		r.GET("/explore", v1.GetAllNotes)
 		//获取特定笔记（搜索/标签）
 		r.GET("/explore/:keyword", v1.GetSpecificNotes)
+
+		// 获取用户界面的信息
+		r.GET("/:userId/PersonalView", v1.GetUserInfo)
+		// 用户修改个人信息
+		r.POST("/:userId/PersonalView", v1.ModifyUserInfo)
+
 		//上传笔记
-		r.POST("/:userId/publish",v1.UploadNote)
+		r.POST("/:userId/publish", v1.UploadNote)
+		//用户删除笔记
+		r.DELETE("/:userId/publish/:noteId", v1.DeleteNote)
+
+		//加载某篇笔记的评论
+		r.GET("/comment/:noteId", v1.GetComments)
+		//发表评论
+		r.POST("/comment/:noteId", v1.PostComment)
+
+		//点赞某篇笔记
+		r.POST("/explore/:noteId/like", v1.LikeNote)
+		//取消点赞
+		r.DELETE("/explore/:noteId/like", v1.CancelLike)
+
 		// //vue获取table信息
 		// apiv1.GET("/table/list", v1.GetArticles)
 		// //获取标签列表
