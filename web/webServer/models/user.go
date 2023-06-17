@@ -19,7 +19,7 @@ type UserClaim struct {
 }
 
 type userInfo struct {
-	userId  int       `JSON:"UserId"`
+	userId       int       `JSON:"UserId"`
 	userName     string    `JSON:"UserName"`
 	password     string    `JSON:"Password"`
 	gender       string    `JSON:"Gender"`
