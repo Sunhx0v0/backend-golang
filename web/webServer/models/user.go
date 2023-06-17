@@ -18,7 +18,6 @@ type UserClaim struct { // 登录验证
 	Claims   []LoginInfo
 }
 
-<<<<<<< HEAD
 type userInfo struct {
 	userId       int       `JSON:"UserId"`
 	userName     string    `JSON:"UserName"`
@@ -36,7 +35,6 @@ type userInfo struct {
 	likedNum     int       `JSON:"LikedNum"`     // 被点赞数量
 	phoneNumber  string    `JSON:"PhoneNumber"`
 	mail         string    `JSON:"Mail"`
-=======
 // 发布的笔记
 type Notes struct {
 	Cover       string `json:"cover"`
@@ -46,7 +44,6 @@ type Notes struct {
 	CreatorID   int64  `json:"creatorID"`
 	CreatorName string `json:"creatorName"` // 作者姓名
 	Portrait    string `json:"portrait"`
->>>>>>> 3a8ab293f70d599db6e9c3c1a7a92bf36ed5d7dd
 }
 
 // 用户基本信息
