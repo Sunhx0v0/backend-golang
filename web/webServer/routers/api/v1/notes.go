@@ -12,7 +12,6 @@ import (
 	"webServer/models"
 
 	"github.com/gin-gonic/gin"
-	"github.com/unknwon/com"
 )
 
 type Data struct {
@@ -157,10 +156,12 @@ func UploadNote(c *gin.Context) {
 		newNote.NoteID = ntID
 		newNote.Title = c.PostForm("title")
 		newNote.Body = c.PostForm("body")
-		newNote.Tag = c.PostForm("tag")
+		newNote.Tags = c.PostFormArray("tags")
 		newNote.Picnum = len(files)
 		newNote.Location = c.PostForm("location")
-		newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
+		newNote.AtList = c.PostFormArray("atList")
+		newNote.AtLocation = c.PostFormArray("atLocation")
+		//newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
 		ok := models.ModifyNote(newNote)
 		if ok {
 			models.ChangeNoteNum(userId, 1)

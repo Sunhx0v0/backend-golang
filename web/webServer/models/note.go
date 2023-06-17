@@ -20,18 +20,20 @@ type Note struct {
 
 // 笔记的详细信息
 type DetailNote struct {
-	NoteID     int       `json:"noteid"`    // 笔记编号
-	CreatorID  int       `json:"creatorId"` // 作者编号
-	Title      string    `json:"title"`
-	Body       string    `json:"body"`
-	Picnum     int       `json:"picnum"`
-	Cover      string    `json:"cover"`
-	CreateTime time.Time `json:"createtime"`
-	UpdateTime time.Time `json:"updatetime"`
-	Tag        string    `json:"tag"`
-	Location   string    `json:"location"`
-	AtUserID   int       `json:"atuserid"`
-	LikedNum   int       `json:"likedNum"` // 点赞数
+	NoteID     int        `json:"noteid"`    // 笔记编号
+	CreatorID  int        `json:"creatorId"` // 作者编号
+	Title      string     `json:"title"`
+	Body       string     `json:"body"`
+	Picnum     int        `json:"picnum"`
+	Cover      string     `json:"cover"`
+	CreateTime time.Time  `json:"createtime"`
+	UpdateTime time.Time  `json:"updatetime"`
+	Tags       [11]string `json:"tags"`
+	Location   string     `json:"location"`
+	AtUserID   int        `json:"atuserid"`
+	LikedNum   int        `json:"likedNum"` // 点赞数
+	AtList     []string   `json:"atList"`
+	AtLocation []string   `json:"atLocation"`
 }
 
 // 获取笔记的封面标题等简要信息
@@ -137,12 +139,14 @@ func NewNoteInfo(nn DetailNote) (int, bool) {
 // 更新某笔记的信息
 func ModifyNote(mn DetailNote) bool {
 	sqlstr := `UPDATE noteInfo SET
-	cover=?, title=?, body=?, numOfPic=?, createTime=?, updateTime=?, tag=?, location=?, atUserId=?
+	cover=?, title=?, body=?, numOfPic=?, createTime=?, updateTime=?, location=?, tag=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, tag6=?, tag7=?, tag8=?, tag9=?, tag10=?
 	WHERE
 	noteId=?`
-	ret, err := db.Exec(sqlstr, mn.Cover, mn.Title, mn.Body, mn.Picnum, mn.CreateTime, mn.UpdateTime, mn.Tag, mn.Location, mn.AtUserID, mn.NoteID)
+	ret, err := db.Exec(sqlstr, mn.Cover, mn.Title, mn.Body, mn.Picnum, mn.CreateTime, mn.UpdateTime, mn.Location,
+		mn.Tags[0], mn.Tags[1], mn.Tags[2], mn.Tags[3], mn.Tags[4], mn.Tags[5], mn.Tags[6], mn.Tags[7], mn.Tags[8], mn.Tags[9], mn.Tags[10],
+		mn.NoteID)
 	if err != nil {
-		fmt.Printf("insert failed, err:%v\n", err)
+		fmt.Printf("笔记修改 failed, err:%v\n", err)
 		return false
 	}
 	theID, err := ret.LastInsertId() // 修改的行数
