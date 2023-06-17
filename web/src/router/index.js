@@ -5,6 +5,7 @@ import HomeView from '../views/HomeView'
 import Cate from '../views/Cate'
 import Cateset from '../views/Cateset'
 import AboutView from '../views/AboutView'
+import Login from '../views/login'
 Vue.use(Router)
 
 export default new Router({
@@ -13,6 +14,11 @@ export default new Router({
       path: '/',
       name: 'HelloWorld',
       component: HelloWorld
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
     },
     {
       path: '/about',

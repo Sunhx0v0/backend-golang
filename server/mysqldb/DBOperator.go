@@ -3,6 +3,7 @@ package mysqldb
 import (
 	"database/sql"
 	// 不需要这个包，单纯希望执行这个包的init()函数
+
 	_ "github.com/go-sql-driver/mysql"
 )
 

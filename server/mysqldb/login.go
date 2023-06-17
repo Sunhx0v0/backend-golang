@@ -1,12 +1,13 @@
 package mysqldb
 
-// import (
-// 	"net/http"
+import (
+	"github.com/gin-gonic/gin"
+)
 
-// 	"github.com/gin-gonic/gin"
-// 	"gopkg.in/mgo.v2"
-// 	"gopkg.in/mgo.v2/bson"
-// )
+// 网站用户登录
+func login(ctx *gin.Context) {
+
+}
 
 // // 定义结构
 // type user struct {
