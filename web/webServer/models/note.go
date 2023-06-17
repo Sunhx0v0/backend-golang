@@ -95,6 +95,33 @@ func GetSpBriefNtInfo(keyword string) (notes []Note) {
 	return
 }
 
+// 获取用户关注的人的所有笔记的简要信息
+func GetFlwedNotes(userId int) (notes []Note, ok bool) {
+	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName 
+	FROM noteInfo n, userInfo u ,followTable f
+	WHERE f.userAct=? AND f.followAct=n.creatorAccount AND n.creatorAccount = u.userAccount`
+	rows, err := db.Query(sqlStr, userId)
+	if err != nil {
+		fmt.Printf("关注的人的笔记query failed, err:%v\n", err)
+		return nil, false
+	}
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
+
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		var nt Note
+		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait, &nt.CreatorName)
+		if err != nil {
+			fmt.Printf("关注的人的笔记scan failed, err:%v\n", err)
+			return nil, false
+		}
+		fmt.Println(nt.NoteID)
+		notes = append(notes, nt)
+	}
+	return notes, true
+}
+
 // 存入新上传的笔记信息
 func NewNoteInfo(nn DetailNote) (int, bool) {
 	sqlstr := `INSERT INTO noteInfo
