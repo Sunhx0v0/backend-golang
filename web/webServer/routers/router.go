@@ -64,6 +64,8 @@ func InitRouter() *gin.Engine {
 		r.GET("/comment/:noteId", v1.GetComments)
 		//发表评论
 		r.POST("/comment/:noteId", v1.PostComment)
+		//删除评论
+		r.DELETE("/comment/:noteId", v1.CancleComment)
 
 		//点赞某篇笔记
 		r.POST("/explore/:noteId/like", v1.LikeNote)
@@ -71,6 +73,10 @@ func InitRouter() *gin.Engine {
 		r.DELETE("/explore/:noteId/like", v1.CancelLike)
 		//获取笔记详细内容
 		r.GET("/explore/:noteid", v1.NoteDetailHandler)
+		//收藏某篇笔记
+		r.POST("/explore/:noteId/collect", v1.CollectNote)
+		//取消收藏某篇笔记
+		r.DELETE("/explore/:noteId/collect", v1.CancleCollect)
 
 		// 关注用户
 		r.POST("/:userId/PersonalView/follow", v1.FollowHandler)

@@ -260,3 +260,28 @@ func ChangeUserLikes(noteId, option int) {
 	}
 	fmt.Printf("用户编号：%d\n", n)
 }
+
+// 修改用户被收藏笔记数量
+func ChangeUserCollects(noteId, option int) {
+	var sqlstr string
+	userId := NoteToUser(noteId)
+	addnum := `UPDATE userInfo set collectedNum =collectedNum+1 WHERE userAccount = ? `
+	reducenum := `UPDATE userInfo set collectedNum =collectedNum-1 WHERE userAccount = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("用户被收藏数update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("用户被收藏get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("收藏数增加的用户编号：%d\n", n)
+}
