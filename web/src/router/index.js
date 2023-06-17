@@ -6,6 +6,8 @@ import Cate from '../views/Cate'
 import Cateset from '../views/Cateset'
 import AboutView from '../views/AboutView'
 import Login from '../views/login'
+import AdminSet from '../views/AdminSet'
+import AdminList from '../views/AdminList'
 Vue.use(Router)
 
 export default new Router({
@@ -31,7 +33,10 @@ export default new Router({
       component: Cate,
       children: [
         {path: '/cate/home', component: HomeView},
-        {path: '/cate/set', component: Cateset}
+        {path: '/cate/set', component: Cateset},
+        {path: '/admins/create', component: AdminSet},
+        {path: '/admins/edit/:id', component: AdminSet, props: true},
+        {path: '/admins/list', component: AdminList}
       ]
     }
   ]

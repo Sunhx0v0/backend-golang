@@ -11,8 +11,9 @@
                     <el-menu-item index="/cate/set">创建分类</el-menu-item>
                     <el-menu-item index="/cate/home">选项2</el-menu-item>
                 </el-menu-item-group>
-                <el-menu-item-group title="分组2">
-                    <el-menu-item index="1-3">选项3</el-menu-item>
+                <el-menu-item-group title="管理员信息">
+                    <el-menu-item index="/admin/list">管理员列表</el-menu-item>
+                    <el-menu-item index="/admin/create">新建管理员</el-menu-item>
                 </el-menu-item-group>
                 <el-submenu index="1-4">
                     <template slot="title">选项4</template>

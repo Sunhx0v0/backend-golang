@@ -9,4 +9,5 @@ import (
 func loginRegister(r *gin.Engine) {
 	// r.POST("/login", mysqldb.LoginHandler)
 	r.POST("/mongo/login", mysqldb.LoginHandler)
+	r.POST("/mongo/register", mysqldb.RegisterHandler)
 }

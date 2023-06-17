@@ -3,8 +3,10 @@ package mysqldb
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -13,7 +15,7 @@ type LoginRequest struct {
 	UserName string `json:"userName"` // 用户名
 }
 
-// 网站用户登录
+// 网站用户登录处理
 func LoginHandler(ctx *gin.Context) {
 	// 传入并获取前端数据
 	var form LoginRequest
@@ -56,10 +58,43 @@ func LoginHandler(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{"message": "密码错误"})
 		return
 	} else {
-		ctx.JSON(200, gin.H{"message": "登录成功"})
+		// 获取token
+		tokenString, err := setToken(username)
+		if err != nil {
+			fmt.Printf("setToken failed, err:%v\n", err)
+			ctx.JSON(400, gin.H{"message": "获取token失败"})
+			return
+		}
+		// 输出结果和token
+		ctx.JSON(200, gin.H{
+			"message": "登录成功",
+			"token":   tokenString,
+		})
 		return
 	}
+}
 
+func RegisterHandler(ctx *gin.Context) {
+	// 传入并获取前端数据
+	var form LoginRequest
+	if err := ctx.ShouldBind(&form); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// 对密码进行加密
+	passwordHashed, err := bcryptPassword(form.Password)
+	if err != nil {
+		ctx.JSON(400, gin.H{"message": "加密失败"})
+		return
+	}
+	// 插入账号数据
+	sqlstr := "insert into easy (username,password) values (?,?)"
+	_, err = db.Query(sqlstr, form.UserName, passwordHashed)
+	if err != nil {
+		fmt.Printf("insert failed, err:%v\n", err)
+		ctx.JSON(400, gin.H{"message": "注册失败！请检查数据库"})
+		return
+	}
 }
 
 // 函数：加密密码
@@ -79,7 +114,7 @@ func bcryptPassword(password string) (passwordHashed string, err error) {
 }
 
 // 函数：验证密码
-// 传入字符串格式的两个密码，一个是数据库获取到的已加密密码，一个是需要进行验证的登录密码。输出一个bool值结果
+// 输入：字符串格式的两个密码，一个是数据库获取到的已加密密码，一个是需要进行验证的登录密码。输出：bool值结果
 func comparePassword(mysqlPassword string, loginPassword string) bool {
 	// 将需要比对的密码放入byte格式数组中转码
 	byteHashed := []byte(mysqlPassword)
@@ -92,6 +127,40 @@ func comparePassword(mysqlPassword string, loginPassword string) bool {
 	}
 	// 如果验证成功
 	return true
+}
+
+// 定义一个全局token密钥，token密钥随意定义一串字符串
+var jwtkey = []byte("lskjdghfhkagflkagh")
+
+// 定义字符串格式token，方便之后token的转化
+var tokenString string
+
+// 定义一个token模型，用于存放token信息，识别不同账号
+type claims struct {
+	UserId string
+	jwt.StandardClaims
+}
+
+// 生成token
+// 传入字符串格式用户id，输出字符串格式的token和错误值
+func setToken(id string) (tokenString string, err error) {
+	// 定义token过期时间，一天后过期
+	expireTime := time.Now().Add(1 * 24 * time.Hour)
+	claims := &claims{
+		UserId: id,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expireTime.Unix(), // 过期时间，用上方定义的过期时间
+			IssuedAt:  time.Now().Unix(), // 生效时间，生成token的这一刻起
+			Issuer:    "127.0.0.1",       // 生成者，本域名
+			Subject:   "user token",      // 生成主题
+		},
+	}
+	// 生成token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// 根据之前定义的密钥，将token转化为加密字符串
+	tokenString, err = token.SignedString(jwtkey)
+	// 输出
+	return
 }
 
 // // 定义结构
