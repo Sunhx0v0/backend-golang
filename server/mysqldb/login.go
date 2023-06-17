@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginRequest struct {
@@ -13,7 +14,7 @@ type LoginRequest struct {
 }
 
 // 网站用户登录
-func Login(ctx *gin.Context) {
+func LoginHandler(ctx *gin.Context) {
 	// 传入并获取前端数据
 	var form LoginRequest
 	if err := ctx.ShouldBind(&form); err != nil {
@@ -37,18 +38,60 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{"message": "没有该用户"})
 		return
 	}
-	var password string
+	// 获取该用户的密码（加密后）
+	var mysqlPassword string
 	for rows.Next() {
-		err := rows.Scan(&password)
+		err := rows.Scan(&mysqlPassword)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
-			ctx.JSON(400, gin.H{"message": "用户解析失败"})
+			ctx.JSON(400, gin.H{"message": "用户密码拉取失败"})
 			return
 		}
 	}
-
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
+	// 验证密码
+	corect := comparePassword(mysqlPassword, form.Password)
+	if !corect {
+		ctx.JSON(400, gin.H{"message": "密码错误"})
+		return
+	} else {
+		ctx.JSON(200, gin.H{"message": "登录成功"})
+		return
+	}
+
+}
+
+// 函数：加密密码
+// 输入：字符串格式的密码，输出：字符串格式的加密后密码、错误值
+func bcryptPassword(password string) (passwordHashed string, err error) {
+	// 将需要加密的密码放入byte格式数组中
+	passwordByte := []byte(password)
+	// 通过bcrypt内部自带加密的方法对该数组进行加密
+	hash, err := bcrypt.GenerateFromPassword(passwordByte, bcrypt.MinCost)
+	// 如果加密过程出错，则返回错误值
+	if err != nil {
+		return
+	}
+	// 如果加密完成，则将加密后的值编译成字符串格式，返回加密后的密码
+	passwordHashed = string(hash)
+	return
+}
+
+// 函数：验证密码
+// 传入字符串格式的两个密码，一个是数据库获取到的已加密密码，一个是需要进行验证的登录密码。输出一个bool值结果
+func comparePassword(mysqlPassword string, loginPassword string) bool {
+	// 将需要比对的密码放入byte格式数组中转码
+	byteHashed := []byte(mysqlPassword)
+	byteLogin := []byte(loginPassword)
+	// 通过bcrypt内部自带的比对方法比对两个密码是否对应
+	err := bcrypt.CompareHashAndPassword(byteHashed, byteLogin)
+	// 如果验证错误
+	if err != nil {
+		return false
+	}
+	// 如果验证成功
+	return true
 }
 
 // // 定义结构
