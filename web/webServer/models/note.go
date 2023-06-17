@@ -7,14 +7,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// type noteInfo struct {
-// 	NoteId    int    `JSON:"NoteId"`
-// 	NoteTitle string `JSON:"NoteTitle"`
-// 	NoteCover string `JSON:"NoteCover"`
-// }
-
-// var Notes []noteInfo
-
 type Note struct {
 	Cover       string `json:"cover"`
 	CreatorID   int    `json:"creatorId"`
@@ -42,13 +34,20 @@ type DetailNote struct {
 	AtInfos    []AtInfo  `json:"atInfo"`
 }
 
+type detailNote struct {
+	NoteInfo   DetailNote `JSON:"noteInfo"`
+	PicsOfNote []string   `JSON:"pictures"`
+}
+
 // 获取笔记的封面标题等简要信息
-func GetBriefNtInfo() (notes []Note) {
+func GetBriefNtInfo() (notes []Note, ok bool) {
+	ok = true
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
 	from noteInfo n,userInfo u
 	where n.creatorAccount = u.userAccount`
 	rows, err := db.Query(sqlStr)
 	if err != nil {
+		ok = false
 		fmt.Printf("query failed, err:%v\n", err)
 		return
 	}
@@ -60,6 +59,7 @@ func GetBriefNtInfo() (notes []Note) {
 		var nt Note
 		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait, &nt.CreatorName)
 		if err != nil {
+			ok = false
 			fmt.Printf("scan failed, err:%v\n", err)
 			return
 		}
@@ -70,14 +70,14 @@ func GetBriefNtInfo() (notes []Note) {
 }
 
 // 获取特定内容的笔记
-func GetSpBriefNtInfo(keyword string) (notes []Note) {
+func GetSpBriefNtInfo(keyword string) (notes []Note, ok bool) {
 	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
 	FROM noteInfo n, userInfo u
 	WHERE n.creatorAccount = u.userAccount AND (n.tag = ? OR n.title LIKE CONCAT('%',#{keyword},'%'))`
 	rows, err := db.Query(sqlStr, keyword, keyword)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
-		return nil
+		return nil, false
 	}
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
@@ -126,10 +126,10 @@ func GetFlwedNotes(userId int) (notes []Note, ok bool) {
 // 存入新上传的笔记信息
 func NewNoteInfo(nn DetailNote) (int, bool) {
 	sqlstr := `INSERT INTO noteInfo
-	(creatorAccount, cover, title, body, createTime, updateTime, tag, location, atUserId, likeNum)
+	(creatorAccount, cover, title, body, createTime, updateTime, location, atUserId, likeNum)
 	VALUES
 	(?,?,?,?,?,?,?,?,?,?)`
-	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Cover, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime, nn.Tag, nn.Location, nn.AtUserID, nn.LikedNum)
+	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Cover, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime, nn.Location, nn.AtUserID, nn.LikedNum)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
 		return -1, false
@@ -164,11 +164,28 @@ func ModifyNote(mn DetailNote) bool {
 	return true
 }
 
+// 删除笔记
+func DeleteNote(ntid int) bool {
+	sqlstr := "DELETE FROM noteInfo WHERE noteID = ?"
+	ret, err := db.Exec(sqlstr, ntid)
+	if err != nil {
+		fmt.Printf("delete failed, err:%v\n", err)
+		return false
+	}
+	n, err := ret.RowsAffected() // 操作影响的行数
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("delete success, affected rows:%d\n", n)
+	return true
+}
+
 // 查询特定笔记
 func SpecificNote(noteid int) detailNote {
 	var N detailNote
 	//先找笔记信息
-	sqlStr1 := "select Noteid,CreatorAccount,Title,Body,NumOfPic,Cover,CreateTime,UpdateTime,Tag,Location,AtUserid from noteInfo where noteId = ?"
+	sqlStr1 := "select Noteid,CreatorAccount,Title,Body,NumOfPic,Cover,CreateTime,UpdateTime,Location,AtUserid from noteInfo where noteId = ?"
 	rows, err := db.Query(sqlStr1, noteid)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
@@ -182,7 +199,7 @@ func SpecificNote(noteid int) detailNote {
 	for rows.Next() {
 		var createTimestring string
 		var updateTimestring string
-		err := rows.Scan(&N.NoteInfo.NoteID, &N.NoteInfo.CreatorID, &N.NoteInfo.Title, &N.NoteInfo.Body, &N.NoteInfo.Picnum, &N.NoteInfo.Cover, &createTimestring, &updateTimestring, &N.NoteInfo.Tag, &N.NoteInfo.Location, &N.NoteInfo.AtUserID)
+		err := rows.Scan(&N.NoteInfo.NoteID, &N.NoteInfo.CreatorID, &N.NoteInfo.Title, &N.NoteInfo.Body, &N.NoteInfo.Picnum, &N.NoteInfo.Cover, &createTimestring, &updateTimestring, &N.NoteInfo.Location, &N.NoteInfo.AtUserID)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
 			var err detailNote
@@ -214,6 +231,30 @@ func SpecificNote(noteid int) detailNote {
 	defer rows2.Close()
 
 	return N
+}
+
+// 修改笔记的获赞数
+func ChangeNoteLikes(noteId, option int) {
+	var sqlstr string
+	addnum := `UPDATE noteInfo set likeNum =likeNum+1 WHERE noteId = ?`
+	reducenum := `UPDATE noteInfo set likeNum =likeNum-1 WHERE noteId = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, noteId)
+	if err != nil {
+		fmt.Printf("update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("笔记编号：%d\n", n)
 }
 
 // 修改笔记被收藏数
