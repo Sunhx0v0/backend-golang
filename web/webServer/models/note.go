@@ -20,20 +20,19 @@ type Note struct {
 
 // 笔记的详细信息
 type DetailNote struct {
-	NoteID     int        `json:"noteid"`    // 笔记编号
-	CreatorID  int        `json:"creatorId"` // 作者编号
-	Title      string     `json:"title"`
-	Body       string     `json:"body"`
-	Picnum     int        `json:"picnum"`
-	Cover      string     `json:"cover"`
-	CreateTime time.Time  `json:"createtime"`
-	UpdateTime time.Time  `json:"updatetime"`
-	Tags       [11]string `json:"tags"`
-	Location   string     `json:"location"`
-	AtUserID   int        `json:"atuserid"`
-	LikedNum   int        `json:"likedNum"` // 点赞数
-	AtList     []string   `json:"atList"`
-	AtLocation []string   `json:"atLocation"`
+	NoteID     int       `json:"noteid"`    // 笔记编号
+	CreatorID  int       `json:"creatorId"` // 作者编号
+	Title      string    `json:"title"`
+	Body       string    `json:"body"`
+	Picnum     int       `json:"picnum"`
+	Cover      string    `json:"cover"`
+	CreateTime time.Time `json:"createtime"`
+	UpdateTime time.Time `json:"updatetime"`
+	Tags       []string  `json:"tags"`
+	Location   string    `json:"location"`
+	AtUserID   int       `json:"atuserid"`
+	LikedNum   int       `json:"likedNum"` // 点赞数
+	AtInfos    []AtInfo  `json:"atInfo"`
 }
 
 // 获取笔记的封面标题等简要信息
@@ -221,4 +220,28 @@ func ChangeNoteCollects(noteId, option int) {
 		return
 	}
 	fmt.Printf("笔记收藏数修改编号：%d\n", n)
+}
+
+// 修改笔记评论数
+func ChangeNoteComments(noteId, option int) {
+	var sqlstr string
+	addnum := `UPDATE noteInfo set commentNum =commentNum+1 WHERE noteId = ?`
+	reducenum := `UPDATE noteInfo set commentNum =commentNum-1 WHERE noteId = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, noteId)
+	if err != nil {
+		fmt.Printf("笔记评论数update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("笔记评论数get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("笔记评论数修改编号：%d\n", n)
 }
