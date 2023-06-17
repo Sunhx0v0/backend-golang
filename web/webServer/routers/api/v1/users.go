@@ -2,8 +2,10 @@ package v1
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+	"time"
 	"webServer/models"
 
 	"github.com/gin-gonic/gin"
@@ -53,9 +55,19 @@ func ModifyUserInfo(c *gin.Context) { //用户修改个人信息
 	info.Infos.Mail = c.PostForm("mail")
 	info.Infos.Password = c.PostForm("password")
 	info.Infos.PhoneNumber = c.PostForm("phoneNumber")
-	info.Infos.Portrait = c.PostForm("portrait")
 	info.Infos.UserName = c.PostForm("userName")
 	info.IsHost, _ = strconv.ParseBool(c.PostForm("isHost"))
+
+	file, _ := c.FormFile("file")
+	log.Println(file.Filename)                                                           //输出文件名
+	timeStamp := time.Now().Unix()                                                       // 时间戳
+	name := fmt.Sprintf("%d_%s_%s", userID, strconv.Itoa(int(timeStamp)), file.Filename) // 文件名
+	dst := fmt.Sprintf("images/%s", name)                                                //路径
+	// 上传文件至指定的完整文件路径
+	c.SaveUploadedFile(file, dst) // 图片
+	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+	info.Infos.Portrait = name // 将图片目录保存在数据库
+
 	success := models.ModifyInfo(info.Infos, userID)
 	if !success {
 		c.JSON(http.StatusBadRequest, gin.H{
