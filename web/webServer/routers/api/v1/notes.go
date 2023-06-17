@@ -120,13 +120,13 @@ func UploadNote(c *gin.Context) {
 			timeStamp := time.Now().Unix()
 
 			log.Println(file.Filename)
-			dst := fmt.Sprintf("images/%d_%d_%s_%s", userId, ntID, strconv.Itoa(int(timeStamp)), file.Filename)
-
+			name := fmt.Sprintf("%d_%d_%s_%s", userId, ntID, strconv.Itoa(int(timeStamp)), file.Filename)
+			dst := fmt.Sprintf("images/%s", name)
 			if index == 0 {
-				newNote.Cover = dst
+				newNote.Cover = name
 			}
 			pc.NoteId = ntID
-			pc.Picurl = dst
+			pc.Picurl = name
 			// 上传文件到指定的目录
 			c.SaveUploadedFile(file, dst)
 			//将路径等信息更新到数据库
