@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     async login () {
-      const res = await this.$AXIOS.post('login')
+      const res = await this.$AXIOS.post('login', this.model)
       console.log(res)
     }
   }

@@ -5,6 +5,7 @@ import (
 )
 
 func SetupWebRoutes(r *gin.Engine) {
+	loginRegister(r)
 	userRegister(r)
 	web_testRegister(r)
 	exploreRegister(r)
