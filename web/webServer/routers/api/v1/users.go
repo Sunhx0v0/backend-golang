@@ -58,8 +58,6 @@ func ModifyUserInfo(c *gin.Context) { //用户修改个人信息
 	info.Infos.UserName = c.PostForm("userName")
 	info.IsHost, _ = strconv.ParseBool(c.PostForm("isHost"))
 
-	//info.Infos.Portrait = c.PostForm("portrait")
-
 	file, _ := c.FormFile("file")
 	log.Println(file.Filename)                                                           //输出文件名
 	timeStamp := time.Now().Unix()                                                       // 时间戳
