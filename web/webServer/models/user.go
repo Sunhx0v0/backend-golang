@@ -18,6 +18,25 @@ type UserClaim struct { // 登录验证
 	Claims   []LoginInfo
 }
 
+type userInfo struct {
+	userId       int       `JSON:"UserId"`
+	userName     string    `JSON:"UserName"`
+	password     string    `JSON:"Password"`
+	gender       string    `JSON:"Gender"`
+	portrait     string    `JSON:"Portrait"`
+	introduction string    `JSON:"UserName"`
+	birthday     time.Time `JSON:"Birthday"`
+	registTime   time.Time `JSON:"RegistTime"`
+	fansNum      int       `JSON:"FansNum"`      // 粉丝数
+	noteNum      int       `JSON:"NoteNum"`      // 笔记数
+	collectNum   int       `JSON:"CollectNum"`   //收藏数
+	followNum    int       `JSON:"FollowNum"`    //关注数
+	collectedNum int       `JSON:"CollectedNum"` // 被收藏数量
+	likedNum     int       `JSON:"LikedNum"`     // 被点赞数量
+	phoneNumber  string    `JSON:"PhoneNumber"`
+	mail         string    `JSON:"Mail"`
+}
+
 // 发布的笔记
 type Notes struct {
 	Cover       string `json:"cover"`
@@ -132,7 +151,8 @@ func CollectInfoDB(id int) []Notes {
 	return collects
 }
 
-func LikeInfoDB(id int) []Notes { // 从数据库获得用户信息
+// 从数据库获得某用户点赞的笔记信息
+func LikeInfoDB(id int) []Notes {
 
 	var collects []Notes
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
@@ -175,6 +195,32 @@ func ModifyInfo(beforeInfo ModifiableInfo, id int) bool { // 修改用户的信�
 	return true
 }
 
+// 修改用户发布笔记数
+func ChangeNoteNum(userId, option int) {
+	var sqlstr string
+	addnum := `UPDATE userInfo set noteNum =noteNum+1 WHERE userAccount = ?`
+	reducenum := `UPDATE userInfo set noteNum =noteNum-1 WHERE userAccount = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("用户编号：%d\n", n)
+	// return
+}
+
+// 登录验证（简易版）
 func CheckUser(userName, password string) bool {
 	//用户的登录信息
 	var buser LoginInfo
@@ -190,4 +236,54 @@ func CheckUser(userName, password string) bool {
 	}
 
 	return false
+}
+
+// 修改用户获赞数
+func ChangeUserLikes(noteId, option int) {
+	var sqlstr string
+	userId := NoteToUser(noteId)
+	addnum := `UPDATE userInfo set likedNum =likedNum+1 WHERE userAccount = ? `
+	reducenum := `UPDATE userInfo set likedNum =likedNum-1 WHERE userAccount = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("用户编号：%d\n", n)
+}
+
+// 修改用户被收藏笔记数量
+func ChangeUserCollects(noteId, option int) {
+	var sqlstr string
+	userId := NoteToUser(noteId)
+	addnum := `UPDATE userInfo set collectedNum =collectedNum+1 WHERE userAccount = ? `
+	reducenum := `UPDATE userInfo set collectedNum =collectedNum-1 WHERE userAccount = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("用户被收藏数update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("用户被收藏get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("收藏数增加的用户编号：%d\n", n)
 }
