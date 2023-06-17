@@ -103,3 +103,8 @@ func DeleteCollect(dclt CollectInfo, noteId int) bool {
 	fmt.Printf("收藏信息 delete success, affected rows:%d\n", n)
 	return true
 }
+
+// 获取关注用户
+func GetFollows() bool {
+	return true
+}

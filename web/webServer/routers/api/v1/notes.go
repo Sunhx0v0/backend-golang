@@ -12,7 +12,6 @@ import (
 	"webServer/models"
 
 	"github.com/gin-gonic/gin"
-	"github.com/unknwon/com"
 )
 
 type Data struct {
@@ -41,7 +40,6 @@ func GetAllNotes(c *gin.Context) {
 			"data":    data,
 		})
 	}
-
 }
 
 // 获取特定笔记（搜索/标签）
@@ -78,6 +76,29 @@ func NoteDetailHandler(c *gin.Context) {
 	// c.HTML(http.StatusOK, "server/templates/users_test/index.html", gin.H{
 	// 	"title": "users/index",
 	// })
+}
+
+// 获取关注的人的笔记
+func GetFollowedNotes(c *gin.Context) {
+	var data Data
+	var OK bool
+	//判断是否登录，还要再加判断的函数
+	data.IsLogin = false
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	data.Notes, OK = models.GetFlwedNotes(userId)
+	if OK {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    data,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+			"data":    data,
+		})
+	}
 }
 
 // 上传笔记
@@ -148,10 +169,12 @@ func UploadNote(c *gin.Context) {
 		newNote.NoteID = ntID
 		newNote.Title = c.PostForm("title")
 		newNote.Body = c.PostForm("body")
-		newNote.Tag = c.PostForm("tag")
+		// newNote.Tags = c.PostFormArray("tags")
 		newNote.Picnum = len(files)
 		newNote.Location = c.PostForm("location")
-		newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
+		newNote.AtList = c.PostFormArray("atList")
+		newNote.AtLocation = c.PostFormArray("atLocation")
+		//newNote.AtUserID = com.StrTo(c.PostForm("atuserid")).MustInt()
 		ok := models.ModifyNote(newNote)
 		if ok {
 			models.ChangeNoteNum(userId, 1)
