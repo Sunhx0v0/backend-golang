@@ -71,6 +71,10 @@ func InitRouter() *gin.Engine {
 		r.POST("/explore/:noteId/like", v1.LikeNote)
 		//取消点赞
 		r.DELETE("/explore/:noteId/like", v1.CancelLike)
+		//收藏某篇笔记
+		r.POST("/explore/:noteId/collect", v1.CollectNote)
+		//取消收藏某篇笔记
+		r.DELETE("/explore/:noteId/collect", v1.CancleCollect)
 
 		// //vue获取table信息
 		// apiv1.GET("/table/list", v1.GetArticles)

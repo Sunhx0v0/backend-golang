@@ -167,3 +167,27 @@ func ChangeNoteLikes(noteId, option int) {
 	}
 	fmt.Printf("笔记编号：%d\n", n)
 }
+
+// 修改笔记被收藏数
+func ChangeNoteCollects(noteId, option int) {
+	var sqlstr string
+	addnum := `UPDATE noteInfo set collectNum =collectNum+1 WHERE noteId = ?`
+	reducenum := `UPDATE noteInfo set collectNum =collectNum-1 WHERE noteId = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, noteId)
+	if err != nil {
+		fmt.Printf("笔记收藏数update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("笔记收藏数get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("笔记收藏数修改编号：%d\n", n)
+}
