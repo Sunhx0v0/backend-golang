@@ -11,12 +11,13 @@ import (
 type NoteInfo models.NoteInfo
 type PictureInfo models.PictureInfo
 
+// ——————————————————————————————————————————————————————
+// 查询特定笔记
 type Note struct {
 	NoteInfo   NoteInfo `JSON:"noteInfo"`
 	PicsOfNote []string `JSON:"pictures"`
 }
 
-// 查询特定笔记
 func SpecificNote(noteid int) Note {
 	var N Note
 	//先找笔记信息
@@ -67,3 +68,5 @@ func SpecificNote(noteid int) Note {
 
 	return N
 }
+
+// ——————————————————————————————————————————————————————————————————
