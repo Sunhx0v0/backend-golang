@@ -118,9 +118,13 @@ func UploadNote(c *gin.Context) {
 
 		//新声明新笔记的结构体
 		var newNote models.DetailNote
+		fmt.Print("最初的笔记信息")
+		fmt.Println(newNote)
 		if err := c.ShouldBind(&newNote); err == nil {
 			newNote.CreatorID = userId
 			//先创建一个不含内容的笔记信息，后面再填上信息
+			fmt.Print("初始的笔记信息")
+			fmt.Println(newNote)
 			ntID, success := models.NewNoteInfo(newNote)
 			if !success {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -166,10 +170,12 @@ func UploadNote(c *gin.Context) {
 			newNote.NoteID = ntID
 			newNote.Picnum = len(files)
 			//写入笔记的全部信息
+			fmt.Print("完整的笔记信息")
+			fmt.Println(newNote)
 			ok := models.ModifyNote(newNote)
 			//写入@信息
-			ok1 := models.AddAtInfo(userId, ntID, newNote.AtInfos)
-			if ok && ok1 {
+			//ok1 := models.AddAtInfo(userId, ntID, newNote.AtInfos)
+			if ok {
 				models.ChangeNoteNum(userId, 1)
 				c.JSON(http.StatusOK, gin.H{
 					"code":    200,

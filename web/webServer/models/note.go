@@ -19,19 +19,19 @@ type Note struct {
 
 // 笔记的详细信息
 type DetailNote struct {
-	NoteID     int       `json:"noteid"`    // 笔记编号
-	CreatorID  int       `json:"creatorId"` // 作者编号
-	Title      string    `json:"title"`
-	Body       string    `json:"body"`
-	Picnum     int       `json:"picnum"`
-	Cover      string    `json:"cover"`
-	CreateTime time.Time `json:"createtime"`
-	UpdateTime time.Time `json:"updatetime"`
-	Tags       []string  `json:"tags"`
-	Location   string    `json:"location"`
-	AtUserID   int       `json:"atuserid"`
-	LikedNum   int       `json:"likedNum"` // 点赞数
-	AtInfos    []AtInfo  `json:"atInfo"`
+	NoteID     int       `json:"noteid" form:"noteid"`       // 笔记编号
+	CreatorID  int       `json:"creatorId" form:"creatorId"` // 作者编号
+	Title      string    `json:"title" form:"title"`
+	Body       string    `json:"body" form:"body"`
+	Picnum     int       `json:"picnum" form:"picnum"`
+	Cover      string    `json:"cover" form:"cover"`
+	CreateTime time.Time `json:"createtime" form:"createtime"`
+	UpdateTime time.Time `json:"updatetime" form:"updatetime"`
+	Tags       []string  `json:"tags" form:"tags"`
+	Location   string    `json:"location" form:"location"`
+	AtUserID   int       `json:"atuserid" form:"atuserid"`
+	LikedNum   int       `json:"likedNum" form:"likedNum"` // 点赞数
+	AtInfos    []AtInfo  `json:"atInfo" form:"atInfo"`
 }
 
 type detailNote struct {
@@ -49,7 +49,7 @@ func GetBriefNtInfo() (notes []Note, ok bool) {
 	if err != nil {
 		ok = false
 		fmt.Printf("query failed, err:%v\n", err)
-		return
+		return notes, ok
 	}
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
@@ -61,12 +61,12 @@ func GetBriefNtInfo() (notes []Note, ok bool) {
 		if err != nil {
 			ok = false
 			fmt.Printf("scan failed, err:%v\n", err)
-			return
+			return notes, ok
 		}
 		fmt.Print(nt.NoteID)
 		notes = append(notes, nt)
 	}
-	return
+	return notes, ok
 }
 
 // 获取特定内容的笔记
@@ -157,7 +157,7 @@ func ModifyNote(mn DetailNote) bool {
 	}
 	theID, err := ret.LastInsertId() // 修改的行数
 	if err != nil {
-		fmt.Printf("get lastinsert ID failed, err:%v\n", err)
+		fmt.Printf("get lastinsert ID failed,  err:%v\n", err)
 		return false
 	}
 	fmt.Printf("笔记更新成功！，影响行数：%d\n", theID)

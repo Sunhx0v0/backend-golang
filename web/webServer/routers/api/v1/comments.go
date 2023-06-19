@@ -13,7 +13,7 @@ func GetComments(c *gin.Context) {
 	var comments []models.Comment
 	var success bool
 	noteId, _ := strconv.Atoi(c.Param("noteId"))
-	comments, success = models.GetCommentInfo(noteId)
+	comments, success = models.GetCommentInfo(noteId, 0)
 	if success {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
