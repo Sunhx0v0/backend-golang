@@ -165,7 +165,7 @@ func ModifyNote(mn DetailNote) bool {
 }
 
 // 删除笔记
-func DeleteNote(ntid int) bool {
+func DeleteNoteInfo(ntid int) bool {
 	sqlstr := "DELETE FROM noteInfo WHERE noteID = ?"
 	ret, err := db.Exec(sqlstr, ntid)
 	if err != nil {

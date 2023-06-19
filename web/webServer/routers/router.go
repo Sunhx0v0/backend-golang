@@ -82,6 +82,10 @@ func InitRouter() *gin.Engine {
 		// 关注用户
 		r.POST("/:userId/PersonalView/follow", v1.FollowHandler)
 
+		//获取评论消息列表
+		r.GET("/messages/:userId/comments", v1.MsgGetComments)
+		//把评论设置为已读
+		r.PUT("/messages/:userId/comments/:commentId", v1.ChangeCommentState)
 	}
 
 	return r

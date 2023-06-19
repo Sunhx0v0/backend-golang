@@ -183,7 +183,7 @@ func UploadNote(c *gin.Context) {
 				})
 			} else {
 				//如果上传失败，就把空的信息删掉
-				models.DeleteNote(userId)
+				models.DeleteNoteInfo(userId)
 				models.DeletePic(ntID)
 				models.DeleteAtInfo(ntID)
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -223,7 +223,7 @@ func DeleteNote(c *gin.Context) {
 			return
 		}
 	}
-	if models.DeletePic(noteId) && models.DeleteNote(noteId) {
+	if models.DeletePic(noteId) && models.DeleteNoteInfo(noteId) {
 		models.ChangeNoteNum(userId, 0)
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,

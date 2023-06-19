@@ -91,3 +91,21 @@ func DeleteComment(commentId int) bool {
 	fmt.Printf("评论信息 delete success, affected rows:%d\n", n)
 	return true
 }
+
+// 把某条评论设为已读
+func SetCommentState(commentId int) bool {
+	sqlstr := "UPDATE commentInfo SET state=0 WHERE commentId=?"
+	ret, err := db.Exec(sqlstr, commentId)
+	if err != nil {
+		fmt.Printf("评论状态update failed, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("评论状态get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("评论状态修改编号：%d\n", n)
+	return true
+}

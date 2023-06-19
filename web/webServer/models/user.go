@@ -8,15 +8,15 @@ import (
 )
 
 // 发布的笔记
-type Notes struct {
-	Cover       string `json:"cover"`
-	LikedNum    int64  `json:"likedNum"` // 点赞数
-	NoteID      int64  `json:"noteId"`   // 笔记编号
-	Title       string `json:"title"`
-	CreatorID   int64  `json:"creatorID"`
-	CreatorName string `json:"creatorName"` // 作者姓名
-	Portrait    string `json:"portrait"`
-}
+// type Notes struct {
+// 	Cover       string `json:"cover"`
+// 	LikedNum    int64  `json:"likedNum"` // 点赞数
+// 	NoteID      int64  `json:"noteId"`   // 笔记编号
+// 	Title       string `json:"title"`
+// 	CreatorID   int64  `json:"creatorID"`
+// 	CreatorName string `json:"creatorName"` // 作者姓名
+// 	Portrait    string `json:"portrait"`
+// }
 
 // 用户基本信息
 type UserInfo struct {
@@ -71,8 +71,8 @@ func UserInfoDB(id int) UserInfo { // 从数据库获得用户信息
 }
 
 // 从数据库获得某用户发布的笔记信息
-func NoteInfoDB(id int) []Notes {
-	var notes []Notes
+func NoteInfoDB(id int) []Note {
+	var notes []Note
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
 	from noteInfo n, userInfo u
 	where creatorAccount = ? and n.creatorAccount = u.userAccount`
@@ -83,7 +83,7 @@ func NoteInfoDB(id int) []Notes {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var nt Notes
+		var nt Note
 		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.CreatorName, &nt.Portrait)
 		fmt.Println(nt.NoteID, nt.Title, nt.Cover, nt.CreatorID, nt.LikedNum, nt.CreatorName, nt.Portrait)
 		if err != nil {
@@ -96,9 +96,9 @@ func NoteInfoDB(id int) []Notes {
 }
 
 // 从数据库获得某用户收藏的笔记信息
-func CollectInfoDB(id int) []Notes {
+func CollectInfoDB(id int) []Note {
 
-	var collects []Notes
+	var collects []Note
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
 	from noteInfo n, userInfo u, collectTable c
 	where c.userAct = ? and c.collectNoteId=n.noteId and n.creatorAccount = u.userAccount`
@@ -109,7 +109,7 @@ func CollectInfoDB(id int) []Notes {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var ct Notes
+		var ct Note
 		err := rows.Scan(&ct.NoteID, &ct.Title, &ct.Cover, &ct.CreatorID, &ct.LikedNum, &ct.CreatorName, &ct.Portrait)
 		fmt.Println(ct.NoteID, ct.Title, ct.Cover, ct.CreatorID, ct.LikedNum, ct.CreatorName, ct.Portrait)
 		if err != nil {
@@ -122,9 +122,9 @@ func CollectInfoDB(id int) []Notes {
 }
 
 // 从数据库获得某用户点赞的笔记信息
-func LikeInfoDB(id int) []Notes {
+func LikeInfoDB(id int) []Note {
 
-	var collects []Notes
+	var collects []Note
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
 	from noteInfo n, userInfo u, favorTable c
 	where c.userAct = ? and c.favorNoteId=n.noteId and n.creatorAccount = u.userAccount`
@@ -135,7 +135,7 @@ func LikeInfoDB(id int) []Notes {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var ct Notes
+		var ct Note
 		err := rows.Scan(&ct.NoteID, &ct.Title, &ct.Cover, &ct.CreatorID, &ct.LikedNum, &ct.CreatorName, &ct.Portrait)
 		fmt.Println(ct.NoteID, ct.Title, ct.Cover, ct.CreatorID, ct.LikedNum, ct.CreatorName, ct.Portrait)
 		if err != nil {

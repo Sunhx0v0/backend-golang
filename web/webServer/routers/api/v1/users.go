@@ -15,9 +15,9 @@ import (
 
 type UsersInfo struct {
 	Infos    models.UserInfo `json:"userInfo"` // 用户信息，只有一条，不用数组
-	Notes    []models.Notes  `json:"notes"`    // 笔记，简要信息
-	Collects []models.Notes  `json:"collects"`
-	Likes    []models.Notes  `json:"likes"`
+	Notes    []models.Note   `json:"notes"`    // 笔记，简要信息
+	Collects []models.Note   `json:"collects"`
+	Likes    []models.Note   `json:"likes"`
 	IsHost   bool            `json:"isHost"` //是否页面主人
 }
 

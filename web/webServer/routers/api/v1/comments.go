@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 加载评论
+// 笔记页面加载评论
 func GetComments(c *gin.Context) {
 	var comments []models.Comment
 	var success bool
@@ -59,6 +59,7 @@ func PostComment(c *gin.Context) {
 	}
 }
 
+// 删除评论
 func CancleComment(c *gin.Context) {
 	var success bool
 	noteId, _ := strconv.Atoi(c.Param("noteId"))
@@ -82,6 +83,45 @@ func CancleComment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  400,
 			"error": err.Error(),
+		})
+	}
+}
+
+// 消息列表加载评论
+func MsgGetComments(c *gin.Context) {
+	var comments []models.Comment
+	var success bool
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	comments, success = models.GetCommentInfo(userId, 1)
+	if success {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    comments,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+			"data":    comments,
+		})
+	}
+}
+
+// 修改某条评论状态
+func ChangeCommentState(c *gin.Context) {
+	var success bool
+	commentId, _ := strconv.Atoi(c.Param("commentId"))
+	success = models.SetCommentState(commentId)
+	if success {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "评论状态修改失败",
 		})
 	}
 }
