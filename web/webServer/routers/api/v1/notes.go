@@ -125,6 +125,8 @@ func UploadNote(c *gin.Context) {
 			//先创建一个不含内容的笔记信息，后面再填上信息
 			fmt.Print("初始的笔记信息")
 			fmt.Println(newNote)
+			fmt.Printf("Tag里内容：%d", len(newNote.Tags))
+			fmt.Println(newNote.Tags)
 			ntID, success := models.NewNoteInfo(newNote)
 			if !success {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -174,8 +176,8 @@ func UploadNote(c *gin.Context) {
 			fmt.Println(newNote)
 			ok := models.ModifyNote(newNote)
 			//写入@信息
-			//ok1 := models.AddAtInfo(userId, ntID, newNote.AtInfos)
-			if ok {
+			ok1 := models.AddAtInfo(userId, ntID, newNote.AtInfos)
+			if ok && ok1 {
 				models.ChangeNoteNum(userId, 1)
 				c.JSON(http.StatusOK, gin.H{
 					"code":    200,

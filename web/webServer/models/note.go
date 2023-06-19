@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,19 +18,19 @@ type Note struct {
 
 // 笔记的详细信息
 type DetailNote struct {
-	NoteID     int       `json:"noteid" form:"noteid"`       // 笔记编号
-	CreatorID  int       `json:"creatorId" form:"creatorId"` // 作者编号
-	Title      string    `json:"title" form:"title"`
-	Body       string    `json:"body" form:"body"`
-	Picnum     int       `json:"picnum" form:"picnum"`
-	Cover      string    `json:"cover" form:"cover"`
-	CreateTime time.Time `json:"createtime" form:"createtime"`
-	UpdateTime time.Time `json:"updatetime" form:"updatetime"`
-	Tags       []string  `json:"tags" form:"tags"`
-	Location   string    `json:"location" form:"location"`
-	AtUserID   int       `json:"atuserid" form:"atuserid"`
-	LikedNum   int       `json:"likedNum" form:"likedNum"` // 点赞数
-	AtInfos    []AtInfo  `json:"atInfo" form:"atInfo"`
+	NoteID     int        `json:"noteid" form:"noteid"`       // 笔记编号
+	CreatorID  int        `json:"creatorId" form:"creatorId"` // 作者编号
+	Title      string     `json:"title" form:"title"`
+	Body       string     `json:"body" form:"body"`
+	Picnum     int        `json:"picnum" form:"picnum"`
+	Cover      string     `json:"cover" form:"cover"`
+	CreateTime string     `json:"createtime" form:"createtime"`
+	UpdateTime string     `json:"updatetime" form:"updatetime"`
+	Tags       [11]string `json:"tags" form:"tags"`
+	Location   string     `json:"location" form:"location"`
+	AtUserID   int        `json:"atuserid" form:"atuserid"`
+	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数
+	AtInfos    []AtInfo   `json:"atInfos" form:"atInfos"`
 }
 
 type detailNote struct {
@@ -126,10 +125,10 @@ func GetFlwedNotes(userId int) (notes []Note, ok bool) {
 // 存入新上传的笔记信息
 func NewNoteInfo(nn DetailNote) (int, bool) {
 	sqlstr := `INSERT INTO noteInfo
-	(creatorAccount, cover, title, body, createTime, updateTime, location, atUserId, likeNum)
+	(creatorAccount, cover, title, body, createTime, updateTime, location, atUserId)
 	VALUES
-	(?,?,?,?,?,?,?,?,?,?)`
-	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Cover, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime, nn.Location, nn.AtUserID, nn.LikedNum)
+	(?,?,?,?,?,?,?,?)`
+	ret, err := db.Exec(sqlstr, nn.CreatorID, nn.Cover, nn.Title, nn.Body, nn.CreateTime, nn.UpdateTime, nn.Location, nn.AtUserID)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
 		return -1, false
@@ -205,8 +204,10 @@ func SpecificNote(noteid int) detailNote {
 			var err detailNote
 			return err
 		}
-		N.NoteInfo.CreateTime, _ = time.ParseInLocation("2000-01-01 24:00:00", createTimestring, time.Local)
-		N.NoteInfo.UpdateTime, _ = time.ParseInLocation("2000-01-01 24:00:00", updateTimestring, time.Local)
+		N.NoteInfo.CreateTime = createTimestring
+		N.NoteInfo.UpdateTime = updateTimestring
+		// N.NoteInfo.CreateTime, _ = time.ParseInLocation("2000-01-01 24:00:00", createTimestring, time.Local)
+		// N.NoteInfo.UpdateTime, _ = time.ParseInLocation("2000-01-01 24:00:00", updateTimestring, time.Local)
 	}
 	//再找图片信息
 	sqlStr2 := "select picUrl from pictureLibrary where noteID = ?"
