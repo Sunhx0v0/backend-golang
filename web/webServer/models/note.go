@@ -205,8 +205,8 @@ func SpecificNote(noteid int) detailNote {
 			var err detailNote
 			return err
 		}
-		N.NoteInfo.CreateTime, _ = time.Parse("2000-01-01 24:00:00", createTimestring)
-		N.NoteInfo.UpdateTime, _ = time.Parse("2000-01-01 24:00:00", updateTimestring)
+		N.NoteInfo.CreateTime, _ = time.ParseInLocation("2000-01-01 24:00:00", createTimestring, time.Local)
+		N.NoteInfo.UpdateTime, _ = time.ParseInLocation("2000-01-01 24:00:00", updateTimestring, time.Local)
 	}
 	//再找图片信息
 	sqlStr2 := "select picUrl from pictureLibrary where noteID = ?"
