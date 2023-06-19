@@ -25,17 +25,17 @@ type UserInfo struct {
 	CollectNum   int64  `json:"collectNum"`   // 收藏数
 	FansNum      int64  `json:"fansNum"`
 	FollowNum    int64  `json:"followNum"`    // 关注数
-	Gender       string `json:"gender "`      // 性别
+	Gender       string `json:"gender"`       // 性别
 	Introduction string `json:"introduction"` // 简介
 	LikedNum     int64  `json:"likedNum"`     // 被点赞数量
 	Mail         string `json:"mail"`
-	NoteNum      int64  `json:"noteNum "`
+	NoteNum      int64  `json:"noteNum"`
 	Password     string `json:"password"`
 	PhoneNumber  string `json:"phoneNumber"`
 	Portrait     string `json:"portrait"` // 头像
 	RegistTime   string `json:"registTime"`
 	UserID       int64  `json:"userAccount"`
-	UserName     string `json:"userName "`
+	UserName     string `json:"userName"`
 }
 
 // 用户可修改信息

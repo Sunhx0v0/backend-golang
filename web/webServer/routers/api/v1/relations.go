@@ -22,7 +22,7 @@ func LikeNote(c *gin.Context) {
 		success = models.NewLike(likeInfo, noteId)
 		if success {
 			//将该笔记点赞数加一
-			models.ChangeNoteLikes(noteId, 1)
+			//models.ChangeNoteLikes(noteId, 1)
 			//将该笔记作者点赞数加一
 			models.ChangeUserLikes(noteId, 1)
 			c.JSON(http.StatusOK, gin.H{
@@ -55,7 +55,7 @@ func CancelLike(c *gin.Context) {
 		success = models.DeleteLike(likeInfo, noteId)
 		if success {
 			//将该笔记点赞数减一
-			models.ChangeNoteLikes(noteId, -1)
+			//models.ChangeNoteLikes(noteId, -1)
 			//将该笔记作者点赞数减一
 			models.ChangeUserLikes(noteId, -1)
 			c.JSON(http.StatusOK, gin.H{
@@ -154,9 +154,9 @@ func GetFollowUser(c *gin.Context) {
 // 	userId, _ := strconv.Atoi(c.Param("userId"))
 // }
 
-func FollowHandler(c *gin.Context) {
-	//数据库修改是否成功
-	var success bool
-	userId, _ := strconv.Atoi(c.Param("userId"))
+// func FollowHandler(c *gin.Context) {
+// 	//数据库修改是否成功
+// 	var success bool
+// 	userId, _ := strconv.Atoi(c.Param("userId"))
 
-}
+// }
