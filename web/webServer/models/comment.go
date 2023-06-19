@@ -59,6 +59,7 @@ func NewComment(nc Comment, noteId int) bool {
 	return true
 }
 
+//删除评论信息
 func DeleteComment(commentId int) bool {
 	sqlstr := "DELETE FROM commentInfo WHERE commentId=?"
 	ret, err := db.Exec(sqlstr, commentId)

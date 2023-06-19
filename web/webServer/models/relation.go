@@ -18,6 +18,12 @@ type CollectInfo struct {
 	CollectNoteID int `json:"collectNoteId"`
 }
 
+// @用户信息
+type AtInfo struct {
+	AtName     string `json:"atName"`
+	AtLocation string `json:"atLocation"`
+}
+
 // 根据笔记编号获取作者账号
 func NoteToUser(noteId int) int {
 	var userId int
@@ -106,5 +112,36 @@ func DeleteCollect(dclt CollectInfo, noteId int) bool {
 
 // 获取关注用户
 func GetFollows() bool {
+	return true
+}
+
+// 写入某篇笔记的@信息
+func AddAtInfo(userId, noteId int, atinfos []AtInfo) bool {
+	sqlstr := "INSERT INTO atTable (userAct, noteId, atUserName, atLocation) VALUES (?,?,?,?)"
+	for _, atItem := range atinfos {
+		_, err := db.Exec(sqlstr, userId, atItem.AtName, atItem.AtLocation)
+		if err != nil {
+			fmt.Printf("@信息insert failed, err:%v\n", err)
+			return false
+		}
+	}
+	return true
+}
+
+// 删除某篇笔记的@信息
+func DeleteAtInfo(noteId int) bool {
+	sqlstr := "DELETE from atTable WHERE noteId=?"
+	ret, err := db.Exec(sqlstr, noteId)
+	if err != nil {
+		fmt.Printf("@信息delete failed, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("@信息get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("@信息 delete success, affected rows:%d\n", n)
 	return true
 }

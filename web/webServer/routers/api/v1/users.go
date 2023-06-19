@@ -26,7 +26,8 @@ type ModifiedInfo struct {
 	IsHost bool                  `json:"isHost"`   //是否页面主人
 }
 
-func GetUserInfo(c *gin.Context) { //显示用户界面全部信息
+// 显示用户界面全部信息
+func GetUserInfo(c *gin.Context) {
 	var info UsersInfo
 	userID, _ := strconv.Atoi(c.Param("userId"))
 	fmt.Println("用户ID:", userID)
@@ -46,7 +47,8 @@ func GetUserInfo(c *gin.Context) { //显示用户界面全部信息
 	})
 }
 
-func ModifyUserInfo(c *gin.Context) { //用户修改个人信息
+// 用户修改个人信息
+func ModifyUserInfo(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Param("userId"))
 	fmt.Println("用户ID:", userID)
 	// 新声明的可修改信息的结构体

@@ -39,6 +39,8 @@ func PostComment(c *gin.Context) {
 	if err := c.ShouldBind(&newComment); err == nil {
 		success = models.NewComment(newComment, noteId)
 		if success {
+			//将该笔记点赞数加一
+			models.ChangeNoteComments(noteId, 1)
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
 				"message": "评论成功！",
@@ -59,11 +61,13 @@ func PostComment(c *gin.Context) {
 
 func CancleComment(c *gin.Context) {
 	var success bool
-	// noteId, _ := strconv.Atoi(c.Param("noteId"))
+	noteId, _ := strconv.Atoi(c.Param("noteId"))
 	var comment models.Comment
 	if err := c.ShouldBind(&comment); err == nil {
 		success = models.DeleteComment(int(comment.CommentID))
 		if success {
+			//将该笔记点赞数加一
+			models.ChangeNoteComments(noteId, -1)
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
 				"message": "评论删除成功！",
