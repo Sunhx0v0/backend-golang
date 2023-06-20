@@ -44,12 +44,12 @@ func GinJWTMiddlewareInit(jwtAuthorizator IAuthorizator) (userMiddleware *jwt.Gi
 			if err := c.ShouldBind(&loginVals); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
-			userName := loginVals.Username
+			phoneNumber := loginVals.PhoneNumber
 			password := loginVals.Password
 
-			if models.CheckUser(userName, password) {
+			if models.CheckUser(phoneNumber, password) {
 				return &models.User{
-					UserName: userName,
+					PhoneNumber: phoneNumber,
 				}, nil
 			}
 

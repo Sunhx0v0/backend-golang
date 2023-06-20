@@ -78,7 +78,7 @@ func Register(c *gin.Context) { // 注册
 	//返回结果
 	//发放token
 	token, err := webjwt.ReleaseToken(requestUser.PhoneNumber)
-	if err != nil {
+	if err != nil { // token发放失败
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"code": 500,
 			"data": nil,

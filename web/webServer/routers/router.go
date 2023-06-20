@@ -18,7 +18,7 @@ func InitRouter() *gin.Engine {
 	r.Use(cors.CorsMiddleware())
 
 	// gin.SetMode(setting.RunMode)
-	var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{})
+	var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
 	r.POST("/login", userMiddleware.LoginHandler)
 	//404 handler
 	r.NoRoute(userMiddleware.MiddlewareFunc(), func(c *gin.Context) {

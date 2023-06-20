@@ -191,11 +191,11 @@ func ChangeNoteNum(userId, option int) {
 }
 
 // 登录验证（简易版）
-func CheckUser(userName, password string) bool {
+func CheckUser(phoneNumber, password string) bool {
 	//用户的登录信息
 	var buser LoginInfo
-	sqlstr := "select userAccount from userInfo where userName=? and password=?"
-	err := db.QueryRow(sqlstr, userName, password).Scan(&buser.UserID)
+	sqlstr := "select userAccount from userInfo where phoneNumber=? and password=?"
+	err := db.QueryRow(sqlstr, phoneNumber, password).Scan(&buser.UserID)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
 		return false

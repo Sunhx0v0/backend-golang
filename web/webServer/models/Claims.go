@@ -1,14 +1,14 @@
 package models
 
 type LoginInfo struct {
-	Password string `json:"password"` // 密码
-	UserID   int64  `json:"userId"`   // 用户编号
-	Username string `json:"userName"` // 用户名
+	Password    string `json:"password"`    // 密码
+	UserID      int64  `json:"userId"`      // 用户编号
+	PhoneNumber string `json:"phoneNumber"` // 手机号
 }
 
 type User struct { //登录验证
-	UserName  string
-	UserClaim int //用户声明，
+	PhoneNumber string
+	UserClaim   int //用户声明，
 }
 
 // type Claims struct {

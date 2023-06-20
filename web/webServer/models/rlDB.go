@@ -21,19 +21,13 @@ func IsTelephoneExists(PhoneNumber string) bool { // 查找手机号是否存在
 	from userinfo 
 	where phoneNumber = ?`
 	err := db.QueryRow(sqlStr, PhoneNumber).Scan(&userID)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
-func CreateUser(registInfo Regist, userID int, registTime string) { // 创建用户
+func CreateUser(registInfo Regist, userID int, registTime string) bool { // 创建用户
 	sqlStr := `insert into userinfo(userName, password, gender,portrait,introduction,birthday,phoneNumber,mail,userAccount,registTime) values(?,?,?,?,?,?,?,?,?,?)`
 	_, err := db.Exec(sqlStr, registInfo.UserName, registInfo.Password, registInfo.Gender, registInfo.Portrait, registInfo.Introduction, registInfo.Birthday, registInfo.PhoneNumber, registInfo.Mail, userID, registTime)
-	if err != nil {
-		return
-	}
-	return
+	return err == nil
 }
 
 func SecretCorrect(PhoneNumber string, password string) bool { // 判断密码是否正确
@@ -43,10 +37,10 @@ func SecretCorrect(PhoneNumber string, password string) bool { // 判断密码�
 	var pwd string
 	err := db.QueryRow(sqlStr, PhoneNumber).Scan(&pwd)
 	if err != nil {
-		return false
+		return false // 找不到密码
 	}
 	if pwd != password {
-		return false
+		return false // 密码错误
 	}
 	return true
 }
