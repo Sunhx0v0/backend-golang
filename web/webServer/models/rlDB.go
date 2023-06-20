@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -25,8 +27,9 @@ func IsTelephoneExists(PhoneNumber string) bool { // 查找手机号是否存在
 }
 
 func CreateUser(registInfo Regist, userID int, registTime string) bool { // 创建用户
-	sqlStr := `insert into userinfo(userName, password, gender,portrait,introduction,birthday,phoneNumber,mail,userAccount,registTime) values(?,?,?,?,?,?,?,?,?,?)`
-	_, err := db.Exec(sqlStr, registInfo.UserName, registInfo.Password, registInfo.Gender, registInfo.Portrait, registInfo.Introduction, registInfo.Birthday, registInfo.PhoneNumber, registInfo.Mail, userID, registTime)
+	sqlStr := `insert into userinfo(userName, password, gender,portrait,introduction,birthday,phoneNumber,mail,userAccount,registTime,uA) values(?,?,?,?,?,?,?,?,?,?,?)` // 历史遗留问题，正版可以去掉uA，其实就是userAccount
+	_, err := db.Exec(sqlStr, registInfo.UserName, registInfo.Password, registInfo.Gender, registInfo.Portrait, registInfo.Introduction, registInfo.Birthday, registInfo.PhoneNumber, registInfo.Mail, userID, registTime, userID)
+	fmt.Println(err)
 	return err == nil
 }
 

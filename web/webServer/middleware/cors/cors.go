@@ -30,7 +30,7 @@ import (
 // 	}
 // }
 
-func CorsMiddleware() gin.HandlerFunc {
+func CorsMiddleware() gin.HandlerFunc { // 用于跨区域连接的中间件
 	return func(c *gin.Context) {
 		//请求方法
 		method := c.Request.Method

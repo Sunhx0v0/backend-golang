@@ -73,27 +73,33 @@ func Register(c *gin.Context) { // 注册
 	// }
 
 	//把上述的数据存入数据库，从而创建新用户
-	models.CreateUser(requestUser, userID, registTime)
-
-	//返回结果
-	//发放token
-	token, err := webjwt.ReleaseToken(requestUser.PhoneNumber)
-	if err != nil { // token发放失败
+	if !models.CreateUser(requestUser, userID, registTime) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"code": 500,
 			"data": nil,
-			"msg":  "系统异常",
+			"msg":  "数据库写入失败",
 		})
-		log.Printf("token generate error: %v", err)
-		return
-	}
+	} else {
+		//返回结果
+		//发放token
+		token, err := webjwt.ReleaseToken(requestUser.PhoneNumber)
+		if err != nil { // token发放失败
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"code": 500,
+				"data": nil,
+				"msg":  "系统异常",
+			})
+			log.Printf("token generate error: %v", err)
+			return
+		}
 
-	//返回结果
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": token,
-		"msg":  "注册成功",
-	})
+		//返回结果
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"data": token, // data中存放token
+			"msg":  "注册成功",
+		})
+	}
 }
 
 func Login(c *gin.Context) {

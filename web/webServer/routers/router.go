@@ -12,10 +12,13 @@ func InitRouter() *gin.Engine {
 	// 新建一个没有任何默认中间件的路由
 	r := gin.New()
 
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
+	r.POST("/register", v1.Register) // 注册
+
+	//使用Use（）方法向路由器添加一些中间件功能。
+	r.Use(gin.Logger())   //第一个中间件函数是gin.Logger（），它记录对控制台或文件的HTTP请求和响应。它帮助开发人员调试和监控应用程序的行为。
+	r.Use(gin.Recovery()) //第二个中间件函数是gin.Recovery（），它可以从请求处理过程中发生的任何死机中恢复。它确保服务器不会因意外错误而崩溃，并返回错误响应。
 	// 使用CorsMiddleware()中间件来进行跨域连接
-	r.Use(cors.CorsMiddleware())
+	r.Use(cors.CorsMiddleware()) //最后，它添加了一个名为CORS.CorsMiddleware（）的第三方CORS中间件。该中间件允许跨源资源共享（CORS），使运行在不同域上的客户端JavaScript应用程序能够访问
 
 	// gin.SetMode(setting.RunMode)
 	var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
