@@ -20,8 +20,8 @@ type CollectInfo struct {
 
 // @用户信息
 type AtInfo struct {
-	AtName     string `json:"atName"`
-	AtLocation string `json:"atLocation"`
+	AtName     string `json:"atName" form:"atName"`
+	AtLocation string `json:"atLocation" form:"atLocation"`
 }
 
 // 根据笔记编号获取作者账号

@@ -1,6 +1,8 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // 评论信息
 type Comment struct {
@@ -10,17 +12,30 @@ type Comment struct {
 	CommentTime     string `json:"commentTime"`     // 评论时间
 	Content         string `json:"content"`         // 评论内容
 	Portrait        string `json:"portrait"`        // 用户头像
+	State           int    `json:"state"`           //是否已读
 }
 
 // 获取评论
-func GetCommentInfo(noteId int) (comments []Comment, ok bool) {
+func GetCommentInfo(Id, option int) (comments []Comment, ok bool) {
+	//option字段用来判断是笔记获取评论还是消息获取评论
 	ok = true
-	sqlstr := `SELECT c.commentId, c.commentatorId, c.content, c.commentTime, u.userName, u.portrait
+	var sqlstr string
+	//笔记中获取评论
+	notesql := `SELECT c.commentId, c.commentatorId, c.content, c.commentTime, c.state, u.userName, u.portrait
 	FROM commentInfo c, userInfo u
 	WHERE c.noteID = ? AND c.commentatorId = u.userAccount`
-	rows, err := db.Query(sqlstr, noteId)
+	//消息列表中获取评论
+	messagesql := `SELECT c.commentId, c.commentatorId, c.content, c.commentTime, c.state, u.userName, u.portrait
+	FROM commentInfo c, userInfo u, noteInfo n
+	WHERE u.userAccount=? AND u.userAccount=n.creatorAccount AND c.noteID = n.noteId`
+	if option == 0 {
+		sqlstr = notesql
+	} else {
+		sqlstr = messagesql
+	}
+	rows, err := db.Query(sqlstr, Id)
 	if err != nil {
-		fmt.Printf("query failed, err:%v\n", err)
+		fmt.Printf("评论query failed, err:%v\n", err)
 		ok = false
 		return
 	}
@@ -30,9 +45,9 @@ func GetCommentInfo(noteId int) (comments []Comment, ok bool) {
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var cmt Comment
-		err := rows.Scan(&cmt.CommentID, &cmt.CommentatorID, &cmt.Content, &cmt.CommentTime, &cmt.CommentatorName, &cmt.Portrait)
+		err := rows.Scan(&cmt.CommentID, &cmt.CommentatorID, &cmt.Content, &cmt.CommentTime, &cmt.CommentatorName, &cmt.State, &cmt.Portrait)
 		if err != nil {
-			fmt.Printf("scan failed, err:%v\n", err)
+			fmt.Printf("评论scan failed, err:%v\n", err)
 			ok = false
 			return
 		}
@@ -59,7 +74,7 @@ func NewComment(nc Comment, noteId int) bool {
 	return true
 }
 
-//删除评论信息
+// 删除评论信息
 func DeleteComment(commentId int) bool {
 	sqlstr := "DELETE FROM commentInfo WHERE commentId=?"
 	ret, err := db.Exec(sqlstr, commentId)
@@ -74,5 +89,23 @@ func DeleteComment(commentId int) bool {
 		return false
 	}
 	fmt.Printf("评论信息 delete success, affected rows:%d\n", n)
+	return true
+}
+
+// 把某条评论设为已读
+func SetCommentState(commentId int) bool {
+	sqlstr := "UPDATE commentInfo SET state=0 WHERE commentId=?"
+	ret, err := db.Exec(sqlstr, commentId)
+	if err != nil {
+		fmt.Printf("评论状态update failed, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("评论状态get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("评论状态修改编号：%d\n", n)
 	return true
 }

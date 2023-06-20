@@ -50,14 +50,14 @@ func InitRouter() *gin.Engine {
 		//获取特定笔记（搜索/标签）
 		r.GET("/search/:keyword", v1.GetSpecificNotes)
 		//获取关注人的笔记
-		//r.GET("/:userId/follow", v1.GetFollowedNotes)
+		r.GET("/:userId/follow", v1.GetFollowedNotes)
 
 		// 获取用户界面的信息
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)
 		// 用户修改个人信息
 		r.PUT("/:userId/PersonalView", v1.ModifyUserInfo)
 		//上传笔记
-		//r.POST("/:userId/publish", v1.UploadNote)
+		r.POST("/:userId/publish", v1.UploadNote)
 		//用户删除笔记
 		r.DELETE("/:userId/publish/:noteId", v1.DeleteNote)
 
@@ -73,35 +73,19 @@ func InitRouter() *gin.Engine {
 		//取消点赞
 		r.DELETE("/explore/:noteId/like", v1.CancelLike)
 		//获取笔记详细内容
-		//r.GET("/explore/:noteid", v1.NoteDetailHandler)
+		r.GET("/explore/:noteid", v1.NoteDetailHandler)
 		//收藏某篇笔记
 		r.POST("/explore/:noteId/collect", v1.CollectNote)
 		//取消收藏某篇笔记
 		r.DELETE("/explore/:noteId/collect", v1.CancleCollect)
 
 		// 关注用户
-		//r.POST("/:userId/PersonalView/follow", v1.FollowHandler)
-		// //vue获取table信息
-		// apiv1.GET("/table/list", v1.GetArticles)
-		// //获取标签列表
-		// apiv1.GET("/tags", v1.GetTags)
-		// //新建标签
-		// apiv1.POST("/tags", v1.AddTag)
-		// //更新指定标签
-		// apiv1.PUT("/tags/:id", v1.EditTag)
-		// //删除指定标签
-		// apiv1.DELETE("/tags/:id", v1.DeleteTag)
+		r.POST("/:userId/PersonalView/follow", v1.FollowHandler)
 
-		// //获取文章列表
-		// apiv1.GET("/articles", v1.GetArticles)
-		// //获取指定文章
-		// apiv1.GET("/articles/:id", v1.GetArticle)
-		// //新建文章
-		// apiv1.POST("/articles", v1.AddArticle)
-		// //更新指定文章
-		// apiv1.PUT("/articles/:id", v1.EditArticle)
-		// //删除指定文章
-		// apiv1.DELETE("/articles/:id", v1.DeleteArticle)
+		//获取评论消息列表
+		r.GET("/messages/:userId/comments", v1.MsgGetComments)
+		//把评论设置为已读
+		r.PUT("/messages/:userId/comments/:commentId", v1.ChangeCommentState)
 	}
 
 	return r

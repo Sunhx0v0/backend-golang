@@ -65,41 +65,42 @@ func GetSpecificNotes(c *gin.Context) {
 	}
 }
 
-// func NoteDetailHandler(c *gin.Context) {
-// 	noteid, _ := strconv.Atoi(c.Param("noteid"))
-// 	data := models.SpecificNote(noteid)
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"code":    200,
-// 		"message": "success",
-// 		"data":    data,
-// 	})
-// 	// c.HTML(http.StatusOK, "server/templates/users_test/index.html", gin.H{
-// 	// 	"title": "users/index",
-// 	// })
-// }
+// 获取笔记详细内容
+func NoteDetailHandler(c *gin.Context) {
+	noteid, _ := strconv.Atoi(c.Param("noteid"))
+	data := models.SpecificNote(noteid)
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "success",
+		"data":    data,
+	})
+	// c.HTML(http.StatusOK, "server/templates/users_test/index.html", gin.H{
+	// 	"title": "users/index",
+	// })
+}
 
 // 获取关注的人的笔记
-// func GetFollowedNotes(c *gin.Context) {
-// 	var data Data
-// 	var OK bool
-// 	//判断是否登录，还要再加判断的函数
-// 	data.IsLogin = false
-// 	userId, _ := strconv.Atoi(c.Param("userId"))
-// 	data.Notes, OK = models.GetFlwedNotes(userId)
-// 	if OK {
-// 		c.JSON(http.StatusOK, gin.H{
-// 			"code":    200,
-// 			"message": "success",
-// 			"data":    data,
-// 		})
-// 	} else {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"code":    400,
-// 			"message": "fail",
-// 			"data":    data,
-// 		})
-// 	}
-// }
+func GetFollowedNotes(c *gin.Context) {
+	var data Data
+	var OK bool
+	//判断是否登录，还要再加判断的函数
+	data.IsLogin = false
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	data.Notes, OK = models.GetFlwedNotes(userId)
+	if OK {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    data,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+			"data":    data,
+		})
+	}
+}
 
 // 上传笔记
 func UploadNote(c *gin.Context) {
@@ -118,9 +119,15 @@ func UploadNote(c *gin.Context) {
 
 		//新声明新笔记的结构体
 		var newNote models.DetailNote
+		fmt.Print("最初的笔记信息")
+		fmt.Println(newNote)
 		if err := c.ShouldBind(&newNote); err == nil {
 			newNote.CreatorID = userId
 			//先创建一个不含内容的笔记信息，后面再填上信息
+			fmt.Print("初始的笔记信息")
+			fmt.Println(newNote)
+			fmt.Printf("Tag里内容：%d", len(newNote.Tags))
+			fmt.Println(newNote.Tags)
 			ntID, success := models.NewNoteInfo(newNote)
 			if !success {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -166,6 +173,8 @@ func UploadNote(c *gin.Context) {
 			newNote.NoteID = ntID
 			newNote.Picnum = len(files)
 			//写入笔记的全部信息
+			fmt.Print("完整的笔记信息")
+			fmt.Println(newNote)
 			ok := models.ModifyNote(newNote)
 			//写入@信息
 			ok1 := models.AddAtInfo(userId, ntID, newNote.AtInfos)
@@ -177,7 +186,7 @@ func UploadNote(c *gin.Context) {
 				})
 			} else {
 				//如果上传失败，就把空的信息删掉
-				models.DeleteNote(userId)
+				models.DeleteNoteInfo(userId)
 				models.DeletePic(ntID)
 				models.DeleteAtInfo(ntID)
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -217,7 +226,7 @@ func DeleteNote(c *gin.Context) {
 			return
 		}
 	}
-	if models.DeletePic(noteId) && models.DeleteNote(noteId) {
+	if models.DeletePic(noteId) && models.DeleteNoteInfo(noteId) {
 		models.ChangeNoteNum(userId, 0)
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,

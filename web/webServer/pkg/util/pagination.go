@@ -1,10 +1,11 @@
 package util
 
 import (
+	"webServer/pkg/setting"
+
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
-
-	"gin-vue/pkg/setting"
+	//"gin-vue/pkg/setting"
 )
 
 func GetPage(c *gin.Context) int {
