@@ -65,41 +65,42 @@ func GetSpecificNotes(c *gin.Context) {
 	}
 }
 
-// func NoteDetailHandler(c *gin.Context) {
-// 	noteid, _ := strconv.Atoi(c.Param("noteid"))
-// 	data := models.SpecificNote(noteid)
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"code":    200,
-// 		"message": "success",
-// 		"data":    data,
-// 	})
-// 	// c.HTML(http.StatusOK, "server/templates/users_test/index.html", gin.H{
-// 	// 	"title": "users/index",
-// 	// })
-// }
+// 获取笔记详细内容
+func NoteDetailHandler(c *gin.Context) {
+	noteid, _ := strconv.Atoi(c.Param("noteid"))
+	data := models.SpecificNote(noteid)
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "success",
+		"data":    data,
+	})
+	// c.HTML(http.StatusOK, "server/templates/users_test/index.html", gin.H{
+	// 	"title": "users/index",
+	// })
+}
 
 // 获取关注的人的笔记
-// func GetFollowedNotes(c *gin.Context) {
-// 	var data Data
-// 	var OK bool
-// 	//判断是否登录，还要再加判断的函数
-// 	data.IsLogin = false
-// 	userId, _ := strconv.Atoi(c.Param("userId"))
-// 	data.Notes, OK = models.GetFlwedNotes(userId)
-// 	if OK {
-// 		c.JSON(http.StatusOK, gin.H{
-// 			"code":    200,
-// 			"message": "success",
-// 			"data":    data,
-// 		})
-// 	} else {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"code":    400,
-// 			"message": "fail",
-// 			"data":    data,
-// 		})
-// 	}
-// }
+func GetFollowedNotes(c *gin.Context) {
+	var data Data
+	var OK bool
+	//判断是否登录，还要再加判断的函数
+	data.IsLogin = false
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	data.Notes, OK = models.GetFlwedNotes(userId)
+	if OK {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    data,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+			"data":    data,
+		})
+	}
+}
 
 // 上传笔记
 func UploadNote(c *gin.Context) {
