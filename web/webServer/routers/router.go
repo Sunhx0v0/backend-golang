@@ -84,6 +84,8 @@ func InitRouter() *gin.Engine {
 
 		// 关注用户
 		r.POST("/:userId/PersonalView/follow", v1.FollowHandler)
+		// 取关用户
+		r.DELETE("/:userId/PersonalView/follow", v1.CancelFollowHandler)
 
 		//获取评论消息列表
 		r.GET("/messages/:userId/comments", v1.MsgGetComments)

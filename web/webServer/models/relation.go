@@ -24,6 +24,11 @@ type AtInfo struct {
 	AtLocation string `json:"atLocation" form:"atLocation"`
 }
 
+// 关注信息
+type FollowRequest struct {
+	FollowID string `json:"followID"` // 关注的人的id
+}
+
 // 根据笔记编号获取作者账号
 func NoteToUser(noteId int) int {
 	var userId int
@@ -144,4 +149,88 @@ func DeleteAtInfo(noteId int) bool {
 	}
 	fmt.Printf("@信息 delete success, affected rows:%d\n", n)
 	return true
+}
+
+// 增加关注信息
+func AddFollowInfo(useraccount int, account int) bool {
+	sqlstr := "insert into followTable (userAct,followAct) values (?,?)"
+	ret, err := db.Exec(sqlstr, useraccount, account)
+	if err != nil {
+		fmt.Printf("insert failed, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("收藏信息get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("收藏信息 delete success, affected rows:%d\n", n)
+	return true
+}
+
+// 删除关注信息
+func DelFollowInfo(useraccount int, account int) bool {
+	sqlstr := "delete from followTable where userAct=? and followAct=?"
+	ret, err := db.Exec(sqlstr, useraccount, account)
+	if err != nil {
+		fmt.Printf("insert failed, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("收藏信息get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("收藏信息 delete success, affected rows:%d\n", n)
+	return true
+}
+
+// 修改关注数
+func ChangeUserFollows(userId, option int) {
+	var sqlstr string
+	addnum := `UPDATE userInfo set followNum =followNum+1 WHERE userAccount = ?`
+	reducenum := `UPDATE userInfo set followNum =followNum-1 WHERE userACCount = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("关注数update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("关注数get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("关注数修改编号：%d\n", n)
+}
+
+// 修改粉丝数
+func ChangeUserFans(userId, option int) {
+	var sqlstr string
+	addnum := `UPDATE userInfo set fansNum =fansNum+1 WHERE userAccount = ?`
+	reducenum := `UPDATE userInfo set fansNum =fansNum-1 WHERE userAccount = ?`
+	if option == 1 {
+		sqlstr = addnum
+	} else {
+		sqlstr = reducenum
+	}
+	ret, err := db.Exec(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("粉丝数update failed, err:%v\n", err)
+		return
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("粉丝数get RowsAffected failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("粉丝数修改编号：%d\n", n)
 }
