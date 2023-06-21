@@ -29,10 +29,16 @@ type DetailNote struct {
 	Tags       [11]string `json:"tags" form:"tags"`
 	Location   string     `json:"location" form:"location"`
 	AtUserID   int        `json:"atuserid" form:"atuserid"`
-	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数
+	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数  待定
 	AtName     []string   `json:"atName" form:"atName"`
 	AtLocation []string   `json:"atLocation" form:"atLocation"`
-	//AtInfos    []AtInfo   `json:"atInfos" form:"atInfos"`
+	//AtInfos    []AtInfo   `json:"atInfos" form:"atInfos"`   // 待定
+
+	IsCollected bool `json:"isCollected"` // 是否收藏该篇
+	IsFollowed  bool `json:"isFollowed"`  // 是否关注该作者
+	IsLiked     bool `json:"isLiked"`     // 是否点赞该篇
+	CollectNum  int  `json:"collectNum"`  // 收藏数
+
 }
 
 type detailNote struct {
@@ -182,7 +188,7 @@ func DeleteNoteInfo(ntid int) bool {
 	return true
 }
 
-// 查询特定笔记
+// 返回笔记详情页
 func SpecificNote(noteid int) detailNote {
 	var N detailNote
 	//先找笔记信息
@@ -230,9 +236,9 @@ func SpecificNote(noteid int) detailNote {
 		N.PicsOfNote = append(N.PicsOfNote, picurl)
 	}
 
-	// 	// 关闭rows释放持有的数据库链接
-	// 	defer rows2.Close()
-
+	// 关闭rows释放持有的s数据库链接
+	defer rows2.Close()
+	N.NoteInfo.CollectNum = GetNoteCollectNum(noteid)
 	return N
 }
 
@@ -306,4 +312,50 @@ func ChangeNoteComments(noteId, option int) {
 		return
 	}
 	fmt.Printf("笔记评论数修改编号：%d\n", n)
+}
+
+// 获取笔记收藏数
+func GetNoteCollectNum(noteid int) int {
+	var collectNum int = 0
+	sqlStr := "select * from collectTable where collectNoteId = ?"
+	rows, err := db.Query(sqlStr, noteid)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return 0
+	}
+	for rows.Next() {
+		collectNum += 1
+	}
+	defer rows.Close()
+	return collectNum
+}
+
+// 判断是否收藏该笔记
+func IsCollected(userid, noteid int) bool {
+	sqlStr := "select * from collectTable where userAct=? and collectNoteId = ?"
+	rows, err := db.Query(sqlStr, userid, noteid)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return false
+	}
+	for rows.Next() {
+		return true
+	}
+	defer rows.Close()
+	return false
+}
+
+// 判断是否收藏该笔记
+func IsLiked(userid, noteid int) bool {
+	sqlStr := "select * from favorTable where userAct=? and favorNoteId = ?"
+	rows, err := db.Query(sqlStr, userid, noteid)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return false
+	}
+	for rows.Next() {
+		return true
+	}
+	defer rows.Close()
+	return false
 }

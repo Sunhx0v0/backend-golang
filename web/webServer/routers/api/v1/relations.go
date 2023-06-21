@@ -162,11 +162,62 @@ func GetFollowUser(c *gin.Context) {
 	}
 }
 
+// 关注用户
 func FollowHandler(c *gin.Context) {
-	//数据库修改是否成功
-	// var success bool
-	// userId, _ := strconv.Atoi(c.Param("userId"))
+	var success bool
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	var account models.FollowRequest
+	//用shouldBind获取前端传来的json数据，只要json名相同就能读取
+	if err := c.ShouldBind(&account); err == nil {
+		id, _ := strconv.Atoi(account.FollowID)
+		//向数据库中插入关注信息
+		success = models.AddFollowInfo(userId, id)
+		if success {
+			//将用户关注数加一
+			models.ChangeUserFollows(userId, 1)
+			//将被关注用户粉丝数加一
+			models.ChangeUserFans(userId, 1)
+			c.JSON(http.StatusOK, gin.H{
+				"code":    200,
+				"message": "关注成功！",
+			})
+		}
+	} else {
+		//json数据获取失败
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":  40,
+			"error": err.Error(),
+		})
+	}
+}
 
+// 取消关注
+func CancelFollowHandler(c *gin.Context) {
+	var success bool
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	var account models.FollowRequest
+	//用shouldBind获取前端传来的json数据，只要json名相同就能读取
+	if err := c.ShouldBind(&account); err == nil {
+		id, _ := strconv.Atoi(account.FollowID)
+		//向数据库中插入关注信息
+		success = models.DelFollowInfo(userId, id)
+		if success {
+			//将用户关注数加一
+			models.ChangeUserFollows(userId, -1)
+			//将被关注用户粉丝数加一
+			models.ChangeUserFans(userId, -1)
+			c.JSON(http.StatusOK, gin.H{
+				"code":    200,
+				"message": "取关成功！",
+			})
+		}
+	} else {
+		//json数据获取失败
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":  400,
+			"error": err.Error(),
+		})
+	}
 }
 
 // 消息列表加载点赞信息
