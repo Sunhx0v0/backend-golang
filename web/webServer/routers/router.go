@@ -12,7 +12,8 @@ func InitRouter() *gin.Engine {
 	// 新建一个没有任何默认中间件的路由
 	r := gin.New()
 
-	r.POST("/register", v1.Register) // 注册
+	// 注册
+	r.POST("/register", v1.Register)
 
 	//使用Use（）方法向路由器添加一些中间件功能。
 	r.Use(gin.Logger())   //第一个中间件函数是gin.Logger（），它记录对控制台或文件的HTTP请求和响应。它帮助开发人员调试和监控应用程序的行为。
@@ -49,9 +50,9 @@ func InitRouter() *gin.Engine {
 	apiv1.Use(userMiddleware.MiddlewareFunc())
 	{
 		//获取笔记（全部）
-		r.GET("/explore", v1.GetAllNotes)
+		r.GET("/explore", v1.GetAllNotes) //
 		//获取特定笔记（搜索/标签）
-		r.GET("/search/:keyword", v1.GetSpecificNotes)
+		r.GET("/search/:keyword", v1.GetSpecificNotes) //
 		//获取关注人的笔记
 		r.GET("/:userId/follow", v1.GetFollowedNotes)
 
@@ -65,7 +66,7 @@ func InitRouter() *gin.Engine {
 		r.DELETE("/:userId/publish/:noteId", v1.DeleteNote)
 
 		//加载某篇笔记的评论
-		r.GET("/comment/:noteId", v1.GetComments)
+		r.GET("/comment/:noteId", v1.GetComments) //
 		//发表评论
 		r.POST("/comment/:noteId", v1.PostComment)
 		//删除评论
@@ -76,7 +77,7 @@ func InitRouter() *gin.Engine {
 		//取消点赞
 		r.DELETE("/explore/:noteId/like", v1.CancelLike)
 		//获取笔记详细内容
-		r.GET("/explore/:noteid", v1.NoteDetailHandler)
+		r.GET("/explore/:noteid", v1.NoteDetailHandler) //
 		//收藏某篇笔记
 		r.POST("/explore/:noteId/collect", v1.CollectNote)
 		//取消收藏某篇笔记

@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
@@ -16,7 +15,6 @@ func Register(c *gin.Context) { // 注册
 	var requestUser = models.Regist{}
 	c.Bind(&requestUser) // 前端转入
 
-	userID := 10086 //自动生成并存放到数据库
 	registTime := time.Now().Format("2006-01-02 15:04:05")
 
 	name := requestUser.UserName
@@ -24,20 +22,19 @@ func Register(c *gin.Context) { // 注册
 	password := requestUser.Password
 
 	//数据验证
-	fmt.Println(telephone, "手机号码长度", len(telephone))
 	if len(telephone) != 11 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "手机号必须为11位",
+			"code":    422,
+			"data":    nil,
+			"message": "手机号必须为11位",
 		})
 		return
 	}
 	if len(password) < 6 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "密码不能少于6位",
+			"code":    422,
+			"data":    nil,
+			"message": "密码不能少于6位",
 		})
 		return
 	}
@@ -54,9 +51,9 @@ func Register(c *gin.Context) { // 注册
 	//判断手机号码是否存在
 	if models.IsTelephoneExists(telephone) { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "用户已经存在",
+			"code":    422,
+			"data":    nil,
+			"message": "用户已经存在",
 		})
 		return
 	}
@@ -73,11 +70,11 @@ func Register(c *gin.Context) { // 注册
 	// }
 
 	//把上述的数据存入数据库，从而创建新用户
-	if !models.CreateUser(requestUser, userID, registTime) {
+	if !models.CreateUser(requestUser, registTime) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 500,
-			"data": nil,
-			"msg":  "数据库写入失败",
+			"code":    500,
+			"data":    nil,
+			"message": "数据库写入失败",
 		})
 	} else {
 		//返回结果
@@ -85,9 +82,9 @@ func Register(c *gin.Context) { // 注册
 		token, err := webjwt.ReleaseToken(requestUser.PhoneNumber)
 		if err != nil { // token发放失败
 			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"code": 500,
-				"data": nil,
-				"msg":  "系统异常",
+				"code":    500,
+				"data":    nil,
+				"message": "系统异常",
 			})
 			log.Printf("token generate error: %v", err)
 			return
@@ -95,9 +92,9 @@ func Register(c *gin.Context) { // 注册
 
 		//返回结果
 		c.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"data": token, // data中存放token
-			"msg":  "注册成功",
+			"code":    200,
+			"data":    token, // data中存放token
+			"message": "注册成功",
 		})
 	}
 }
@@ -110,20 +107,19 @@ func Login(c *gin.Context) {
 	telephone := requestUser.PhoneNumber
 	password := requestUser.Password
 	//数据验证
-	fmt.Println(telephone, "手机号码长度", len(telephone))
 	if len(telephone) != 11 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "手机号必须为11位",
+			"code":    422,
+			"data":    nil,
+			"message": "手机号必须为11位",
 		})
 		return
 	}
 	if len(password) < 6 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "密码不能少于6位",
+			"code":    422,
+			"data":    nil,
+			"message": "密码不能少于6位",
 		})
 		return
 	}
@@ -131,9 +127,9 @@ func Login(c *gin.Context) {
 	//判断手机号码是否存在
 	if !models.IsTelephoneExists(telephone) { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg":  "用户不存在",
+			"code":    400,
+			"data":    nil,
+			"message": "用户不存在",
 		})
 		return
 	}
@@ -150,9 +146,9 @@ func Login(c *gin.Context) {
 
 	if !models.SecretCorrect(telephone, password) { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg":  "密码错误", // 前端提示信息
+			"code":    400,
+			"data":    nil,
+			"message": "密码错误", // 前端提示信息
 		})
 		return
 	}
@@ -161,9 +157,9 @@ func Login(c *gin.Context) {
 	token, err := webjwt.ReleaseToken(requestUser.PhoneNumber)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 500,
-			"data": nil,
-			"msg":  "系统异常",
+			"code":    500,
+			"data":    nil,
+			"message": "系统异常",
 		})
 		log.Printf("token generate error: %v", err)
 		return
@@ -171,8 +167,8 @@ func Login(c *gin.Context) {
 
 	//返回结果
 	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": token,
-		"msg":  "登录成功",
+		"code":    200,
+		"data":    token,
+		"message": "登录成功",
 	})
 }
