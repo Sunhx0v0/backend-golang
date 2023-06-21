@@ -18,6 +18,7 @@ type Data struct {
 	IsLogin bool          `json:"isLogin"` // 是否登录
 	Notes   []models.Note `json:"notes"`   // 笔记，简要信息
 }
+type Note models.Note
 
 // 获取笔记（全部）
 func GetAllNotes(c *gin.Context) {
@@ -67,8 +68,12 @@ func GetSpecificNotes(c *gin.Context) {
 
 // 获取笔记详细内容
 func NoteDetailHandler(c *gin.Context) {
+	userid, _ := strconv.Atoi(c.Param("userId"))
 	noteid, _ := strconv.Atoi(c.Param("noteid"))
 	data := models.SpecificNote(noteid)
+	data.NoteInfo.IsCollected = models.IsCollected(userid, noteid)
+	data.NoteInfo.IsFollowed = models.IsFollowed(userid, noteid)
+	data.NoteInfo.IsLiked = models.IsLiked(userid, noteid)
 	c.JSON(http.StatusOK, gin.H{
 		"code":    200,
 		"message": "success",
@@ -172,12 +177,19 @@ func UploadNote(c *gin.Context) {
 			}
 			newNote.NoteID = ntID
 			newNote.Picnum = len(files)
+			newAt := make([]models.AtInfo, len(newNote.AtName), 50)
+			for i := 0; i < len(newNote.AtName); i++ {
+				newAt[i].AtName = newNote.AtName[i]
+			}
+			for j := 0; j < len(newNote.AtLocation); j++ {
+				newAt[j].AtLocation = newNote.AtLocation[j]
+			}
 			//写入笔记的全部信息
 			fmt.Print("完整的笔记信息")
 			fmt.Println(newNote)
 			ok := models.ModifyNote(newNote)
 			//写入@信息
-			ok1 := models.AddAtInfo(userId, ntID, newNote.AtInfos)
+			ok1 := models.AddAtInfo(userId, ntID, newAt)
 			if ok && ok1 {
 				models.ChangeNoteNum(userId, 1)
 				c.JSON(http.StatusOK, gin.H{
@@ -260,3 +272,13 @@ func Getfile(userid, noteid int) ([]string, error) {
 	}
 	return files, nil
 }
+
+// // 获取关注的人的笔记
+// func GetFollowersNotesHandler(ctx gin.Context) {
+// 	// 解析用户id
+// 	userid, _ := strconv.Atoi(ctx.Param("userId"))
+// 	// 获取该用户的关注人列表
+// 	var follows []int = models.GetFollowers(userid)
+// 	// 根据(批量)用户id查找笔记
+
+// }
