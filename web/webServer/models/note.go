@@ -226,7 +226,7 @@ func SpecificNote(noteid int) detailNote {
 	}
 	for rows2.Next() {
 		var picurl string
-		err := rows.Scan(&picurl)
+		err := rows2.Scan(&picurl)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
 			var err detailNote
