@@ -189,7 +189,7 @@ func UploadNote(c *gin.Context) {
 			fmt.Println(newNote)
 			ok := models.ModifyNote(newNote)
 			//写入@信息
-			ok1 := models.AddAtInfo(userId, ntID, newAt)
+			ok1 := models.AddAtInfo(userId, ntID, 1, newAt)
 			if ok && ok1 {
 				models.ChangeNoteNum(userId, 1)
 				c.JSON(http.StatusOK, gin.H{

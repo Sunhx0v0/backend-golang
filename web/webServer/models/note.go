@@ -31,7 +31,7 @@ type DetailNote struct {
 	AtUserID   int        `json:"atuserid" form:"atuserid"`
 	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数  待定
 	AtName     []string   `json:"atName" form:"atName"`
-	AtLocation []string   `json:"atLocation" form:"atLocation"`
+	AtLocation []int      `json:"atLocation" form:"atLocation"`
 
 	IsCollected bool `json:"isCollected"` // 是否收藏该篇
 	IsFollowed  bool `json:"isFollowed"`  // 是否关注该作者

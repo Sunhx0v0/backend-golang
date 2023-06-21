@@ -6,13 +6,15 @@ import (
 
 // 评论信息
 type Comment struct {
-	CommentatorID   int64  `json:"commentatorId"`   // 评论者账号
-	CommentatorName string `json:"commentatorName"` // 评论者
-	CommentID       int64  `json:"commentId"`       // 评论编号
-	CommentTime     string `json:"commentTime"`     // 评论时间
-	Content         string `json:"content"`         // 评论内容
-	Portrait        string `json:"portrait"`        // 用户头像
-	State           int    `json:"state"`           //是否已读
+	CommentatorID   int64    `json:"commentatorId"`   // 评论者账号
+	CommentatorName string   `json:"commentatorName"` // 评论者
+	CommentID       int64    `json:"commentId"`       // 评论编号
+	CommentTime     string   `json:"commentTime"`     // 评论时间
+	Content         string   `json:"content"`         // 评论内容
+	Portrait        string   `json:"portrait"`        // 用户头像
+	State           int      `json:"state"`           //是否已读
+	AtName          []string `json:"atName"`          //@人的名字
+	AtLocation      []int    `json:"atLocation"`      //@的位置
 }
 
 // 获取评论
@@ -57,21 +59,21 @@ func GetCommentInfo(Id, option int) (comments []Comment, ok bool) {
 }
 
 // 插入评论信息
-func NewComment(nc Comment, noteId int) bool {
+func NewComment(nc Comment, noteId int) (int, bool) {
 	sqlstr := `INSERT INTO commentInfo (noteID, commentatorId, content, commentTime) VALUES (?,?,?,?)`
 	ret, err := db.Exec(sqlstr, noteId, nc.CommentatorID, nc.Content, nc.CommentTime)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
-		return false
+		return -1, false
 	}
 	// 新插入数据的id
 	theID, err := ret.LastInsertId()
 	if err != nil {
 		fmt.Printf("get lastinsert ID failed, err:%v\n", err)
-		return false
+		return -1, false
 	}
 	fmt.Printf("评论成功！评论在数据库行数：%d\n", theID)
-	return true
+	return int(theID), true
 }
 
 // 删除评论信息
