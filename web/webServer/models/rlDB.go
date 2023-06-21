@@ -7,14 +7,13 @@ import (
 )
 
 type Regist struct { // 注册用的结构体
-	Birthday     string  `json:"birthday"`
-	Gender       string  `json:"gender "`      // 性别
-	Introduction *string `json:"introduction"` // 简介
-	Mail         string  `json:"mail"`
-	Password     string  `json:"password"`
-	PhoneNumber  string  `json:"phoneNumber"`
-	Portrait     string  `json:"portrait"` // 头像
-	UserName     string  `json:"userName "`
+	Birthday     string `json:"birthday"`
+	Gender       string `json:"gender"`       // 性别
+	Introduction string `json:"introduction"` // 简介
+	Password     string `json:"password"`
+	PhoneNumber  string `json:"phoneNumber"`
+	Portrait     string `json:"portrait"` // 头像
+	UserName     string `json:"userName"`
 }
 
 func IsTelephoneExists(PhoneNumber string) bool { // 查找手机号是否存在
@@ -26,9 +25,9 @@ func IsTelephoneExists(PhoneNumber string) bool { // 查找手机号是否存在
 	return err == nil
 }
 
-func CreateUser(registInfo Regist, userID int, registTime string) bool { // 创建用户
-	sqlStr := `insert into userinfo(userName, password, gender,portrait,introduction,birthday,phoneNumber,mail,userAccount,registTime,uA) values(?,?,?,?,?,?,?,?,?,?,?)` // 历史遗留问题，正版可以去掉uA，其实就是userAccount
-	_, err := db.Exec(sqlStr, registInfo.UserName, registInfo.Password, registInfo.Gender, registInfo.Portrait, registInfo.Introduction, registInfo.Birthday, registInfo.PhoneNumber, registInfo.Mail, userID, registTime, userID)
+func CreateUser(registInfo Regist, registTime string) bool { // 创建用户
+	sqlStr := `insert into userinfo(userName, password, gender,portrait,introduction,birthday,phoneNumber,registTime) values(?,?,?,?,?,?,?,?)`
+	_, err := db.Exec(sqlStr, registInfo.UserName, registInfo.Password, registInfo.Gender, registInfo.Portrait, registInfo.Introduction, registInfo.Birthday, registInfo.PhoneNumber, registTime)
 	fmt.Println(err)
 	return err == nil
 }
@@ -50,10 +49,10 @@ func SecretCorrect(PhoneNumber string, password string) bool { // 判断密码�
 
 func SelectAll(phone string) Regist {
 	var rg Regist
-	sqlStr := `select userName, password, gender,portrait,introduction,birthday,phoneNumber,mail
+	sqlStr := `select userName, password, gender,portrait,introduction,birthday,phoneNumber
 	from userinfo 
 	where phoneNumber = ?`
-	err := db.QueryRow(sqlStr, phone).Scan(&rg.UserName, &rg.Password, &rg.Gender, &rg.Portrait, &rg.Introduction, &rg.Birthday, &rg.PhoneNumber, &rg.Mail)
+	err := db.QueryRow(sqlStr, phone).Scan(&rg.UserName, &rg.Password, &rg.Gender, &rg.Portrait, &rg.Introduction, &rg.Birthday, &rg.PhoneNumber)
 	if err != nil {
 		return rg
 	}

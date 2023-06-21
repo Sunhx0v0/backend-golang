@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 	"webServer/middleware/webjwt"
 	"webServer/models"
@@ -12,33 +13,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 注册
-func Register(c *gin.Context) {
-	var requestUser = models.Regist{}
-	c.Bind(&requestUser) // 前端转入
+func Register(c *gin.Context) { // 注册
+	var requestUser models.Regist
 
-	userID := 10086 //自动生成并存放到数据库
 	registTime := time.Now().Format("2006-01-02 15:04:05")
+
+	requestUser.Birthday = c.PostForm("birthday") // 从前端获取数据
+	requestUser.Gender = c.PostForm("gender")
+	requestUser.Introduction = c.PostForm("introduction")
+	requestUser.Password = c.PostForm("password")
+	requestUser.PhoneNumber = c.PostForm("phoneNumber")
+	requestUser.UserName = c.PostForm("userName")
 
 	name := requestUser.UserName
 	telephone := requestUser.PhoneNumber
 	password := requestUser.Password
 
 	//数据验证
-	fmt.Println(telephone, "手机号码长度", len(telephone))
 	if len(telephone) != 11 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "手机号必须为11位",
+			"code":    422,
+			"data":    nil,
+			"message": "手机号必须为11位",
 		})
 		return
 	}
 	if len(password) < 6 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "密码不能少于6位",
+			"code":    422,
+			"data":    nil,
+			"message": "密码不能少于6位",
 		})
 		return
 	}
@@ -55,30 +59,29 @@ func Register(c *gin.Context) {
 	//判断手机号码是否存在
 	if models.IsTelephoneExists(telephone) { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "用户已经存在",
+			"code":    422,
+			"data":    nil,
+			"message": "用户已经存在",
 		})
 		return
 	}
 
-	//密码加密
-	// hasePassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	// if err != nil {
-	// 	c.JSON(http.StatusUnprocessableEntity, gin.H{
-	// 		"code": 500,
-	// 		"data": nil,
-	// 		"msg":  "加密失败",
-	// 	})
-	// 	return
-	// }
+	file, _ := c.FormFile("file")
+	log.Println(file.Filename)                                                                      //输出文件名
+	timeStamp := time.Now().Unix()                                                                  // 时间戳
+	PicName := fmt.Sprintf("head_%s_%s_%s", telephone, strconv.Itoa(int(timeStamp)), file.Filename) // 文件名
+	dst := fmt.Sprintf("images/%s", PicName)                                                        //路径
+	// 上传文件至指定的完整文件路径
+	c.SaveUploadedFile(file, dst) // 图片
+	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+	requestUser.Portrait = PicName // 将图片目录保存在数据库
 
 	//把上述的数据存入数据库，从而创建新用户
-	if !models.CreateUser(requestUser, userID, registTime) {
+	if !models.CreateUser(requestUser, registTime) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 500,
-			"data": nil,
-			"msg":  "数据库写入失败",
+			"code":    500,
+			"data":    nil,
+			"message": "数据库写入失败",
 		})
 	} else {
 		//返回结果
@@ -86,9 +89,9 @@ func Register(c *gin.Context) {
 		token, err := webjwt.ReleaseToken(requestUser.PhoneNumber)
 		if err != nil { // token发放失败
 			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"code": 500,
-				"data": nil,
-				"msg":  "系统异常",
+				"code":    500,
+				"data":    nil,
+				"message": "系统异常",
 			})
 			log.Printf("token generate error: %v", err)
 			return
@@ -96,9 +99,9 @@ func Register(c *gin.Context) {
 
 		//返回结果
 		c.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"data": token, // data中存放token
-			"msg":  "注册成功",
+			"code":    200,
+			"data":    token, // data中存放token
+			"message": "注册成功",
 		})
 	}
 }
@@ -111,20 +114,19 @@ func Login(c *gin.Context) {
 	telephone := requestUser.PhoneNumber
 	password := requestUser.Password
 	//数据验证
-	fmt.Println(telephone, "手机号码长度", len(telephone))
 	if len(telephone) != 11 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "手机号必须为11位",
+			"code":    422,
+			"data":    nil,
+			"message": "手机号必须为11位",
 		})
 		return
 	}
 	if len(password) < 6 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 422,
-			"data": nil,
-			"msg":  "密码不能少于6位",
+			"code":    422,
+			"data":    nil,
+			"message": "密码不能少于6位",
 		})
 		return
 	}
@@ -132,28 +134,18 @@ func Login(c *gin.Context) {
 	//判断手机号码是否存在
 	if !models.IsTelephoneExists(telephone) { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg":  "用户不存在",
+			"code":    400,
+			"data":    nil,
+			"message": "用户不存在",
 		})
 		return
 	}
 
-	// //判断密码是否正确
-	// if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"code": 400,
-	// 		"data": nil,
-	// 		"msg":  "密码错误",
-	// 	})
-	// 	return
-	// }
-
 	if !models.SecretCorrect(telephone, password) { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 400,
-			"data": nil,
-			"msg":  "密码错误", // 前端提示信息
+			"code":    400,
+			"data":    nil,
+			"message": "密码错误", // 前端提示信息
 		})
 		return
 	}
@@ -162,9 +154,9 @@ func Login(c *gin.Context) {
 	token, err := webjwt.ReleaseToken(requestUser.PhoneNumber)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"code": 500,
-			"data": nil,
-			"msg":  "系统异常",
+			"code":    500,
+			"data":    nil,
+			"message": "系统异常",
 		})
 		log.Printf("token generate error: %v", err)
 		return
@@ -172,8 +164,17 @@ func Login(c *gin.Context) {
 
 	//返回结果
 	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": token,
-		"msg":  "登录成功",
+		"code":    200,
+		"data":    token,
+		"message": "登录成功",
 	})
 }
+
+// // 从上下文中获取用户信息
+// func Info(ctx *gin.Context) {
+// 	user, _ := ctx.Get("user")
+// 	ctx.JSON(http.StatusOK, gin.H{
+// 		"code": 200,
+// 		"data": gin.H{"user": dto.ToUserDto(user.(model.User))},
+// 	})
+// }

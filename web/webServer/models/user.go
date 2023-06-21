@@ -43,9 +43,7 @@ type ModifiableInfo struct {
 	Birthday     string `json:"birthday"`
 	Gender       string `json:"gender "`      // 性别
 	Introduction string `json:"introduction"` // 简介
-	Mail         string `json:"mail"`
 	Password     string `json:"password"`
-	PhoneNumber  string `json:"phoneNumber"`
 	Portrait     string `json:"portrait"` // 头像
 	UserName     string `json:"userName "`
 }
@@ -147,11 +145,12 @@ func LikeInfoDB(id int) []Note {
 	return collects
 }
 
-func ModifyInfo(beforeInfo ModifiableInfo, id int) bool { // 修改用户的信息并存放到数据库中
-	sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, mail = ?, password = ?, phoneNumber = ?, portrait = ?, userName = ? 
+// 修改用户的信息并存放到数据库中
+func ModifyInfo(beforeInfo ModifiableInfo, id int) bool {
+	sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, password = ?, portrait = ?, userName = ? 
 	where userAccount = ?`
 	birTime, _ := time.ParseInLocation("2006-01-02", beforeInfo.Birthday, time.Local) // string转time
-	result, err := db.Exec(sqlStr, birTime, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Mail, beforeInfo.Password, beforeInfo.PhoneNumber, beforeInfo.Portrait, beforeInfo.UserName, id)
+	result, err := db.Exec(sqlStr, birTime, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Password, beforeInfo.Portrait, beforeInfo.UserName, id)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
 		return false
@@ -300,4 +299,18 @@ func IsFollowed(userid, account int) bool {
 		return true
 	}
 	return false
+}
+
+// 查找用户手机号
+func FindPhone(id int) string { // 查找手机号是否存在
+	var phoneNumber string
+	sqlStr := `select phoneNumber
+	from userinfo 
+	where userAccount = ?`
+	err := db.QueryRow(sqlStr, id).Scan(&phoneNumber)
+	if err != nil {
+		return phoneNumber
+	} else {
+		return phoneNumber
+	}
 }
