@@ -58,17 +58,6 @@ func Register(c *gin.Context) { // 注册
 		return
 	}
 
-	//密码加密
-	// hasePassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	// if err != nil {
-	// 	c.JSON(http.StatusUnprocessableEntity, gin.H{
-	// 		"code": 500,
-	// 		"data": nil,
-	// 		"msg":  "加密失败",
-	// 	})
-	// 	return
-	// }
-
 	//把上述的数据存入数据库，从而创建新用户
 	if !models.CreateUser(requestUser, registTime) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -134,16 +123,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// //判断密码是否正确
-	// if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"code": 400,
-	// 		"data": nil,
-	// 		"msg":  "密码错误",
-	// 	})
-	// 	return
-	// }
-
 	if !models.SecretCorrect(telephone, password) { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"code":    400,
@@ -172,3 +151,12 @@ func Login(c *gin.Context) {
 		"message": "登录成功",
 	})
 }
+
+// // 从上下文中获取用户信息
+// func Info(ctx *gin.Context) {
+// 	user, _ := ctx.Get("user")
+// 	ctx.JSON(http.StatusOK, gin.H{
+// 		"code": 200,
+// 		"data": gin.H{"user": dto.ToUserDto(user.(model.User))},
+// 	})
+// }

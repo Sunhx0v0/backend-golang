@@ -15,11 +15,21 @@ func InitRouter() *gin.Engine {
 	// 注册
 	r.POST("/register", v1.Register)
 
+	//获取笔记（全部）
+	r.GET("/explore", v1.GetAllNotes)
+	//获取特定笔记（搜索/标签）
+	r.GET("/search/:keyword", v1.GetSpecificNotes)
+
+	//加载某篇笔记的评论
+	r.GET("/comment/:noteId", v1.GetComments)
+	//获取笔记详细内容
+	r.GET("/explore/:noteid", v1.NoteDetailHandler)
+
 	//使用Use（）方法向路由器添加一些中间件功能。
 	r.Use(gin.Logger())   //第一个中间件函数是gin.Logger（），它记录对控制台或文件的HTTP请求和响应。它帮助开发人员调试和监控应用程序的行为。
 	r.Use(gin.Recovery()) //第二个中间件函数是gin.Recovery（），它可以从请求处理过程中发生的任何死机中恢复。它确保服务器不会因意外错误而崩溃，并返回错误响应。
 	// 使用CorsMiddleware()中间件来进行跨域连接
-	r.Use(cors.CorsMiddleware()) //最后，它添加了一个名为CORS.CorsMiddleware（）的第三方CORS中间件。该中间件允许跨源资源共享（CORS），使运行在不同域上的客户端JavaScript应用程序能够访问
+	r.Use(cors.CorsMiddleware(), webjwt.AuthMiddleware()) //最后，它添加了一个名为CORS.CorsMiddleware（）的第三方CORS中间件。该中间件允许跨源资源共享（CORS），使运行在不同域上的客户端JavaScript应用程序能够访问
 
 	// gin.SetMode(setting.RunMode)
 	var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
@@ -37,6 +47,7 @@ func InitRouter() *gin.Engine {
 		// 刷新token
 		user.GET("/refresh_token", userMiddleware.RefreshHandler)
 	}
+	user.Use(webjwt.AuthMiddleware())
 
 	// api := r.Group("/user")
 	// api.Use(authMiddleware.MiddlewareFunc())
@@ -47,12 +58,9 @@ func InitRouter() *gin.Engine {
 
 	apiv1 := r.Group("/api/v1")
 	//使用userAuthorizator中间件，只有user权限的用户才能获取到接口
-	apiv1.Use(userMiddleware.MiddlewareFunc())
+	apiv1.Use(userMiddleware.MiddlewareFunc(), webjwt.AuthMiddleware()) // 使用token中间件
 	{
-		//获取笔记（全部）
-		r.GET("/explore", v1.GetAllNotes) //
-		//获取特定笔记（搜索/标签）
-		r.GET("/search/:keyword", v1.GetSpecificNotes) //
+
 		//获取关注人的笔记
 		r.GET("/:userId/follow", v1.GetFollowedNotes)
 
@@ -65,8 +73,6 @@ func InitRouter() *gin.Engine {
 		//用户删除笔记
 		r.DELETE("/:userId/publish/:noteId", v1.DeleteNote)
 
-		//加载某篇笔记的评论
-		r.GET("/comment/:noteId", v1.GetComments) //
 		//发表评论
 		r.POST("/comment/:noteId", v1.PostComment)
 		//删除评论
@@ -76,8 +82,7 @@ func InitRouter() *gin.Engine {
 		r.POST("/explore/:noteId/like", v1.LikeNote)
 		//取消点赞
 		r.DELETE("/explore/:noteId/like", v1.CancelLike)
-		//获取笔记详细内容
-		r.GET("/explore/:noteid", v1.NoteDetailHandler) //
+
 		//收藏某篇笔记
 		r.POST("/explore/:noteId/collect", v1.CollectNote)
 		//取消收藏某篇笔记
@@ -93,4 +98,8 @@ func InitRouter() *gin.Engine {
 	}
 
 	return r
+}
+
+func AuthMiddleware() {
+	panic("unimplemented")
 }
