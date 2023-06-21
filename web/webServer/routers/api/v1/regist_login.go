@@ -55,7 +55,7 @@ func Register(c *gin.Context) { // 注册
 		}
 		name = string(result)
 	}
-
+	requestUser.UserName = name
 	//判断手机号码是否存在
 	if models.IsTelephoneExists(telephone) { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{

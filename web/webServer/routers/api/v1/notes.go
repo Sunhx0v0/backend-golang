@@ -131,7 +131,7 @@ func UploadNote(c *gin.Context) {
 			//先创建一个不含内容的笔记信息，后面再填上信息
 			fmt.Print("初始的笔记信息")
 			fmt.Println(newNote)
-			fmt.Printf("Tag里内容：%d", len(newNote.Tags))
+			fmt.Printf("Tag里内容:%d", len(newNote.Tags))
 			fmt.Println(newNote.Tags)
 			ntID, success := models.NewNoteInfo(newNote)
 			if !success {
