@@ -285,8 +285,6 @@ func Getfile(userid, noteid int) ([]string, error) {
 
 // 获取走马灯的4个笔记
 func GetTops(c *gin.Context) {
-	// var success bool
-	// var notes []Note
 	notes, success := models.Tops()
 	if success {
 		c.JSON(http.StatusOK, gin.H{

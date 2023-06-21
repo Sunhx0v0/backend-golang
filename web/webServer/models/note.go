@@ -362,8 +362,8 @@ func IsLiked(userid, noteid int) bool {
 // 获取走马灯的笔记
 func Tops() (notes []Note, ok bool) {
 	ok = true
-	sqlStr := `select n.noteId, n.title, n.cover
-	from noteInfo
+	sqlStr := `SELECT noteId, title, cover
+	FROM noteInfo
 	ORDER By likeNum LIMIT 4`
 	rows, err := db.Query(sqlStr)
 	if err != nil {
