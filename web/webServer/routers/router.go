@@ -75,8 +75,10 @@ func InitRouter() *gin.Engine {
 		r.POST("/explore/:noteId/like", v1.LikeNote)
 		//取消点赞
 		r.DELETE("/explore/:noteId/like", v1.CancelLike)
+
 		//获取笔记详细内容
-		r.GET("/explore/:noteid", v1.NoteDetailHandler)
+		r.GET("/:userId/explore/:noteid", v1.NoteDetailHandler)
+
 		//收藏某篇笔记
 		r.POST("/explore/:noteId/collect", v1.CollectNote)
 		//取消收藏某篇笔记
@@ -86,6 +88,8 @@ func InitRouter() *gin.Engine {
 		r.POST("/:userId/PersonalView/follow", v1.FollowHandler)
 		// 取关用户
 		r.DELETE("/:userId/PersonalView/follow", v1.CancelFollowHandler)
+		// 获取关注的人的笔记
+		// r.GET("/:userId/follow", v1.GetFollowersNotesHandler)
 
 		//获取评论消息列表
 		r.GET("/messages/:userId/comments", v1.MsgGetComments)

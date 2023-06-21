@@ -256,3 +256,48 @@ func ChangeUserCollects(noteId, option int) {
 	}
 	fmt.Printf("收藏数增加的用户编号：%d\n", n)
 }
+
+// 获取用户关注列表
+func GetFollowers(userid int) []int {
+	var follows []int
+	sqlStr := `select followActfrom followTable 
+	where userAct = ?`
+	rows, err := db.Query(sqlStr, userid)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return nil
+	}
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
+
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		var account int
+		err := rows.Scan(&account)
+		if err != nil {
+			fmt.Printf("scan failed, err:%v\n", err)
+			return nil
+		}
+		follows = append(follows, account)
+	}
+
+	return follows
+}
+
+// 是否已经关注该用户
+func IsFollowed(userid, account int) bool {
+	sqlStr := `select * from followTable 
+	where userAct = ? and followAct=?`
+	rows, err := db.Query(sqlStr, userid, account)
+	if err != nil {
+		fmt.Printf("query failed, err:%v\n", err)
+		return false
+	}
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		return true
+	}
+	return false
+}
