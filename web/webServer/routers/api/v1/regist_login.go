@@ -1,9 +1,11 @@
 package v1
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 	"webServer/middleware/webjwt"
 	"webServer/models"
@@ -12,10 +14,16 @@ import (
 )
 
 func Register(c *gin.Context) { // 注册
-	var requestUser = models.Regist{}
-	c.Bind(&requestUser) // 前端转入
+	var requestUser models.Regist
 
 	registTime := time.Now().Format("2006-01-02 15:04:05")
+
+	requestUser.Birthday = c.PostForm("birthday") // 从前端获取数据
+	requestUser.Gender = c.PostForm("gender")
+	requestUser.Introduction = c.PostForm("introduction")
+	requestUser.Password = c.PostForm("password")
+	requestUser.PhoneNumber = c.PostForm("phoneNumber")
+	requestUser.UserName = c.PostForm("userName")
 
 	name := requestUser.UserName
 	telephone := requestUser.PhoneNumber
@@ -57,6 +65,16 @@ func Register(c *gin.Context) { // 注册
 		})
 		return
 	}
+
+	file, _ := c.FormFile("file")
+	log.Println(file.Filename)                                                                      //输出文件名
+	timeStamp := time.Now().Unix()                                                                  // 时间戳
+	PicName := fmt.Sprintf("head_%s_%s_%s", telephone, strconv.Itoa(int(timeStamp)), file.Filename) // 文件名
+	dst := fmt.Sprintf("images/%s", PicName)                                                        //路径
+	// 上传文件至指定的完整文件路径
+	c.SaveUploadedFile(file, dst) // 图片
+	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+	requestUser.Portrait = PicName // 将图片目录保存在数据库
 
 	//把上述的数据存入数据库，从而创建新用户
 	if !models.CreateUser(requestUser, registTime) {

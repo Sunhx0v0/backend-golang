@@ -56,11 +56,10 @@ func ModifyUserInfo(c *gin.Context) {
 	info.Infos.Birthday = c.PostForm("birthday") // 从前端获取数据
 	info.Infos.Gender = c.PostForm("gender")
 	info.Infos.Introduction = c.PostForm("introduction")
-	info.Infos.Mail = c.PostForm("mail")
 	info.Infos.Password = c.PostForm("password")
-	info.Infos.PhoneNumber = c.PostForm("phoneNumber")
 	info.Infos.UserName = c.PostForm("userName")
-	info.IsHost, _ = strconv.ParseBool(c.PostForm("isHost"))
+	isHost := c.PostForm("isHost")
+	info.IsHost, _ = strconv.ParseBool(isHost)
 
 	files, err := GetHeadfile(userID) // 获取头像文件信息
 	if err != nil {
@@ -73,11 +72,13 @@ func ModifyUserInfo(c *gin.Context) {
 		}
 	}
 
+	phone := models.FindPhone(userID) // 通过用户ID查找手机号
+
 	file, _ := c.FormFile("file")
-	log.Println(file.Filename)                                                                //输出文件名
-	timeStamp := time.Now().Unix()                                                            // 时间戳
-	name := fmt.Sprintf("head_%d_%s_%s", userID, strconv.Itoa(int(timeStamp)), file.Filename) // 文件名
-	dst := fmt.Sprintf("images/%s", name)                                                     //路径
+	log.Println(file.Filename)                                                               //输出文件名
+	timeStamp := time.Now().Unix()                                                           // 时间戳
+	name := fmt.Sprintf("head_%s_%s_%s", phone, strconv.Itoa(int(timeStamp)), file.Filename) // 文件名
+	dst := fmt.Sprintf("images/%s", name)                                                    //路径
 	// 上传文件至指定的完整文件路径
 	c.SaveUploadedFile(file, dst) // 图片
 	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))

@@ -7,13 +7,13 @@ import (
 )
 
 type Regist struct { // 注册用的结构体
-	Birthday     string  `json:"birthday"`
-	Gender       string  `json:"gender"`       // 性别
-	Introduction *string `json:"introduction"` // 简介
-	Password     string  `json:"password"`
-	PhoneNumber  string  `json:"phoneNumber"`
-	Portrait     string  `json:"portrait"` // 头像
-	UserName     string  `json:"userName"`
+	Birthday     string `json:"birthday"`
+	Gender       string `json:"gender"`       // 性别
+	Introduction string `json:"introduction"` // 简介
+	Password     string `json:"password"`
+	PhoneNumber  string `json:"phoneNumber"`
+	Portrait     string `json:"portrait"` // 头像
+	UserName     string `json:"userName"`
 }
 
 func IsTelephoneExists(PhoneNumber string) bool { // 查找手机号是否存在

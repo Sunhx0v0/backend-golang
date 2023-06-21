@@ -25,6 +25,9 @@ func InitRouter() *gin.Engine {
 	//获取笔记详细内容
 	r.GET("/explore/:noteid", v1.NoteDetailHandler)
 
+	// 用户修改个人信息
+	r.PUT("/:userId/PersonalView", v1.ModifyUserInfo)
+
 	//使用Use（）方法向路由器添加一些中间件功能。
 	r.Use(gin.Logger())   //第一个中间件函数是gin.Logger（），它记录对控制台或文件的HTTP请求和响应。它帮助开发人员调试和监控应用程序的行为。
 	r.Use(gin.Recovery()) //第二个中间件函数是gin.Recovery（），它可以从请求处理过程中发生的任何死机中恢复。它确保服务器不会因意外错误而崩溃，并返回错误响应。
@@ -66,8 +69,7 @@ func InitRouter() *gin.Engine {
 
 		// 获取用户界面的信息
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)
-		// 用户修改个人信息
-		r.PUT("/:userId/PersonalView", v1.ModifyUserInfo)
+
 		//上传笔记
 		r.POST("/:userId/publish", v1.UploadNote)
 		//用户删除笔记
