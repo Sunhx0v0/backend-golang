@@ -31,7 +31,8 @@ func InitRouter() *gin.Engine {
 
 	// gin.SetMode(setting.RunMode)
 	var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
-	r.POST("/login", userMiddleware.LoginHandler)
+	//r.POST("/login", userMiddleware.LoginHandler)
+	r.POST("/login", v1.Login)
 
 	// 使用CorsMiddleware()中间件来进行跨域连接
 	r.Use(cors.CorsMiddleware(), webjwt.AuthMiddleware()) //最后，它添加了一个名为CORS.CorsMiddleware（）的第三方CORS中间件。该中间件允许跨源资源共享（CORS），使运行在不同域上的客户端JavaScript应用程序能够访问
