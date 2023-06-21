@@ -29,9 +29,9 @@ export default {
     async save () {
       let res
       if (this.id) {
-        res = await this.$http.put('rest/admin/' + this.id, this.model)
+        res = await this.$AXIOS.put('rest/admin/' + this.id, this.model)
       } else {
-        res = await this.$http.post('rest/admin', this.model)
+        res = await this.$AXIOS.post('register', this.model)
       }
       console.log('en?', res)
       this.$router.push('/admins/list')
@@ -41,7 +41,7 @@ export default {
       })
     },
     async fetch () {
-      const res = await this.$http.get('rest/admins/' + this.id)
+      const res = await this.$AXIOS.get('rest/admins/' + this.id)
       this.model = res.data
     }
   },

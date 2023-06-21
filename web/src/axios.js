@@ -22,5 +22,15 @@ http.interceptors.response.use(res => {
   return Promise.reject(err)
 })
 
+// 使用axios的interceptors拦截器，将http调用时拦截
+http.interceptors.request.use(function (config) {
+  // 将token值传入请求头，"bearer + 空格"是代码规范，看到Bearer(持票人)大家就明白是对token的验证
+  config.headers.Authorization = 'bearer ' + localStorage.token
+  return config
+}, function (error) {
+  // 错误处理
+  return Promise.reject(error)
+})
+
 // 将文件变量导出，导出到main.js
 export default http

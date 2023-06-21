@@ -34,9 +34,9 @@ export default new Router({
       children: [
         {path: '/cate/home', component: HomeView},
         {path: '/cate/set', component: Cateset},
-        {path: '/admins/create', component: AdminSet},
-        {path: '/admins/edit/:id', component: AdminSet, props: true},
-        {path: '/admins/list', component: AdminList}
+        {path: '/admin/create', component: AdminSet},
+        {path: '/admin/edit/:id', component: AdminSet, props: true},
+        {path: '/admin/list', component: AdminList}
       ]
     }
   ]
