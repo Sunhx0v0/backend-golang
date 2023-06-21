@@ -32,7 +32,6 @@ type DetailNote struct {
 	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数  待定
 	AtName     []string   `json:"atName" form:"atName"`
 	AtLocation []string   `json:"atLocation" form:"atLocation"`
-	//AtInfos    []AtInfo   `json:"atInfos" form:"atInfos"`   // 待定
 
 	IsCollected bool `json:"isCollected"` // 是否收藏该篇
 	IsFollowed  bool `json:"isFollowed"`  // 是否关注该作者
@@ -227,7 +226,7 @@ func SpecificNote(noteid int) detailNote {
 	}
 	for rows2.Next() {
 		var picurl string
-		err := rows.Scan(&picurl)
+		err := rows2.Scan(&picurl)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
 			var err detailNote
@@ -358,4 +357,34 @@ func IsLiked(userid, noteid int) bool {
 	}
 	defer rows.Close()
 	return false
+}
+
+// 获取走马灯的笔记
+func Tops() (notes []Note, ok bool) {
+	ok = true
+	sqlStr := `SELECT noteId, title, cover
+	FROM noteInfo
+	ORDER By likeNum LIMIT 4`
+	rows, err := db.Query(sqlStr)
+	if err != nil {
+		ok = false
+		fmt.Printf("走马灯query failed, err:%v\n", err)
+		return notes, ok
+	}
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
+
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		var nt Note
+		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover)
+		if err != nil {
+			ok = false
+			fmt.Printf("走马灯scan failed, err:%v\n", err)
+			return notes, ok
+		}
+		fmt.Print(nt.NoteID)
+		notes = append(notes, nt)
+	}
+	return notes, ok
 }

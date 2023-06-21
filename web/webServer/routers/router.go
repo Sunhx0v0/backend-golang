@@ -67,6 +67,8 @@ func InitRouter() *gin.Engine {
 		r.GET("/:userId/follow/notes", v1.GetFollowedNotes)
 		//获取关注的人
 		r.GET("/userId/follow", v1.GetFollowUser)
+		//获取走马灯
+		r.GET("/explore/tops", v1.GetTops)
 
 		// 获取用户界面的信息
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)

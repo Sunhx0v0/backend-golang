@@ -49,7 +49,6 @@ func Register(c *gin.Context) { // 注册
 	if len(name) == 0 {
 		var letters = []byte("abcdefghijklmnopqrstuvwxyz") // 随机生成用户名
 		result := make([]byte, 10)
-
 		for i := range result {
 			result[i] = letters[rand.Intn(len(letters))]
 		}
