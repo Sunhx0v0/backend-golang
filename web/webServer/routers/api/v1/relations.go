@@ -144,7 +144,22 @@ func CancleCollect(c *gin.Context) {
 
 // 获取关注用户
 func GetFollowUser(c *gin.Context) {
-	// var success bool
+	var success bool
+	var follows []models.FollowInfo
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	follows, success = models.GetFollows(userId)
+	if success {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    follows,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+		})
+	}
 }
 
 func FollowHandler(c *gin.Context) {

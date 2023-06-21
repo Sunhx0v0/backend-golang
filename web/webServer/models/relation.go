@@ -36,6 +36,14 @@ type AtInfo struct {
 	AtLocation string `json:"atLocation" form:"atLocation"`
 }
 
+// 要显示的关注的人信息
+type FollowInfo struct {
+	FolInfoId int    `json:"folInfoId"`
+	FollowAct int    `json:"followAct"`
+	UserName  string `json:"userName"`
+	Portrait  string `json:"portrait"`
+}
+
 // 根据笔记编号获取作者账号
 func NoteToUser(noteId int) int {
 	var userId int
@@ -123,8 +131,31 @@ func DeleteCollect(dclt CollectInfo, noteId int) bool {
 }
 
 // 获取关注用户
-func GetFollows() bool {
-	return true
+func GetFollows(userId int) (follows []FollowInfo, ok bool) {
+	sqlstr := `SELECT f.folInfoId, f.followAct, u.userName, u.portrait
+	FROM followTable f, userInfo u
+	WHERE f.userAct=? AND f.followAct=u.userAccount `
+	rows, err := db.Query(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("获取关注用户query failed, err:%v\n", err)
+		ok = false
+		return
+	}
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
+
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		var fl FollowInfo
+		err := rows.Scan(&fl.FolInfoId, &fl.FollowAct, &fl.UserName, fl.Portrait)
+		if err != nil {
+			fmt.Printf("点赞scan failed, err:%v\n", err)
+			ok = false
+			return
+		}
+		follows = append(follows, fl)
+	}
+	return follows, ok
 }
 
 // 写入某篇笔记的@信息
