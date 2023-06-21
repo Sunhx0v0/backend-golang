@@ -6,9 +6,21 @@ import (
 
 // 点赞信息
 type LikeInfo struct {
-	FvID        int `json:"fvId"`
-	UserAct     int `json:"userAct"`
-	FavorNoteID int `json:"favorNoteId"`
+	FvID        int    `json:"fvId"`
+	UserAct     int    `json:"userAct"`
+	FavorNoteID int    `json:"favorNoteId"`
+	State       int    `json:"state"`
+	LikeTime    string `json:"likeTime"`
+}
+
+// 消息列表的笔记信息
+type LikeToShow struct {
+	LikeID   int    `json:"likeId"`
+	UserName string `json:"userName"`
+	Portrait string `json:"portrait"`
+	LikeTime string `json:"likeTime"`
+	NoteID   int    `json:"noteId"`
+	State    int    `json:"state"`
 }
 
 // 收藏信息
@@ -39,8 +51,8 @@ func NoteToUser(noteId int) int {
 
 // 插入点赞信息
 func NewLike(nl LikeInfo, noteId int) bool {
-	sqlstr := `INSERT INTO favorTable (userAct, favorNoteId) VALUES (?,?)`
-	ret, err := db.Exec(sqlstr, nl.UserAct, noteId)
+	sqlstr := `INSERT INTO favorTable (userAct, favorNoteId, fvTime) VALUES (?,?,?)`
+	ret, err := db.Exec(sqlstr, nl.UserAct, noteId, nl.LikeTime)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
 		return false
@@ -119,7 +131,7 @@ func GetFollows() bool {
 func AddAtInfo(userId, noteId int, atinfos []AtInfo) bool {
 	sqlstr := "INSERT INTO atTable (userAct, noteId, atUserName, atLocation) VALUES (?,?,?,?)"
 	for _, atItem := range atinfos {
-		_, err := db.Exec(sqlstr, userId, atItem.AtName, atItem.AtLocation)
+		_, err := db.Exec(sqlstr, userId, noteId, atItem.AtName, atItem.AtLocation)
 		if err != nil {
 			fmt.Printf("@信息insert failed, err:%v\n", err)
 			return false
@@ -144,4 +156,32 @@ func DeleteAtInfo(noteId int) bool {
 	}
 	fmt.Printf("@信息 delete success, affected rows:%d\n", n)
 	return true
+}
+
+// 消息列表获取点赞信息
+func GetLikeInfos(userId int) (likeInfos []LikeToShow, ok bool) {
+	sqlstr := `SELECT f.fvId, f.state, f.fvTime, u.userName, u.portrait
+	FROM favorTable f, userInfo u, noteInfo n
+	WHERE n.creatorAccount=? AND n.noteId=f.favorNoteId AND f.f.userAct=u.userAccount`
+	rows, err := db.Query(sqlstr, userId)
+	if err != nil {
+		fmt.Printf("点赞query failed, err:%v\n", err)
+		ok = false
+		return
+	}
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
+
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		var lk LikeToShow
+		err := rows.Scan(&lk.LikeID, &lk.State, &lk.LikeTime, &lk.UserName, &lk.Portrait)
+		if err != nil {
+			fmt.Printf("点赞scan failed, err:%v\n", err)
+			ok = false
+			return
+		}
+		likeInfos = append(likeInfos, lk)
+	}
+	return likeInfos, ok
 }

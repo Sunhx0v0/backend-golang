@@ -172,12 +172,19 @@ func UploadNote(c *gin.Context) {
 			}
 			newNote.NoteID = ntID
 			newNote.Picnum = len(files)
+			newAt := make([]models.AtInfo, len(newNote.AtName), 50)
+			for i := 0; i < len(newNote.AtName); i++ {
+				newAt[i].AtName = newNote.AtName[i]
+			}
+			for j := 0; j < len(newNote.AtLocation); j++ {
+				newAt[j].AtLocation = newNote.AtLocation[j]
+			}
 			//写入笔记的全部信息
 			fmt.Print("完整的笔记信息")
 			fmt.Println(newNote)
 			ok := models.ModifyNote(newNote)
 			//写入@信息
-			ok1 := models.AddAtInfo(userId, ntID, newNote.AtInfos)
+			ok1 := models.AddAtInfo(userId, ntID, newAt)
 			if ok && ok1 {
 				models.ChangeNoteNum(userId, 1)
 				c.JSON(http.StatusOK, gin.H{

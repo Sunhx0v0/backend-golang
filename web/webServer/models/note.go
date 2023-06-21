@@ -30,7 +30,9 @@ type DetailNote struct {
 	Location   string     `json:"location" form:"location"`
 	AtUserID   int        `json:"atuserid" form:"atuserid"`
 	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数
-	AtInfos    []AtInfo   `json:"atInfos" form:"atInfos"`
+	AtName     []string   `json:"atName" form:"atName"`
+	AtLocation []string   `json:"atLocation" form:"atLocation"`
+	//AtInfos    []AtInfo   `json:"atInfos" form:"atInfos"`
 }
 
 type detailNote struct {

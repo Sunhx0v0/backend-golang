@@ -153,3 +153,26 @@ func FollowHandler(c *gin.Context) {
 	// userId, _ := strconv.Atoi(c.Param("userId"))
 
 }
+
+// 消息列表加载点赞信息
+func MsgGetLikes(c *gin.Context) {
+	var success bool
+	var likes []models.LikeToShow
+	userId, _ := strconv.Atoi(c.Param("userId"))
+	likes, success = models.GetLikeInfos(userId)
+	if success {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "success",
+			"data":    likes,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "fail",
+			"data":    likes,
+		})
+	}
+}
+
+//获取关注的人

@@ -53,7 +53,9 @@ func InitRouter() *gin.Engine {
 		//获取特定笔记（搜索/标签）
 		r.GET("/search/:keyword", v1.GetSpecificNotes)
 		//获取关注人的笔记
-		r.GET("/:userId/follow", v1.GetFollowedNotes)
+		r.GET("/:userId/follow/notes", v1.GetFollowedNotes)
+		//获取关注的人
+		r.GET("/userId/follow")
 
 		// 获取用户界面的信息
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)
@@ -89,6 +91,10 @@ func InitRouter() *gin.Engine {
 		r.GET("/messages/:userId/comments", v1.MsgGetComments)
 		//把评论设置为已读
 		r.PUT("/messages/:userId/comments/:commentId", v1.ChangeCommentState)
+		//获取点赞消息列表
+		r.GET("/messages/:userId/likes")
+		//把点赞消息设置为已读
+		r.PUT("/messages/:userId/likes/:fvId")
 	}
 
 	return r

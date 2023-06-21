@@ -12,7 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Register(c *gin.Context) { // 注册
+// 注册
+func Register(c *gin.Context) {
 	var requestUser = models.Regist{}
 	c.Bind(&requestUser) // 前端转入
 
