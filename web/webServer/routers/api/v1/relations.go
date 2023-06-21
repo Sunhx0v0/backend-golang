@@ -189,5 +189,3 @@ func MsgGetLikes(c *gin.Context) {
 		})
 	}
 }
-
-//获取关注的人
