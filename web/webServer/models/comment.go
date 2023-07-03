@@ -99,7 +99,7 @@ func DeleteComment(commentId int) bool {
 
 // 把某条评论设为已读
 func SetCommentState(commentId int) bool {
-	sqlstr := "UPDATE commentInfo SET state=0 WHERE commentId=?"
+	sqlstr := "UPDATE commentInfo SET state=1 WHERE commentId=?"
 	ret, err := db.Exec(sqlstr, commentId)
 	if err != nil {
 		fmt.Printf("评论状态update failed, err:%v\n", err)

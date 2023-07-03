@@ -197,7 +197,7 @@ func DeleteAtInfo(noteId int) bool {
 }
 
 // 消息列表获取点赞信息
-func GetLikeInfos(userId int) (likeInfos []LikeToShow, ok bool) {
+func GetLikeInfos(userId int) (likeInfos []LikeToShow, totalState int, ok bool) {
 	sqlstr := `SELECT f.fvId, f.state, f.fvTime, u.userName, u.portrait
 	FROM favorTable f, userInfo u, noteInfo n
 	WHERE n.creatorAccount=? AND n.noteId=f.favorNoteId AND f.f.userAct=u.userAccount`
@@ -210,6 +210,8 @@ func GetLikeInfos(userId int) (likeInfos []LikeToShow, ok bool) {
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
 
+	//整体的状态，1表示已读
+	totalState = 1
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var lk LikeToShow
@@ -219,9 +221,10 @@ func GetLikeInfos(userId int) (likeInfos []LikeToShow, ok bool) {
 			ok = false
 			return
 		}
+		totalState = totalState * lk.State
 		likeInfos = append(likeInfos, lk)
 	}
-	return likeInfos, ok
+	return likeInfos, totalState, ok
 }
 
 // 增加关注信息
@@ -334,4 +337,22 @@ func NewGetAtInfo(state, id int) (atname []string, atlocation []int, ok bool) {
 		atlocation = append(atlocation, at.AtLocation)
 	}
 	return
+}
+
+// 把某个点赞设为已读
+func SetLikeState(likeId int) bool {
+	sqlstr := "UPDATE commentInfo SET state=1 WHERE fvId=?"
+	ret, err := db.Exec(sqlstr, likeId)
+	if err != nil {
+		fmt.Printf("点赞信息状态update failed, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("点赞状态get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("点赞状态修改编号：%d\n", n)
+	return true
 }

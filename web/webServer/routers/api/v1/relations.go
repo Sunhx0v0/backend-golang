@@ -222,21 +222,44 @@ func CancelFollowHandler(c *gin.Context) {
 
 // 消息列表加载点赞信息
 func MsgGetLikes(c *gin.Context) {
-	var success bool
-	var likes []models.LikeToShow
+	//是否全部已读，false表示没有
+	totalState := true
 	userId, _ := strconv.Atoi(c.Param("userId"))
-	likes, success = models.GetLikeInfos(userId)
+	likes, State, success := models.GetLikeInfos(userId)
+	if State == 0 {
+		totalState = false
+	}
+	if success {
+		c.JSON(http.StatusOK, gin.H{
+			"code":       200,
+			"message":    "success",
+			"totalState": totalState,
+			"data":       likes,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":       400,
+			"message":    "fail",
+			"totalState": totalState,
+			"data":       likes,
+		})
+	}
+}
+
+// 把点赞信息设为已读
+func ChangeLikeState(c *gin.Context) {
+	var success bool
+	commentId, _ := strconv.Atoi(c.Param("commentId"))
+	success = models.SetLikeState(commentId)
 	if success {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
 			"message": "success",
-			"data":    likes,
 		})
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
-			"message": "fail",
-			"data":    likes,
+			"message": "点赞状态修改失败",
 		})
 	}
 }

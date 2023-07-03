@@ -115,7 +115,7 @@ func InitRouter() *gin.Engine {
 		//获取点赞消息列表
 		r.GET("/messages/:userId/likes")
 		//把点赞消息设置为已读
-		r.PUT("/messages/:userId/likes/:fvId")
+		r.PUT("/messages/:userId/likes/:fvId", v1.ChangeLikeState)
 	}
 
 	return r
