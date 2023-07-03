@@ -31,28 +31,26 @@ func InitRouter() *gin.Engine {
 	//获取笔记详细内容
 	r.GET("/explore/:noteid", v1.NoteDetailHandler)
 
-	// gin.SetMode(setting.RunMode)
-	var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
+	// // gin.SetMode(setting.RunMode)
+	// var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
 	r.POST("/login", v1.Login)
 
-	// 使用CorsMiddleware()中间件来进行跨域连接
+	r.Use(webjwt.AuthMiddleware()) // 使用token中间件
 
-	r.Use(webjwt.AuthMiddleware()) //最后，它添加了一个名为CORS.CorsMiddleware（）的第三方CORS中间件。该中间件允许跨源资源共享（CORS），使运行在不同域上的客户端JavaScript应用程序能够访问
+	// //404 handler
+	// r.NoRoute(userMiddleware.MiddlewareFunc(), func(c *gin.Context) {
+	// 	c.JSON(404, gin.H{
+	// 		"code":    404,
+	// 		"message": "Page not found",
+	// 	})
+	// })
 
-	//404 handler
-	r.NoRoute(userMiddleware.MiddlewareFunc(), func(c *gin.Context) {
-		c.JSON(404, gin.H{
-			"code":    404,
-			"message": "Page not found",
-		})
-	})
-
-	user := r.Group("/user")
-	{
-		// 刷新token
-		user.GET("/refresh_token", userMiddleware.RefreshHandler)
-	}
-	user.Use(webjwt.AuthMiddleware())
+	// user := r.Group("/user")
+	// {
+	// 	// 刷新token
+	// 	user.GET("/refresh_token", userMiddleware.RefreshHandler)
+	// }
+	// user.Use(webjwt.AuthMiddleware())
 
 	// api := r.Group("/user")
 	// api.Use(authMiddleware.MiddlewareFunc())
@@ -63,7 +61,7 @@ func InitRouter() *gin.Engine {
 
 	apiv1 := r.Group("/api/v1")
 	//使用userAuthorizator中间件，只有user权限的用户才能获取到接口
-	apiv1.Use(userMiddleware.MiddlewareFunc(), webjwt.AuthMiddleware()) // 使用token中间件
+	apiv1.Use(cors.CorsMiddleware(), webjwt.AuthMiddleware()) // 使用token中间件
 	{
 
 		//获取关注人的笔记
