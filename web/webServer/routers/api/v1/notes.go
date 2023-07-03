@@ -79,9 +79,6 @@ func NoteDetailHandler(c *gin.Context) {
 		"message": "success",
 		"data":    data,
 	})
-	// c.HTML(http.StatusOK, "server/templates/users_test/index.html", gin.H{
-	// 	"title": "users/index",
-	// })
 }
 
 // 获取关注的人的笔记
@@ -101,7 +98,7 @@ func GetFollowedNotes(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
-			"message": "fail",
+			"message": "获取关注人笔记失败！",
 			"data":    data,
 		})
 	}

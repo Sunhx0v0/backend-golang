@@ -153,7 +153,7 @@ func GetFollows(userId int) (follows []FollowInfo, ok bool) {
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var fl FollowInfo
-		err := rows.Scan(&fl.FolInfoId, &fl.FollowAct, &fl.UserName, fl.Portrait)
+		err := rows.Scan(&fl.FolInfoId, &fl.FollowAct, &fl.UserName, &fl.Portrait)
 		if err != nil {
 			fmt.Printf("点赞scan failed, err:%v\n", err)
 			ok = false

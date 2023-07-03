@@ -40,7 +40,7 @@ type DetailNote struct {
 
 }
 
-type detailNote struct {
+type fullNote struct {
 	NoteInfo   DetailNote `JSON:"noteInfo"`
 	PicsOfNote []string   `JSON:"pictures"`
 }
@@ -188,14 +188,14 @@ func DeleteNoteInfo(ntid int) bool {
 }
 
 // 返回笔记详情页
-func SpecificNote(noteid int) detailNote {
-	var N detailNote
+func SpecificNote(noteid int) fullNote {
+	var N fullNote
 	//先找笔记信息
 	sqlStr1 := "select Noteid,CreatorAccount,Title,Body,NumOfPic,Cover,CreateTime,UpdateTime,Location,AtUserid from noteInfo where noteId = ?"
 	rows, err := db.Query(sqlStr1, noteid)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
-		var err detailNote
+		var err fullNote
 		return err
 	}
 	// 关闭rows释放持有的数据库链接
@@ -208,7 +208,7 @@ func SpecificNote(noteid int) detailNote {
 		err := rows.Scan(&N.NoteInfo.NoteID, &N.NoteInfo.CreatorID, &N.NoteInfo.Title, &N.NoteInfo.Body, &N.NoteInfo.Picnum, &N.NoteInfo.Cover, &createTimestring, &updateTimestring, &N.NoteInfo.Location, &N.NoteInfo.AtUserID)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
-			var err detailNote
+			var err fullNote
 			return err
 		}
 		N.NoteInfo.CreateTime = createTimestring
@@ -221,7 +221,7 @@ func SpecificNote(noteid int) detailNote {
 	rows2, err := db.Query(sqlStr2, noteid)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
-		var err detailNote
+		var err fullNote
 		return err
 	}
 	for rows2.Next() {
@@ -229,7 +229,7 @@ func SpecificNote(noteid int) detailNote {
 		err := rows2.Scan(&picurl)
 		if err != nil {
 			fmt.Printf("scan failed, err:%v\n", err)
-			var err detailNote
+			var err fullNote
 			return err
 		}
 		N.PicsOfNote = append(N.PicsOfNote, picurl)
