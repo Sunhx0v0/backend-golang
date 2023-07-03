@@ -47,7 +47,7 @@ func GetCommentInfo(Id, option int) (comments []Comment, ok bool) {
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var cmt Comment
-		err := rows.Scan(&cmt.CommentID, &cmt.CommentatorID, &cmt.Content, &cmt.CommentTime, &cmt.CommentatorName, &cmt.State, &cmt.Portrait)
+		err := rows.Scan(&cmt.CommentID, &cmt.CommentatorID, &cmt.Content, &cmt.CommentTime, &cmt.State, &cmt.CommentatorName, &cmt.Portrait)
 		if err != nil {
 			fmt.Printf("评论scan failed, err:%v\n", err)
 			ok = false
