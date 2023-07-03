@@ -4,7 +4,6 @@ package webjwt
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"webServer/models"
 
 	"github.com/gin-gonic/gin"
@@ -16,10 +15,18 @@ func AuthMiddleware() gin.HandlerFunc {
 		// 获取 authorization header
 		tokenString := c.GetHeader("Authorization") // 获取请求头中的token，这个Authorization是前端传过来的
 
-		fmt.Print("请求token", tokenString)
+		fmt.Print("请求token\n", tokenString, "\n")
 
 		//validate token formate   验证格式
-		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
+		// if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer") {
+		// 	c.JSON(http.StatusUnauthorized, gin.H{
+		// 		"code":    401,
+		// 		"message": "token验证失败",
+		// 	})
+		// 	c.Abort()
+		// 	return
+		// }
+		if tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code":    401,
 				"message": "token验证失败",
@@ -28,9 +35,11 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		tokenString = tokenString[7:] //截取字符    提取有效的字符
+		//tokenString = tokenString[7:] //截取字符    提取有效的字符
 
 		token, claims, err := ParseToken(tokenString)
+
+		print("错误:", err, "\n")
 
 		// 解析失败或无效token
 		if err != nil || !token.Valid {
@@ -46,8 +55,10 @@ func AuthMiddleware() gin.HandlerFunc {
 		userPhone := claims.UserId
 		userInfo := models.SelectAll(userPhone)
 
+		print("手机号:", userPhone, "!!!\n")
+
 		//判断用户是否存在
-		if models.IsTelephoneExists(userPhone) { // 在数据库查找手机号码是否存在
+		if !models.IsTelephoneExists(userPhone) { // 在数据库查找手机号码是否存在
 			c.JSON(http.StatusUnprocessableEntity, gin.H{
 				"code":    401,
 				"data":    nil,
