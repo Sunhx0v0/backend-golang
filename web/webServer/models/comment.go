@@ -18,7 +18,7 @@ type Comment struct {
 }
 
 // 获取评论
-func GetCommentInfo(Id, option int) (comments []Comment, ok bool) {
+func GetCommentInfo(Id, option int) (comments []Comment, totalState int, ok bool) {
 	//option字段用来判断是笔记获取评论还是消息获取评论
 	ok = true
 	var sqlstr string
@@ -44,6 +44,8 @@ func GetCommentInfo(Id, option int) (comments []Comment, ok bool) {
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
 
+	//整体的状态，1表示已读
+	totalState = 1
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var cmt Comment
@@ -53,9 +55,10 @@ func GetCommentInfo(Id, option int) (comments []Comment, ok bool) {
 			ok = false
 			return
 		}
+		totalState = totalState * cmt.State
 		comments = append(comments, cmt)
 	}
-	return comments, ok
+	return comments, totalState, ok
 }
 
 // 插入评论信息

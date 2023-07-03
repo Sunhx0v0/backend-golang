@@ -37,7 +37,6 @@ type DetailNote struct {
 	IsFollowed  bool `json:"isFollowed"`  // 是否关注该作者
 	IsLiked     bool `json:"isLiked"`     // 是否点赞该篇
 	CollectNum  int  `json:"collectNum"`  // 收藏数
-
 }
 
 type fullNote struct {
