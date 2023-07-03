@@ -57,8 +57,10 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		print("手机号:", userPhone, "!!!\n")
 
+		_, isExit := models.IsTelephoneExists(userPhone) // 是否存在
+
 		//判断用户是否存在
-		if !models.IsTelephoneExists(userPhone) { // 在数据库查找手机号码是否存在
+		if !isExit { // 在数据库查找手机号码是否存在
 			c.JSON(http.StatusUnprocessableEntity, gin.H{
 				"code":    401,
 				"data":    nil,
