@@ -55,8 +55,10 @@ func Register(c *gin.Context) { // 注册
 		name = string(result)
 	}
 	requestUser.UserName = name
+
+	_, isExit := models.IsTelephoneExists(telephone)
 	//判断手机号码是否存在
-	if models.IsTelephoneExists(telephone) { // 在数据库查找手机号码是否存在
+	if isExit { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"code":    422,
 			"data":    nil,
@@ -130,8 +132,10 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	userID, isExit := models.IsTelephoneExists(telephone) // 是否存在
+
 	//判断手机号码是否存在
-	if !models.IsTelephoneExists(telephone) { // 在数据库查找手机号码是否存在
+	if !isExit { // 在数据库查找手机号码是否存在
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"code":    400,
 			"data":    nil,
@@ -165,6 +169,7 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code":    200,
 		"data":    token,
+		"uid":     userID,
 		"message": "登录成功",
 	})
 }
