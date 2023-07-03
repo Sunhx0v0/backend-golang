@@ -114,3 +114,21 @@ func SetCommentState(commentId int) bool {
 	fmt.Printf("评论状态修改编号：%d\n", n)
 	return true
 }
+
+// 删除评论信息
+func RemoveComments(noteId int) bool {
+	sqlstr := "DELETE FROM commentInfo WHERE noteID=?"
+	ret, err := db.Exec(sqlstr, noteId)
+	if err != nil {
+		fmt.Printf("评论批量删除失败, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("评论批量删除Get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("评论信息批量 delete success, affected rows:%d\n", n)
+	return true
+}

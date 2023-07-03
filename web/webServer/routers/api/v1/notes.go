@@ -235,7 +235,7 @@ func DeleteNote(c *gin.Context) {
 			return
 		}
 	}
-	if models.DeletePic(noteId) && models.DeleteNoteInfo(noteId) {
+	if models.DeletePic(noteId) && models.DeleteNoteInfo(noteId) && models.RemoveComments(noteId) && models.RemoveLikes(noteId) {
 		models.ChangeNoteNum(userId, 0)
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,

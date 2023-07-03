@@ -247,7 +247,7 @@ func AddFollowInfo(useraccount int, account int) bool {
 
 // 删除关注信息
 func DelFollowInfo(useraccount int, account int) bool {
-	sqlstr := "delete from followTable where userAct=? and followAct=?"
+	sqlstr := "DELETE from followTable where userAct=? and followAct=?"
 	ret, err := db.Exec(sqlstr, useraccount, account)
 	if err != nil {
 		fmt.Printf("insert failed, err:%v\n", err)
@@ -341,7 +341,7 @@ func NewGetAtInfo(state, id int) (atname []string, atlocation []int, ok bool) {
 
 // 把某个点赞设为已读
 func SetLikeState(likeId int) bool {
-	sqlstr := "UPDATE commentInfo SET state=1 WHERE fvId=?"
+	sqlstr := "UPDATE favorTable SET state=1 WHERE fvId=?"
 	ret, err := db.Exec(sqlstr, likeId)
 	if err != nil {
 		fmt.Printf("点赞信息状态update failed, err:%v\n", err)
@@ -354,5 +354,23 @@ func SetLikeState(likeId int) bool {
 		return false
 	}
 	fmt.Printf("点赞状态修改编号：%d\n", n)
+	return true
+}
+
+// 删除点赞信息
+func RemoveLikes(noteId int) bool {
+	sqlstr := "DELETE FROM favorTable WHERE favorNoteId=?"
+	ret, err := db.Exec(sqlstr, noteId)
+	if err != nil {
+		fmt.Printf("点赞批量删除失败, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("点赞批量删除Get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("点赞信息批量 delete success, affected rows:%d\n", n)
 	return true
 }
