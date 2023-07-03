@@ -33,7 +33,8 @@ type CollectInfo struct {
 // @用户信息
 type AtInfo struct {
 	AtName     string `json:"atName" form:"atName"`
-	AtLocation string `json:"atLocation" form:"atLocation"`
+	AtLocation int    `json:"atLocation" form:"atLocation"`
+	AtState    int    `json:"atState" form:"atState"`
 }
 
 // 要显示的关注的人信息
@@ -163,11 +164,12 @@ func GetFollows(userId int) (follows []FollowInfo, ok bool) {
 	return follows, ok
 }
 
-// 写入某篇笔记的@信息
-func AddAtInfo(userId, noteId int, atinfos []AtInfo) bool {
-	sqlstr := "INSERT INTO atTable (userAct, noteId, atUserName, atLocation) VALUES (?,?,?,?)"
+// 写入某个东西的@信息
+func AddAtInfo(userId, noteId, state int, atinfos []AtInfo) bool {
+	//state字段表示是在正文还是评论，1表示在正文，0表示在评论
+	sqlstr := "INSERT INTO atTable (userAct, noteId, atUserName, atLocation, atState) VALUES (?,?,?,?,?)"
 	for _, atItem := range atinfos {
-		_, err := db.Exec(sqlstr, userId, noteId, atItem.AtName, atItem.AtLocation)
+		_, err := db.Exec(sqlstr, userId, noteId, atItem.AtName, atItem.AtLocation, atItem.AtState)
 		if err != nil {
 			fmt.Printf("@信息insert failed, err:%v\n", err)
 			return false
@@ -176,7 +178,7 @@ func AddAtInfo(userId, noteId int, atinfos []AtInfo) bool {
 	return true
 }
 
-// 删除某篇笔记的@信息
+// 删除某个东西（笔记或评论）的@信息
 func DeleteAtInfo(noteId int) bool {
 	sqlstr := "DELETE from atTable WHERE noteId=?"
 	ret, err := db.Exec(sqlstr, noteId)
@@ -304,4 +306,32 @@ func ChangeUserFans(userId, option int) {
 		return
 	}
 	fmt.Printf("粉丝数修改编号：%d\n", n)
+}
+
+// 加载@的信息
+func NewGetAtInfo(state, id int) (atname []string, atlocation []int, ok bool) {
+	ok = true
+	sqlstr := `SELECT atUserName, atLocation FROM atTable WHERE noteId=? and atState=?`
+	rows, err := db.Query(sqlstr, id, state)
+	if err != nil {
+		ok = false
+		fmt.Printf("@信息query failed, err:%v\n", err)
+		return
+	}
+	// 关闭rows释放持有的数据库链接
+	defer rows.Close()
+
+	// 循环读取结果集中的数据
+	for rows.Next() {
+		var at AtInfo
+		err := rows.Scan(&at.AtName, &at.AtLocation)
+		if err != nil {
+			ok = false
+			fmt.Printf("@信息scan failed, err:%v\n", err)
+			return
+		}
+		atname = append(atname, at.AtName)
+		atlocation = append(atlocation, at.AtLocation)
+	}
+	return
 }
