@@ -16,7 +16,7 @@ type Regist struct { // 注册用的结构体
 	UserName     string `json:"userName"`
 }
 
-func IsTelephoneExists(PhoneNumber string) bool { // 查找手机号是否存在
+func IsTelephoneExists(PhoneNumber string) (int, bool) { // 查找手机号是否存在
 	userID := 0
 	//具体的以这个为准
 	// sqlStr := `select userAccount
@@ -28,7 +28,7 @@ func IsTelephoneExists(PhoneNumber string) bool { // 查找手机号是否存在
 	where phoneNumber = ?`
 	err := db.QueryRow(sqlStr, PhoneNumber).Scan(&userID)
 	print("查找手机号错误：", err)
-	return err == nil
+	return userID, err == nil
 }
 
 func CreateUser(registInfo Regist, registTime string) bool { // 创建用户
