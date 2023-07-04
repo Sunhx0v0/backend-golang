@@ -199,7 +199,7 @@ func CancelFollowHandler(c *gin.Context) {
 	//用shouldBind获取前端传来的json数据，只要json名相同就能读取
 	if err := c.ShouldBind(&account); err == nil {
 		id := account.FollowID
-		//向数据库中插入关注信息
+		//向数据库中删除关注信息
 		success = models.DelFollowInfo(userId, id)
 		if success {
 			//将用户关注数加一
