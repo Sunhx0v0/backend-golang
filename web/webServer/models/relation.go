@@ -47,7 +47,7 @@ type FollowInfo struct {
 
 // 关注信息
 type FollowRequest struct {
-	FollowID string `json:"followID"` // 关注的人的id
+	FollowID int `json:"followID"` // 关注的人的id
 }
 
 // 根据笔记编号获取作者账号
@@ -250,7 +250,7 @@ func DelFollowInfo(useraccount int, account int) bool {
 	sqlstr := "delete from followTable where userAct=? and followAct=?"
 	ret, err := db.Exec(sqlstr, useraccount, account)
 	if err != nil {
-		fmt.Printf("insert failed, err:%v\n", err)
+		fmt.Printf("delete failed, err:%v\n", err)
 		return false
 	}
 	// 操作影响的行数
