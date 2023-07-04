@@ -1,8 +1,8 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -145,11 +145,20 @@ func LikeInfoDB(id int) []Note {
 }
 
 // 修改用户的信息并存放到数据库中
-func ModifyInfo(beforeInfo ModifiableInfo, id int) bool {
-	sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, password = ?, portrait = ?, userName = ? 
-	where userAccount = ?`
-	birTime, _ := time.ParseInLocation("2006-01-02", beforeInfo.Birthday, time.Local) // string转time
-	result, err := db.Exec(sqlStr, birTime, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Password, beforeInfo.Portrait, beforeInfo.UserName, id)
+func ModifyInfo(beforeInfo ModifiableInfo, id int, yes bool) bool {
+	var result sql.Result
+	var err error
+	if yes {
+		sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, password = ?, portrait = ?, userName = ? 
+		where userAccount = ?`
+		//birTime, _ := time.ParseInLocation("2006-01-02", beforeInfo.Birthday, time.Local) // string转time
+		result, err = db.Exec(sqlStr, beforeInfo.Birthday, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Password, beforeInfo.Portrait, beforeInfo.UserName, id)
+	} else {
+		sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, password = ?, userName = ? 
+		where userAccount = ?`
+		//birTime, _ := time.ParseInLocation("2006-01-02", beforeInfo.Birthday, time.Local) // string转time
+		result, err = db.Exec(sqlStr, beforeInfo.Birthday, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Password, beforeInfo.UserName, id)
+	}
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
 		return false

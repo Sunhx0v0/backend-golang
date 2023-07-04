@@ -84,7 +84,11 @@ func ModifyUserInfo(c *gin.Context) {
 	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
 	info.Infos.Portrait = name // 将图片目录保存在数据库
 
-	success := models.ModifyInfo(info.Infos, userID)
+	// for key := range c.Request.MultipartForm.Value {
+	// 	print("Form Field Name: ", key, "\n")
+	// }
+
+	success := models.ModifyInfo(info.Infos, userID, true)
 	if !success {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
@@ -119,4 +123,34 @@ func GetHeadfile(userid int) ([]string, error) {
 		}
 	}
 	return files, nil
+}
+
+// 用户修改个人信息，头像不做修改
+func ModifyNoP(c *gin.Context) {
+	userID, _ := strconv.Atoi(c.Param("userId"))
+	fmt.Println("用户ID:", userID)
+	// 新声明的可修改信息的结构体
+	var info ModifiedInfo
+	info.Infos.Birthday = c.PostForm("birthday") // 从前端获取数据
+	info.Infos.Gender = c.PostForm("gender")
+	info.Infos.Introduction = c.PostForm("introduction")
+	info.Infos.Password = c.PostForm("password")
+	info.Infos.UserName = c.PostForm("userName")
+	isHost := c.PostForm("isHost")
+	info.IsHost, _ = strconv.ParseBool(isHost)
+
+	success := models.ModifyInfo(info.Infos, userID, false)
+	if !success {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "表单内容获取失败!",
+			"data":    info, // 是否需要重新返回呢，不需要则去掉data字段
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"message": "success",
+		"data":    info, // 将修改的数据发送回前端
+	})
 }
