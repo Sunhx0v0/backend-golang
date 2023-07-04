@@ -78,7 +78,7 @@ func GetBriefNtInfo() (notes []Note, ok bool) {
 func GetSpBriefNtInfo(keyword string) (notes []Note, ok bool) {
 	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
 	FROM noteInfo n, userInfo u
-	WHERE n.creatorAccount = u.userAccount AND (n.tag = ? OR n.title LIKE CONCAT('%',#{keyword},'%'))`
+	WHERE n.creatorAccount = u.userAccount AND (n.tag = ? OR n.title LIKE CONCAT('%',?,'%'))`
 	rows, err := db.Query(sqlStr, keyword, keyword)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
