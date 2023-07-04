@@ -35,6 +35,9 @@ func InitRouter() *gin.Engine {
 	//获取笔记详细内容
 	r.GET("/explore/:noteid", v1.NoteDetailHandler)
 
+	//获取走马灯
+	r.GET("/explore/tops", v1.GetTops)
+
 	// // gin.SetMode(setting.RunMode)
 	// var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
 	r.POST("/login", v1.Login)
@@ -77,6 +80,8 @@ func InitRouter() *gin.Engine {
 		r.GET("/:userId/PersonalView", v1.GetUserInfo)
 		// 用户修改个人信息
 		r.PUT("/:userId/PersonalView", v1.ModifyUserInfo)
+		// 用户修改个人信息
+		r.PUT("/:userId/PersonalView2", v1.ModifyNoP)
 
 		//上传笔记
 		r.POST("/:userId/publish", v1.UploadNote)
@@ -113,7 +118,7 @@ func InitRouter() *gin.Engine {
 		//把评论设置为已读
 		r.PUT("/messages/:userId/comments/:commentId", v1.ChangeCommentState)
 		//获取点赞消息列表
-		r.GET("/messages/:userId/likes", v1.MsgGetLikes)
+		r.GET("/messages/:userId/likes")
 		//把点赞消息设置为已读
 		r.PUT("/messages/:userId/likes/:fvId", v1.ChangeLikeState)
 	}
