@@ -72,7 +72,8 @@ func NoteDetailHandler(c *gin.Context) {
 	noteid, _ := strconv.Atoi(c.Param("noteid"))
 	data := models.SpecificNote(noteid)
 	data.NoteInfo.IsCollected = models.IsCollected(userid, noteid)
-	data.NoteInfo.IsFollowed = models.IsFollowed(userid, noteid)
+	authorid := models.NoteToUser(noteid)
+	data.NoteInfo.IsFollowed = models.IsFollowed(userid, authorid)
 	data.NoteInfo.IsLiked = models.IsLiked(userid, noteid)
 	c.JSON(http.StatusOK, gin.H{
 		"code":    200,

@@ -47,7 +47,7 @@ type FollowInfo struct {
 
 // 关注信息
 type FollowRequest struct {
-	FollowID string `json:"followID"` // 关注的人的id
+	FollowID int `json:"followID"` // 关注的人的id
 }
 
 // 根据笔记编号获取作者账号
