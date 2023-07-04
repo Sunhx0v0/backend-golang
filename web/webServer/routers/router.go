@@ -121,6 +121,6 @@ func InitRouter() *gin.Engine {
 	return r
 }
 
-func AuthMiddleware() {
-	panic("unimplemented")
-}
+// func AuthMiddleware() {
+// 	panic("unimplemented")
+// }

@@ -28,7 +28,6 @@ type UserInfo struct {
 	Gender       string `json:"gender"`       // 性别
 	Introduction string `json:"introduction"` // 简介
 	LikedNum     int64  `json:"likedNum"`     // 被点赞数量
-	Mail         string `json:"mail"`
 	NoteNum      int64  `json:"noteNum"`
 	Password     string `json:"password"`
 	PhoneNumber  string `json:"phoneNumber"`
@@ -41,20 +40,20 @@ type UserInfo struct {
 // 用户可修改信息
 type ModifiableInfo struct {
 	Birthday     string `json:"birthday"`
-	Gender       string `json:"gender "`      // 性别
+	Gender       string `json:"gender"`       // 性别
 	Introduction string `json:"introduction"` // 简介
 	Password     string `json:"password"`
 	Portrait     string `json:"portrait"` // 头像
-	UserName     string `json:"userName "`
+	UserName     string `json:"userName"`
 }
 
 func UserInfoDB(id int) UserInfo { // 从数据库获得用户信息
-	sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, mail, password,birthday,registTime
+	sqlStr := `select userAccount, userName, gender, portrait, introduction, fansNum, noteNum, collectNum, followNum, collectedNum, likedNum, phoneNumber, password,birthday,registTime
 	from userinfo 
 	where userAccount = ?`
 	var ui UserInfo
 	var bd, rt string
-	err := db.QueryRow(sqlStr, id).Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Mail, &ui.Password, &bd, &rt)
+	err := db.QueryRow(sqlStr, id).Scan(&ui.UserID, &ui.UserName, &ui.Gender, &ui.Portrait, &ui.Introduction, &ui.FansNum, &ui.NoteNum, &ui.CollectNum, &ui.FollowNum, &ui.CollectedNum, &ui.LikedNum, &ui.PhoneNumber, &ui.Password, &bd, &rt)
 	ui.Birthday = bd
 	ui.RegistTime = rt
 	// 如果要使用time.Time()类型的birthday/registTime，则将上面两句改成下面两句
@@ -64,7 +63,7 @@ func UserInfoDB(id int) UserInfo { // 从数据库获得用户信息
 		fmt.Printf("scan failed, err:%v\n", err)
 		return ui
 	}
-	fmt.Println(ui.UserID, ui.UserName, ui.Gender, ui.Portrait, ui.Introduction, ui.Birthday, ui.RegistTime, ui.FansNum, ui.NoteNum, ui.CollectNum, ui.FollowNum, ui.CollectedNum, ui.LikedNum, ui.PhoneNumber, ui.Mail, ui.Password)
+	fmt.Println(ui.UserID, ui.UserName, ui.Gender, ui.Portrait, ui.Introduction, ui.Birthday, ui.RegistTime, ui.FansNum, ui.NoteNum, ui.CollectNum, ui.FollowNum, ui.CollectedNum, ui.LikedNum, ui.PhoneNumber, ui.Password)
 	return ui
 }
 

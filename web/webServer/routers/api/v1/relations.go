@@ -169,7 +169,7 @@ func FollowHandler(c *gin.Context) {
 	var account models.FollowRequest
 	//用shouldBind获取前端传来的json数据，只要json名相同就能读取
 	if err := c.ShouldBind(&account); err == nil {
-		id, _ := strconv.Atoi(account.FollowID)
+		id := account.FollowID
 		//向数据库中插入关注信息
 		success = models.AddFollowInfo(userId, id)
 		if success {
@@ -185,7 +185,7 @@ func FollowHandler(c *gin.Context) {
 	} else {
 		//json数据获取失败
 		c.JSON(http.StatusBadRequest, gin.H{
-			"code":  40,
+			"code":  400,
 			"error": err.Error(),
 		})
 	}
@@ -198,8 +198,8 @@ func CancelFollowHandler(c *gin.Context) {
 	var account models.FollowRequest
 	//用shouldBind获取前端传来的json数据，只要json名相同就能读取
 	if err := c.ShouldBind(&account); err == nil {
-		id, _ := strconv.Atoi(account.FollowID)
-		//向数据库中插入关注信息
+		id := account.FollowID
+		//向数据库中删除关注信息
 		success = models.DelFollowInfo(userId, id)
 		if success {
 			//将用户关注数加一
