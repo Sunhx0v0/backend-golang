@@ -25,11 +25,13 @@ func GetCommentInfo(Id, option int) (comments []Comment, totalState int, ok bool
 	//笔记中获取评论
 	notesql := `SELECT c.commentId, c.commentatorId, c.content, c.commentTime, c.state, u.userName, u.portrait
 	FROM commentInfo c, userInfo u
-	WHERE c.noteID = ? AND c.commentatorId = u.userAccount`
+	WHERE c.noteID = ? AND c.commentatorId = u.userAccount
+	ORDER BY commentTime DESC`
 	//消息列表中获取评论
 	messagesql := `SELECT c.commentId, c.commentatorId, c.content, c.commentTime, c.state, u.userName, u.portrait
 	FROM commentInfo c, userInfo u, noteInfo n
-	WHERE u.userAccount=? AND u.userAccount=n.creatorAccount AND c.noteID = n.noteId`
+	WHERE u.userAccount=? AND u.userAccount=n.creatorAccount AND c.noteID = n.noteId
+	ORDER BY commentTime DESC`
 	if option == 0 {
 		sqlstr = notesql
 	} else {
@@ -56,6 +58,7 @@ func GetCommentInfo(Id, option int) (comments []Comment, totalState int, ok bool
 			return
 		}
 		totalState = totalState * cmt.State
+		fmt.Println(cmt)
 		comments = append(comments, cmt)
 	}
 	return comments, totalState, ok

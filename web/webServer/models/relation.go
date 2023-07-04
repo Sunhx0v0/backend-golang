@@ -198,9 +198,10 @@ func DeleteAtInfo(noteId int) bool {
 
 // 消息列表获取点赞信息
 func GetLikeInfos(userId int) (likeInfos []LikeToShow, totalState int, ok bool) {
+	ok = true
 	sqlstr := `SELECT f.fvId, f.state, f.fvTime, u.userName, u.portrait
 	FROM favorTable f, userInfo u, noteInfo n
-	WHERE n.creatorAccount=? AND n.noteId=f.favorNoteId AND f.f.userAct=u.userAccount`
+	WHERE n.creatorAccount=? AND n.noteId=f.favorNoteId AND f.userAct=u.userAccount`
 	rows, err := db.Query(sqlstr, userId)
 	if err != nil {
 		fmt.Printf("点赞query failed, err:%v\n", err)

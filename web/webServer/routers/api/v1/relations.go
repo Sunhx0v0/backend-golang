@@ -249,7 +249,7 @@ func MsgGetLikes(c *gin.Context) {
 // 把点赞信息设为已读
 func ChangeLikeState(c *gin.Context) {
 	var success bool
-	commentId, _ := strconv.Atoi(c.Param("commentId"))
+	commentId, _ := strconv.Atoi(c.Param("fvId"))
 	success = models.SetLikeState(commentId)
 	if success {
 		c.JSON(http.StatusOK, gin.H{
