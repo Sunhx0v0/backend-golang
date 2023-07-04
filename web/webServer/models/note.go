@@ -47,9 +47,9 @@ type fullNote struct {
 // 获取笔记的封面标题等简要信息
 func GetBriefNtInfo() (notes []Note, ok bool) {
 	ok = true
-	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
-	from noteInfo n,userInfo u
-	where n.creatorAccount = u.userAccount`
+	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
+	FROM noteInfo n,userInfo u
+	WHERE n.creatorAccount = u.userAccount`
 	rows, err := db.Query(sqlStr)
 	if err != nil {
 		ok = false
@@ -68,7 +68,6 @@ func GetBriefNtInfo() (notes []Note, ok bool) {
 			fmt.Printf("scan failed, err:%v\n", err)
 			return notes, ok
 		}
-		fmt.Print(nt.NoteID)
 		notes = append(notes, nt)
 	}
 	return notes, ok
@@ -95,7 +94,6 @@ func GetSpBriefNtInfo(keyword string) (notes []Note, ok bool) {
 			fmt.Printf("scan failed, err:%v\n", err)
 			return nil, false
 		}
-		fmt.Println(nt.NoteID)
 		notes = append(notes, nt)
 	}
 	return notes, true
@@ -122,7 +120,6 @@ func GetFlwedNotes(userId int) (notes []Note, ok bool) {
 			fmt.Printf("关注的人的笔记scan failed, err:%v\n", err)
 			return nil, false
 		}
-		fmt.Println(nt.NoteID)
 		notes = append(notes, nt)
 	}
 	return notes, true
@@ -182,20 +179,22 @@ func DeleteNoteInfo(ntid int) bool {
 		fmt.Printf("get RowsAffected failed, err:%v\n", err)
 		return false
 	}
-	fmt.Printf("delete success, affected rows:%d\n", n)
+	fmt.Printf("笔记删除success, affected rows:%d\n", n)
 	return true
 }
 
 // 返回笔记详情页
-func SpecificNote(noteid int) fullNote {
+func SpecificNote(noteid int) (fullNote, bool) {
 	var N fullNote
 	//先找笔记信息
-	sqlStr1 := "select Noteid,CreatorAccount,Title,Body,NumOfPic,Cover,CreateTime,UpdateTime,Location,AtUserid from noteInfo where noteId = ?"
+	sqlStr1 := `SELECT Noteid,CreatorAccount,Title,Body,NumOfPic,Cover,CreateTime,UpdateTime,Location,AtUserid 
+	FROM noteInfo 
+	WHERE noteId = ?`
 	rows, err := db.Query(sqlStr1, noteid)
 	if err != nil {
-		fmt.Printf("query failed, err:%v\n", err)
+		fmt.Printf("笔记详情query failed, err:%v\n", err)
 		var err fullNote
-		return err
+		return err, false
 	}
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
@@ -206,9 +205,9 @@ func SpecificNote(noteid int) fullNote {
 		var updateTimestring string
 		err := rows.Scan(&N.NoteInfo.NoteID, &N.NoteInfo.CreatorID, &N.NoteInfo.Title, &N.NoteInfo.Body, &N.NoteInfo.Picnum, &N.NoteInfo.Cover, &createTimestring, &updateTimestring, &N.NoteInfo.Location, &N.NoteInfo.AtUserID)
 		if err != nil {
-			fmt.Printf("scan failed, err:%v\n", err)
+			fmt.Printf("笔记详情scan failed, err:%v\n", err)
 			var err fullNote
-			return err
+			return err, false
 		}
 		N.NoteInfo.CreateTime = createTimestring
 		N.NoteInfo.UpdateTime = updateTimestring
@@ -219,17 +218,17 @@ func SpecificNote(noteid int) fullNote {
 	sqlStr2 := "select picUrl from pictureLibrary where noteID = ?"
 	rows2, err := db.Query(sqlStr2, noteid)
 	if err != nil {
-		fmt.Printf("query failed, err:%v\n", err)
+		fmt.Printf("笔记详情中图片query failed, err:%v\n", err)
 		var err fullNote
-		return err
+		return err, false
 	}
 	for rows2.Next() {
 		var picurl string
 		err := rows2.Scan(&picurl)
 		if err != nil {
-			fmt.Printf("scan failed, err:%v\n", err)
+			fmt.Printf("笔记详情中图片scan failed, err:%v\n", err)
 			var err fullNote
-			return err
+			return err, false
 		}
 		N.PicsOfNote = append(N.PicsOfNote, picurl)
 	}
@@ -237,7 +236,7 @@ func SpecificNote(noteid int) fullNote {
 	// 关闭rows释放持有的s数据库链接
 	defer rows2.Close()
 	N.NoteInfo.CollectNum = GetNoteCollectNum(noteid)
-	return N
+	return N, true
 }
 
 // 修改笔记的获赞数
@@ -318,7 +317,7 @@ func GetNoteCollectNum(noteid int) int {
 	sqlStr := "select * from collectTable where collectNoteId = ?"
 	rows, err := db.Query(sqlStr, noteid)
 	if err != nil {
-		fmt.Printf("query failed, err:%v\n", err)
+		fmt.Printf("笔记收藏数query failed, err:%v\n", err)
 		return 0
 	}
 	for rows.Next() {
@@ -329,41 +328,42 @@ func GetNoteCollectNum(noteid int) int {
 }
 
 // 判断是否收藏该笔记
-func IsCollected(userid, noteid int) bool {
-	sqlStr := "select * from collectTable where userAct=? and collectNoteId = ?"
+func IsCollected(userid, noteid int) (bool, bool) {
+	sqlStr := "SELECT * FROM collectTable WHWERE userAct=? and collectNoteId = ?"
 	rows, err := db.Query(sqlStr, userid, noteid)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
-		return false
+		return false, false
 	}
 	for rows.Next() {
-		return true
+		return true, true
 	}
 	defer rows.Close()
-	return false
+	return false, true
 }
 
 // 判断是否收藏该笔记
-func IsLiked(userid, noteid int) bool {
-	sqlStr := "select * from favorTable where userAct=? and favorNoteId = ?"
+func IsLiked(userid, noteid int) (bool, bool) {
+	sqlStr := "SELECT * FROM favorTable WHERE userAct=? and favorNoteId = ?"
 	rows, err := db.Query(sqlStr, userid, noteid)
 	if err != nil {
-		fmt.Printf("query failed, err:%v\n", err)
-		return false
+		fmt.Printf("判断笔记收藏query failed, err:%v\n", err)
+		return false, false
 	}
 	for rows.Next() {
-		return true
+		return true, true
 	}
 	defer rows.Close()
-	return false
+	return false, true
 }
 
 // 获取走马灯的笔记
 func Tops() (notes []Note, ok bool) {
 	ok = true
-	sqlStr := `SELECT noteId, title, cover
-	FROM noteInfo
-	ORDER By likeNum LIMIT 4`
+	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
+	FROM noteInfo n, userInfo u
+	WHERE n.creatorAccount = u.userAccount
+	ORDER BY likeNum LIMIT 4`
 	rows, err := db.Query(sqlStr)
 	if err != nil {
 		ok = false
@@ -376,7 +376,7 @@ func Tops() (notes []Note, ok bool) {
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var nt Note
-		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover)
+		err := rows.Scan(&nt.NoteID, &nt.Title, &nt.Cover, &nt.CreatorID, &nt.LikedNum, &nt.Portrait, &nt.CreatorName)
 		if err != nil {
 			ok = false
 			fmt.Printf("走马灯scan failed, err:%v\n", err)

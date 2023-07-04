@@ -7,17 +7,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// 发布的笔记
-// type Notes struct {
-// 	Cover       string `json:"cover"`
-// 	LikedNum    int64  `json:"likedNum"` // 点赞数
-// 	NoteID      int64  `json:"noteId"`   // 笔记编号
-// 	Title       string `json:"title"`
-// 	CreatorID   int64  `json:"creatorID"`
-// 	CreatorName string `json:"creatorName"` // 作者姓名
-// 	Portrait    string `json:"portrait"`
-// }
-
 // 用户基本信息
 type UserInfo struct {
 	Birthday     string `json:"birthday"`
@@ -292,21 +281,21 @@ func GetFollowers(userid int) []int {
 }
 
 // 是否已经关注该用户
-func IsFollowed(userid, account int) bool {
+func IsFollowed(userid, account int) (bool, bool) {
 	sqlStr := `select * from followTable 
 	where userAct = ? and followAct=?`
 	rows, err := db.Query(sqlStr, userid, account)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
-		return false
+		return false, false
 	}
 	// 关闭rows释放持有的数据库链接
 	defer rows.Close()
 	// 循环读取结果集中的数据
 	for rows.Next() {
-		return true
+		return true, true
 	}
-	return false
+	return false, true
 }
 
 // 查找用户手机号

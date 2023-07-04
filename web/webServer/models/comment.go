@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"time"
 )
 
 // 评论信息
@@ -15,6 +16,37 @@ type Comment struct {
 	State           int      `json:"state"`           //是否已读
 	AtName          []string `json:"atName"`          //@人的名字
 	AtLocation      []int    `json:"atLocation"`      //@的位置
+}
+
+// 判断多久之前
+func JudgeTime(msgtime string) string {
+	//获取当地时区
+	loc, _ := time.LoadLocation("Local")
+	location, err := time.ParseInLocation("2006-01-02 15:04:05", msgtime, loc)
+	if err != nil {
+		return msgtime
+	}
+	//消息的时间戳
+	unix := location.Unix()
+	//当前的时间戳
+	nowUnix := time.Now().Unix()
+	duration := nowUnix - unix
+	if duration < 60 {
+		return fmt.Sprintf("%d秒前", duration)
+	}
+	if duration >= 60 && duration < 3600 {
+		return fmt.Sprintf("%d分钟前", duration/60)
+	}
+	if duration >= 3600 && duration < 86400 {
+		return fmt.Sprintf("%d小时前", duration/3600)
+	}
+	if duration >= 86400 && duration <= 604800 {
+		return fmt.Sprintf("%d天前", duration/86400)
+	}
+	if duration > 604800 {
+		return msgtime
+	}
+	return msgtime
 }
 
 // 获取评论
@@ -57,6 +89,7 @@ func GetCommentInfo(Id, option int) (comments []Comment, totalState int, ok bool
 			ok = false
 			return
 		}
+		cmt.CommentTime = JudgeTime(cmt.CommentTime)
 		totalState = totalState * cmt.State
 		fmt.Println(cmt)
 		comments = append(comments, cmt)
