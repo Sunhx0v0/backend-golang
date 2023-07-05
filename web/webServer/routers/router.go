@@ -70,7 +70,6 @@ func InitRouter() *gin.Engine {
 	//使用userAuthorizator中间件，只有user权限的用户才能获取到接口
 	apiv1.Use(cors.CorsMiddleware(), webjwt.AuthMiddleware()) // 使用token中间件
 	{
-
 		//获取关注人的笔记
 		r.GET("/:userId/follow/notes", v1.GetFollowedNotes)
 		//获取关注的人
