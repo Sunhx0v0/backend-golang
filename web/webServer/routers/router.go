@@ -42,28 +42,6 @@ func InitRouter() *gin.Engine {
 	// 使用token中间件
 	r.Use(webjwt.AuthMiddleware())
 
-	// //404 handler
-	// r.NoRoute(userMiddleware.MiddlewareFunc(), func(c *gin.Context) {
-	// 	c.JSON(404, gin.H{
-	// 		"code":    404,
-	// 		"message": "Page not found",
-	// 	})
-	// })
-
-	// user := r.Group("/user")
-	// {
-	// 	// 刷新token
-	// 	user.GET("/refresh_token", userMiddleware.RefreshHandler)
-	// }
-	// user.Use(webjwt.AuthMiddleware())
-
-	// api := r.Group("/user")
-	// api.Use(authMiddleware.MiddlewareFunc())
-	// {
-	// 	api.GET("/info", v1.GetUserInfo)
-	// 	api.POST("/logout", v1.Logout)
-	// }
-
 	apiv1 := r.Group("/api/v1")
 	//使用userAuthorizator中间件，只有user权限的用户才能获取到接口
 	apiv1.Use(cors.CorsMiddleware(), webjwt.AuthMiddleware()) // 使用token中间件
