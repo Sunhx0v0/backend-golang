@@ -32,7 +32,10 @@ func JudgeTime(msgtime string) string {
 	//当前的时间戳
 	nowUnix := time.Now().Unix()
 	duration := nowUnix - unix
-	if duration < 60 {
+	if duration <= 5 {
+		return "刚刚"
+	}
+	if duration > 5 && duration < 60 {
 		return fmt.Sprintf("%d秒前", duration)
 	}
 	if duration >= 60 && duration < 3600 {
