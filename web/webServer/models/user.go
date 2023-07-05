@@ -136,15 +136,15 @@ func ModifyInfo(beforeInfo ModifiableInfo, id int, yes bool) bool {
 	var result sql.Result
 	var err error
 	if yes {
-		sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, password = ?, portrait = ?, userName = ? 
+		sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, portrait = ?, userName = ? 
 		where userAccount = ?`
 		//birTime, _ := time.ParseInLocation("2006-01-02", beforeInfo.Birthday, time.Local) // string转time
-		result, err = db.Exec(sqlStr, beforeInfo.Birthday, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Password, beforeInfo.Portrait, beforeInfo.UserName, id)
+		result, err = db.Exec(sqlStr, beforeInfo.Birthday, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Portrait, beforeInfo.UserName, id)
 	} else {
-		sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, password = ?, userName = ? 
+		sqlStr := `update userInfo set birthday = ?, gender = ?, introduction = ?, userName = ? 
 		where userAccount = ?`
 		//birTime, _ := time.ParseInLocation("2006-01-02", beforeInfo.Birthday, time.Local) // string转time
-		result, err = db.Exec(sqlStr, beforeInfo.Birthday, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.Password, beforeInfo.UserName, id)
+		result, err = db.Exec(sqlStr, beforeInfo.Birthday, beforeInfo.Gender, beforeInfo.Introduction, beforeInfo.UserName, id)
 	}
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
@@ -307,5 +307,21 @@ func FindPhone(id int) string { // 查找手机号是否存在
 		return phoneNumber
 	} else {
 		return phoneNumber
+	}
+}
+
+func ModifyPassword(id int, secret string) bool { //修改密码
+	var secDB string
+	sqlStr := `select password from userInfo where userAccount = ?`
+	err := db.QueryRow(sqlStr, id).Scan(&secDB)
+	if err != nil {
+		return false
+	}
+	if secDB == secret {
+		sqlStr = `update userInfo set password = ? where userAccount = ?`
+		_, err = db.Exec(sqlStr, secret, id)
+		return err == nil
+	} else {
+		return false
 	}
 }

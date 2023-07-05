@@ -138,7 +138,6 @@ func ModifyNoP(c *gin.Context) {
 	info.Infos.Birthday = c.PostForm("birthday") // 从前端获取数据
 	info.Infos.Gender = c.PostForm("gender")
 	info.Infos.Introduction = c.PostForm("introduction")
-	info.Infos.Password = c.PostForm("password")
 	info.Infos.UserName = c.PostForm("userName")
 	isHost := c.PostForm("isHost")
 	info.IsHost, _ = strconv.ParseBool(isHost)
@@ -158,3 +157,31 @@ func ModifyNoP(c *gin.Context) {
 		"data":    info, // 将修改的数据发送回前端
 	})
 }
+
+func ChangePassword(c *gin.Context) {
+	userID, _ := strconv.Atoi(c.Param("userId"))
+	flag := models.ModifyPassword(userID, c.PostForm("oldPassword"))
+	if flag { // 修改成功
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "密码修改成功",
+		})
+	} else { // 修改失败
+		c.JSON(400, gin.H{
+			"code":    400,
+			"message": "密码错误",
+		})
+	}
+}
+
+//增加了函数ChangePassword，删除了修改个人信息中的密码（两处）
+// Path: routers\api\v1\users.go
+
+//删除了ModifyInfo中的password（四处）
+// Path: models\user.go
+
+//增加了函数ModifyPassword
+// Path: models\user.go
+
+//增加了路由/password
+// Path: routers/router.go

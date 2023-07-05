@@ -115,6 +115,9 @@ func InitRouter() *gin.Engine {
 		r.GET("/messages/:userId/likes", v1.MsgGetLikes)
 		//把点赞消息设置为已读
 		r.PUT("/messages/:userId/likes/:fvId", v1.ChangeLikeState)
+
+		//修改密码
+		r.PUT("/:userId/PersonalView/password", v1.ChangePassword)
 	}
 
 	return r
