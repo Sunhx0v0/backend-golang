@@ -11,22 +11,23 @@ type Pictures struct {
 	Pictag string `json:"pictag"`
 }
 
-func NewPicInfo(pc Pictures) {
+func NewPicInfo(pc Pictures) bool {
 	sqlstr := `INSERT INTO pictureLibrary
-	(noteID, picUrl, picTag)
+	(noteID, picUrl)
 	VALUES
-	(?,?,?)`
-	ret, err := db.Exec(sqlstr, pc.NoteId, pc.Picurl, pc.Pictag)
+	(?,?)`
+	ret, err := db.Exec(sqlstr, pc.NoteId, pc.Picurl)
 	if err != nil {
-		fmt.Printf("insert failed, err:%v\n", err)
-		return
+		fmt.Printf("笔记图片insert failed, err:%v\n", err)
+		return false
 	}
 	theID, err := ret.LastInsertId() // 新插入数据的id
 	if err != nil {
 		fmt.Printf("get lastinsert ID failed, err:%v\n", err)
-		return
+		return false
 	}
-	fmt.Printf("insert success, affected rows:%d\n", theID)
+	fmt.Printf("笔记图片insert success, affected rows:%d\n", theID)
+	return true
 }
 
 func DeletePic(ntid int) bool {

@@ -378,3 +378,21 @@ func RemoveLikes(noteId int) bool {
 	fmt.Printf("点赞信息批量 delete success, affected rows:%d\n", n)
 	return true
 }
+
+// 批量删除收藏信息
+func RemoveCollect(noteId int) bool {
+	sqlstr := "DELETE FROM collectTable WHERE collectNoteId=?"
+	ret, err := db.Exec(sqlstr, noteId)
+	if err != nil {
+		fmt.Printf("收藏批量删除失败, err:%v\n", err)
+		return false
+	}
+	// 操作影响的行数
+	n, err := ret.RowsAffected()
+	if err != nil {
+		fmt.Printf("收藏批量删除Get RowsAffected failed, err:%v\n", err)
+		return false
+	}
+	fmt.Printf("收藏信息批量 delete success, affected rows:%d\n", n)
+	return true
+}
