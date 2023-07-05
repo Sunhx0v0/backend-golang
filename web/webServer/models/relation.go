@@ -138,6 +138,7 @@ func DeleteCollect(dclt CollectInfo, noteId int) bool {
 
 // 获取关注用户
 func GetFollows(userId int) (follows []FollowInfo, ok bool) {
+	ok = true
 	sqlstr := `SELECT f.folInfoId, f.followAct, u.userName, u.portrait
 	FROM followTable f, userInfo u
 	WHERE f.userAct=? AND f.followAct=u.userAccount `
@@ -155,7 +156,7 @@ func GetFollows(userId int) (follows []FollowInfo, ok bool) {
 		var fl FollowInfo
 		err := rows.Scan(&fl.FolInfoId, &fl.FollowAct, &fl.UserName, &fl.Portrait)
 		if err != nil {
-			fmt.Printf("点赞scan failed, err:%v\n", err)
+			fmt.Printf("获取关注用户scan failed, err:%v\n", err)
 			ok = false
 			return
 		}
