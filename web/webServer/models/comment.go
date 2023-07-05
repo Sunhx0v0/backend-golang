@@ -15,6 +15,7 @@ type Comment struct {
 	Content         string   `json:"content"`         // 评论内容
 	Portrait        string   `json:"portrait"`        // 用户头像
 	State           int      `json:"state"`           //是否已读
+	AtUserID        []int    `json:"atUserId"`        //@人的账号
 	AtName          []string `json:"atName"`          //@人的名字
 	AtLocation      []int    `json:"atLocation"`      //@的位置
 }

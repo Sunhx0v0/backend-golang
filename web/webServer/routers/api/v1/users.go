@@ -29,7 +29,9 @@ type ModifiedInfo struct {
 // 显示用户界面全部信息
 func GetUserInfo(c *gin.Context) {
 	var info UsersInfo
+	isfollow := false
 	userID, _ := strconv.Atoi(c.Param("userId"))
+	nowUser, _ := strconv.Atoi(c.Param("nowUser"))
 	fmt.Println("用户ID:", userID)
 	// 通过用户ID去数据库获取信息
 	info.Infos = models.UserInfoDB(userID)
@@ -39,11 +41,13 @@ func GetUserInfo(c *gin.Context) {
 	info.Collects = models.CollectInfoDB(userID)
 	// 获取某用户点赞的笔记
 	info.Likes = models.LikeInfoDB(userID)
-	info.IsHost = true
+	//info.IsHost = true
+	_, isfollow = models.IsFollowed(nowUser, userID)
 	c.JSON(http.StatusOK, gin.H{
-		"code":    200,
-		"message": "success",
-		"data":    info,
+		"code":       200,
+		"message":    "success",
+		"data":       info,
+		"isFollowed": isfollow,
 	})
 }
 

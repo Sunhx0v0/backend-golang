@@ -28,8 +28,8 @@ type DetailNote struct {
 	UpdateTime string     `json:"updatetime" form:"updatetime"`
 	Tags       [11]string `json:"tags" form:"tags"`
 	Location   string     `json:"location" form:"location"`
-	AtUserID   int        `json:"atuserid" form:"atuserid"`
 	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数  待定
+	AtUserID   []int      `json:"atUserId" form:"atUserId"` //@人的账号
 	AtName     []string   `json:"atName" form:"atName"`
 	AtLocation []int      `json:"atLocation" form:"atLocation"`
 

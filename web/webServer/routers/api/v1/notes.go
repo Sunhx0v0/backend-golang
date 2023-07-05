@@ -126,7 +126,7 @@ func UploadNote(c *gin.Context) {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
-			"message": fmt.Sprintf("读取失败! err:%s", err),
+			"message": fmt.Sprintf("图片读取失败! err:%s", err),
 		})
 		return
 	} else {
@@ -134,7 +134,7 @@ func UploadNote(c *gin.Context) {
 
 		//新声明新笔记的结构体
 		var newNote models.DetailNote
-		fmt.Print("最初的笔记信息")
+		fmt.Print("最初的笔记信息：")
 		fmt.Println(newNote)
 		if err := c.ShouldBind(&newNote); err == nil {
 			newNote.CreatorID = userId
@@ -194,6 +194,9 @@ func UploadNote(c *gin.Context) {
 			newNote.NoteID = ntID
 			newNote.Picnum = len(files)
 			newAt := make([]models.AtInfo, len(newNote.AtName), 50)
+			for k := 0; k < len(newNote.AtUserID); k++ {
+				newAt[k].AtUserID = newNote.AtUserID[k]
+			}
 			for i := 0; i < len(newNote.AtName); i++ {
 				newAt[i].AtName = newNote.AtName[i]
 			}
