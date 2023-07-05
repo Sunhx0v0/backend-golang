@@ -310,7 +310,7 @@ func FindPhone(id int) string { // 查找手机号是否存在
 	}
 }
 
-func ModifyPassword(id int, secret string) bool { //修改密码
+func ModifyPassword(id int, secret string, password string) bool { //修改密码
 	var secDB string
 	sqlStr := `select password from userInfo where userAccount = ?`
 	err := db.QueryRow(sqlStr, id).Scan(&secDB)
@@ -319,7 +319,7 @@ func ModifyPassword(id int, secret string) bool { //修改密码
 	}
 	if secDB == secret {
 		sqlStr = `update userInfo set password = ? where userAccount = ?`
-		_, err = db.Exec(sqlStr, secret, id)
+		_, err = db.Exec(sqlStr, password, id)
 		return err == nil
 	} else {
 		return false
