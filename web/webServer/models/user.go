@@ -83,7 +83,6 @@ func NoteInfoDB(id int) []Note {
 
 // 从数据库获得某用户收藏的笔记信息
 func CollectInfoDB(id int) []Note {
-
 	var collects []Note
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
 	from noteInfo n, userInfo u, collectTable c
@@ -109,7 +108,6 @@ func CollectInfoDB(id int) []Note {
 
 // 从数据库获得某用户点赞的笔记信息
 func LikeInfoDB(id int) []Note {
-
 	var collects []Note
 	sqlStr := `select n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.userName, u.portrait
 	from noteInfo n, userInfo u, favorTable c

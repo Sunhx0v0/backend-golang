@@ -56,7 +56,6 @@ func ModifyUserInfo(c *gin.Context) {
 	info.Infos.Birthday = c.PostForm("birthday") // 从前端获取数据
 	info.Infos.Gender = c.PostForm("gender")
 	info.Infos.Introduction = c.PostForm("introduction")
-	info.Infos.Password = c.PostForm("password")
 	info.Infos.UserName = c.PostForm("userName")
 	isHost := c.PostForm("isHost")
 	info.IsHost, _ = strconv.ParseBool(isHost)
