@@ -17,7 +17,7 @@ type Claims struct {
 
 // 分发token
 func ReleaseToken(phone string) (string, error) {
-	expirationTime := time.Now().Add(7 * 24 * time.Hour) // 设置过期时间（左边为7天）
+	expirationTime := time.Now().Add(7 * 24 * time.Hour) // 设置过期时间（7天）
 	claims := &Claims{
 		UserId: phone, // 用户ID？
 		StandardClaims: jwt.StandardClaims{
@@ -27,24 +27,19 @@ func ReleaseToken(phone string) (string, error) {
 			Subject:   "user token",      // token主题
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims) // HS256加密方式
 	tokenString, err := token.SignedString(jwtKey)             // 使用秘钥jwtKey来生成token
-
 	if err != nil {
 		return "", err
 	}
-
 	return tokenString, nil // 返回生成的token
 }
 
 // 解析token
 func ParseToken(tokenString string) (*jwt.Token, *Claims, error) {
 	claims := &Claims{}
-
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-
 	return token, claims, err
 }
