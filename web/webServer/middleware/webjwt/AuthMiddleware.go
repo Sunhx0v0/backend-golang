@@ -17,15 +17,6 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		fmt.Print("请求token\n", tokenString, "\n")
 
-		//validate token formate   验证格式
-		// if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer") {
-		// 	c.JSON(http.StatusUnauthorized, gin.H{
-		// 		"code":    401,
-		// 		"message": "token验证失败",
-		// 	})
-		// 	c.Abort()
-		// 	return
-		// }
 		if tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code":    401,

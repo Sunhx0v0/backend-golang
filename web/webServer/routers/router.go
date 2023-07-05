@@ -35,8 +35,6 @@ func InitRouter() *gin.Engine {
 	//获取笔记详细内容
 	r.GET("/:userId/explore/:noteid", v1.NoteDetailHandler)
 
-	// // gin.SetMode(setting.RunMode)
-	// var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
 	r.POST("/login", v1.Login)
 
 	// 使用token中间件
@@ -52,7 +50,7 @@ func InitRouter() *gin.Engine {
 		r.GET("/:userId/follow", v1.GetFollowUser)
 
 		// 获取用户界面的信息
-		r.GET("/:userId/PersonalView", v1.GetUserInfo)
+		r.GET("/:nowUser/:userId/PersonalView", v1.GetUserInfo)
 		// 用户修改个人信息
 		r.PUT("/:userId/PersonalView", v1.ModifyUserInfo)
 		// 用户修改个人信息

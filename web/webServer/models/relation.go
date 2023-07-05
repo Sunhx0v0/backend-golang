@@ -32,6 +32,7 @@ type CollectInfo struct {
 
 // @用户信息
 type AtInfo struct {
+	AtUserID   int    `json:"atUserId" form:"atUserId"`
 	AtName     string `json:"atName" form:"atName"`
 	AtLocation int    `json:"atLocation" form:"atLocation"`
 	AtState    int    `json:"atState" form:"atState"`
@@ -316,9 +317,9 @@ func ChangeUserFans(userId, option int) {
 }
 
 // 加载@的信息
-func NewGetAtInfo(state, id int) (atname []string, atlocation []int, ok bool) {
+func NewGetAtInfo(state, id int) (atname []string, atid, atlocation []int, ok bool) {
 	ok = true
-	sqlstr := `SELECT atUserName, atLocation FROM atTable WHERE noteId=? and atState=?`
+	sqlstr := `SELECT atUserId, atUserName, atLocation FROM atTable WHERE noteId=? and atState=?`
 	rows, err := db.Query(sqlstr, id, state)
 	if err != nil {
 		ok = false
@@ -331,12 +332,13 @@ func NewGetAtInfo(state, id int) (atname []string, atlocation []int, ok bool) {
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var at AtInfo
-		err := rows.Scan(&at.AtName, &at.AtLocation)
+		err := rows.Scan(&at.AtUserID, &at.AtName, &at.AtLocation)
 		if err != nil {
 			ok = false
 			fmt.Printf("@信息scan failed, err:%v\n", err)
 			return
 		}
+		atid = append(atid, at.AtUserID)
 		atname = append(atname, at.AtName)
 		atlocation = append(atlocation, at.AtLocation)
 	}

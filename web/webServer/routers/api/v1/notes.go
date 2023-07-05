@@ -123,10 +123,9 @@ func UploadNote(c *gin.Context) {
 
 	form, err := c.MultipartForm()
 	if err != nil {
-		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
-			"message": fmt.Sprintf("读取失败! err:%s", err),
+			"message": fmt.Sprintf("图片读取失败! err:%s", err),
 		})
 		return
 	} else {
@@ -134,15 +133,10 @@ func UploadNote(c *gin.Context) {
 
 		//新声明新笔记的结构体
 		var newNote models.DetailNote
-		fmt.Print("最初的笔记信息")
-		fmt.Println(newNote)
+		//获取前端传来的JSON数据
 		if err := c.ShouldBind(&newNote); err == nil {
 			newNote.CreatorID = userId
 			//先创建一个不含内容的笔记信息，后面再填上信息
-			fmt.Print("初始的笔记信息")
-			fmt.Println(newNote)
-			fmt.Printf("Tag里内容:%d", len(newNote.Tags))
-			fmt.Println(newNote.Tags)
 			ntID, success := models.NewNoteInfo(newNote)
 			if !success {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -159,7 +153,6 @@ func UploadNote(c *gin.Context) {
 				".gif":  true,
 			}
 			for index, file := range files {
-				fmt.Print(index)
 				extName := path.Ext(file.Filename)
 				_, b := fileType[extName]
 				if !b {
@@ -194,6 +187,9 @@ func UploadNote(c *gin.Context) {
 			newNote.NoteID = ntID
 			newNote.Picnum = len(files)
 			newAt := make([]models.AtInfo, len(newNote.AtName), 50)
+			for k := 0; k < len(newNote.AtUserID); k++ {
+				newAt[k].AtUserID = newNote.AtUserID[k]
+			}
 			for i := 0; i < len(newNote.AtName); i++ {
 				newAt[i].AtName = newNote.AtName[i]
 			}
@@ -201,8 +197,6 @@ func UploadNote(c *gin.Context) {
 				newAt[j].AtLocation = newNote.AtLocation[j]
 			}
 			//写入笔记的全部信息
-			fmt.Print("完整的笔记信息")
-			fmt.Println(newNote)
 			ok := models.ModifyNote(newNote)
 			//写入@信息
 			ok1 := models.AddAtInfo(userId, ntID, 1, newAt)
@@ -223,7 +217,7 @@ func UploadNote(c *gin.Context) {
 				})
 			}
 		} else {
-			//json数据获取失败
+			//JSON数据获取失败
 			c.JSON(http.StatusBadRequest, gin.H{
 				"code":  400,
 				"error": err.Error(),

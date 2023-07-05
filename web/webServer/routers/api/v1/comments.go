@@ -17,7 +17,7 @@ func GetComments(c *gin.Context) {
 	var temp bool
 	//加载在评论的@信息
 	for _, comment := range comments {
-		comment.AtName, comment.AtLocation, temp = models.NewGetAtInfo(0, int(comment.CommentID))
+		comment.AtName, comment.AtUserID, comment.AtLocation, temp = models.NewGetAtInfo(0, int(comment.CommentID))
 		success1 = success1 && temp
 	}
 	if success && success1 {
@@ -44,6 +44,9 @@ func PostComment(c *gin.Context) {
 	if err := c.ShouldBind(&newComment); err == nil {
 		//获取@的信息
 		newAt := make([]models.AtInfo, len(newComment.AtName), 50)
+		for k := 0; k < len(newComment.AtUserID); k++ {
+			newAt[k].AtUserID = newComment.AtUserID[k]
+		}
 		for i := 0; i < len(newComment.AtName); i++ {
 			newAt[i].AtName = newComment.AtName[i]
 		}
@@ -116,7 +119,7 @@ func MsgGetComments(c *gin.Context) {
 	var temp bool
 	//加载在评论的@信息
 	for _, comment := range comments {
-		comment.AtName, comment.AtLocation, temp = models.NewGetAtInfo(0, int(comment.CommentID))
+		comment.AtName, comment.AtUserID, comment.AtLocation, temp = models.NewGetAtInfo(0, int(comment.CommentID))
 		success1 = success1 && temp
 	}
 	if success && success1 {
