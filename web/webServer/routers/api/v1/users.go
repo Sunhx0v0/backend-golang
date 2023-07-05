@@ -72,7 +72,6 @@ func ModifyUserInfo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    400,
 			"message": "头像修改失败！",
-			"data":    info, // 是否需要重新返回呢，不需要则去掉data字段
 		})
 		return
 	}
@@ -86,8 +85,7 @@ func ModifyUserInfo(c *gin.Context) {
 	dst := fmt.Sprintf("images/%s", name)                                                    //路径
 	// 上传文件至指定的完整文件路径
 	c.SaveUploadedFile(file, dst) // 图片
-	//c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
-	info.Infos.Portrait = name // 将图片目录保存在数据库
+	info.Infos.Portrait = name    // 将图片目录保存在数据库
 
 	// for key := range c.Request.MultipartForm.Value {
 	// 	print("Form Field Name: ", key, "\n")
