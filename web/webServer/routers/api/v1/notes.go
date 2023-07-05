@@ -183,7 +183,13 @@ func UploadNote(c *gin.Context) {
 				// 上传文件到指定的目录
 				c.SaveUploadedFile(file, dst)
 				//将路径等信息更新到数据库
-				models.NewPicInfo(pc)
+				success := models.NewPicInfo(pc)
+				if !success {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"code":    400,
+						"message": "图片上传失败！",
+					})
+				}
 			}
 			newNote.NoteID = ntID
 			newNote.Picnum = len(files)
@@ -243,12 +249,12 @@ func DeleteNote(c *gin.Context) {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"code":    400,
-				"message": "删除失败",
+				"message": "图片文件删除失败",
 			})
 			return
 		}
 	}
-	if models.DeletePic(noteId) && models.DeleteNoteInfo(noteId) && models.RemoveComments(noteId) && models.RemoveLikes(noteId) {
+	if models.DeletePic(noteId) && models.DeleteNoteInfo(noteId) && models.RemoveComments(noteId) && models.RemoveLikes(noteId) && models.RemoveCollect(noteId) {
 		models.ChangeNoteNum(userId, 0)
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
