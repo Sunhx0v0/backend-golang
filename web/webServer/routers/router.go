@@ -33,16 +33,14 @@ func InitRouter() *gin.Engine {
 	//加载某篇笔记的评论
 	r.GET("/comment/:noteId", v1.GetComments)
 	//获取笔记详细内容
-	r.GET("/explore/:noteid", v1.NoteDetailHandler)
-
-	//获取走马灯
-	r.GET("/explore/tops", v1.GetTops)
+	r.GET("/:userId/explore/:noteid", v1.NoteDetailHandler)
 
 	// // gin.SetMode(setting.RunMode)
 	// var userMiddleware = webjwt.GinJWTMiddlewareInit(&webjwt.Visitor{}) // 自定义的授权规则
 	r.POST("/login", v1.Login)
 
-	r.Use(webjwt.AuthMiddleware()) // 使用token中间件
+	// 使用token中间件
+	r.Use(webjwt.AuthMiddleware())
 
 	// //404 handler
 	// r.NoRoute(userMiddleware.MiddlewareFunc(), func(c *gin.Context) {
@@ -96,9 +94,6 @@ func InitRouter() *gin.Engine {
 		r.POST("/explore/:noteId/like", v1.LikeNote)
 		//取消点赞
 		r.DELETE("/explore/:noteId/like", v1.CancelLike)
-
-		//获取笔记详细内容
-		r.GET("/:userId/explore/:noteid", v1.NoteDetailHandler)
 
 		//收藏某篇笔记
 		r.POST("/explore/:noteId/collect", v1.CollectNote)

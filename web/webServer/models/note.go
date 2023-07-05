@@ -77,8 +77,10 @@ func GetBriefNtInfo() (notes []Note, ok bool) {
 func GetSpBriefNtInfo(keyword string) (notes []Note, ok bool) {
 	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
 	FROM noteInfo n, userInfo u
-	WHERE n.creatorAccount = u.userAccount AND (n.tag = ? OR n.title LIKE CONCAT('%',?,'%'))`
-	rows, err := db.Query(sqlStr, keyword, keyword)
+	WHERE n.creatorAccount = u.userAccount AND 
+	(n.tag = ? OR n.tag1=? OR n.tag2=? OR n.tag3=? OR n.tag4=? OR n.tag5=? OR n.tag6=? OR n.tag7=? OR n.tag8=? OR n.tag9=? OR n.tag10=?
+	OR n.title LIKE CONCAT('%',?,'%'))`
+	rows, err := db.Query(sqlStr, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword, keyword)
 	if err != nil {
 		fmt.Printf("query failed, err:%v\n", err)
 		return nil, false
@@ -148,8 +150,7 @@ func NewNoteInfo(nn DetailNote) (int, bool) {
 func ModifyNote(mn DetailNote) bool {
 	sqlstr := `UPDATE noteInfo SET
 	cover=?, title=?, body=?, numOfPic=?, createTime=?, updateTime=?, location=?, tag=?, tag1=?, tag2=?, tag3=?, tag4=?, tag5=?, tag6=?, tag7=?, tag8=?, tag9=?, tag10=?
-	WHERE
-	noteId=?`
+	WHERE noteId=?`
 	ret, err := db.Exec(sqlstr, mn.Cover, mn.Title, mn.Body, mn.Picnum, mn.CreateTime, mn.UpdateTime, mn.Location,
 		mn.Tags[0], mn.Tags[1], mn.Tags[2], mn.Tags[3], mn.Tags[4], mn.Tags[5], mn.Tags[6], mn.Tags[7], mn.Tags[8], mn.Tags[9], mn.Tags[10],
 		mn.NoteID)
@@ -171,7 +172,7 @@ func DeleteNoteInfo(ntid int) bool {
 	sqlstr := "DELETE FROM noteInfo WHERE noteID = ?"
 	ret, err := db.Exec(sqlstr, ntid)
 	if err != nil {
-		fmt.Printf("delete failed, err:%v\n", err)
+		fmt.Printf("笔记删除失败, err:%v\n", err)
 		return false
 	}
 	n, err := ret.RowsAffected() // 操作影响的行数
@@ -329,10 +330,10 @@ func GetNoteCollectNum(noteid int) int {
 
 // 判断是否收藏该笔记
 func IsCollected(userid, noteid int) (bool, bool) {
-	sqlStr := "SELECT * FROM collectTable WHWERE userAct=? and collectNoteId = ?"
+	sqlStr := "SELECT * FROM collectTable WHERE userAct=? and collectNoteId = ?"
 	rows, err := db.Query(sqlStr, userid, noteid)
 	if err != nil {
-		fmt.Printf("query failed, err:%v\n", err)
+		fmt.Printf("判断收藏query failed, err:%v\n", err)
 		return false, false
 	}
 	for rows.Next() {
@@ -342,12 +343,12 @@ func IsCollected(userid, noteid int) (bool, bool) {
 	return false, true
 }
 
-// 判断是否收藏该笔记
+// 判断是否点赞该笔记
 func IsLiked(userid, noteid int) (bool, bool) {
 	sqlStr := "SELECT * FROM favorTable WHERE userAct=? and favorNoteId = ?"
 	rows, err := db.Query(sqlStr, userid, noteid)
 	if err != nil {
-		fmt.Printf("判断笔记收藏query failed, err:%v\n", err)
+		fmt.Printf("判断笔记点赞query failed, err:%v\n", err)
 		return false, false
 	}
 	for rows.Next() {
@@ -363,7 +364,7 @@ func Tops() (notes []Note, ok bool) {
 	sqlStr := `SELECT n.noteId, n.title, n.cover, n.creatorAccount, n.likeNum, u.portrait, u.userName
 	FROM noteInfo n, userInfo u
 	WHERE n.creatorAccount = u.userAccount
-	ORDER BY likeNum LIMIT 4`
+	ORDER BY likeNum DESC LIMIT 4`
 	rows, err := db.Query(sqlStr)
 	if err != nil {
 		ok = false
@@ -382,7 +383,7 @@ func Tops() (notes []Note, ok bool) {
 			fmt.Printf("走马灯scan failed, err:%v\n", err)
 			return notes, ok
 		}
-		fmt.Print(nt.NoteID)
+		fmt.Println(nt.NoteID)
 		notes = append(notes, nt)
 	}
 	return notes, ok
