@@ -61,15 +61,20 @@ func ModifyUserInfo(c *gin.Context) {
 	isHost := c.PostForm("isHost")
 	info.IsHost, _ = strconv.ParseBool(isHost)
 
-	files, err := GetHeadfile(userID) // 获取头像文件信息
+	head, err := GetHeadfile(userID) // 获取头像文件信息
+	fmt.Println(head)
 	if err != nil {
 		fmt.Println("用户没有以前的头像")
 	}
-	for _, file := range files {
-		err := os.Remove(file) // 删除以前的头像
-		if err != nil {
-			return
-		}
+	derr := os.Remove(head) // 删除以前的头像
+	if derr != nil {
+		fmt.Println(derr)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "头像修改失败！",
+			"data":    info, // 是否需要重新返回呢，不需要则去掉data字段
+		})
+		return
 	}
 
 	phone := models.FindPhone(userID) // 通过用户ID查找手机号
@@ -105,24 +110,26 @@ func ModifyUserInfo(c *gin.Context) {
 }
 
 // 获取用户头像文件
-func GetHeadfile(userid int) ([]string, error) {
-	var files []string
+func GetHeadfile(userid int) (string, error) {
+	var head string
 	f, err := os.Open("images")
 	if err != nil {
-		return files, err
+		return head, err
 	}
 	fileInfo, err := f.Readdir(-1)
 	f.Close()
 	if err != nil {
-		return files, err
+		return head, err
 	}
-	filter := fmt.Sprintf("head_%d", userid)
+	phone := models.FindPhone(userid)
+	filter := fmt.Sprintf("head_%s", phone)
 	for _, file := range fileInfo {
 		if strings.Contains(file.Name(), filter) {
-			files = append(files, fmt.Sprintf("%s%s", "images/", file.Name()))
+			head = fmt.Sprintf("%s%s", "images/", file.Name())
+			break
 		}
 	}
-	return files, nil
+	return head, nil
 }
 
 // 用户修改个人信息，头像不做修改

@@ -202,7 +202,7 @@ func GetLikeInfos(userId int) (likeInfos []LikeToShow, totalState int, ok bool) 
 	sqlstr := `SELECT f.fvId, f.state, f.fvTime, u.userName, u.portrait
 	FROM favorTable f, userInfo u, noteInfo n
 	WHERE n.creatorAccount=? AND n.noteId=f.favorNoteId AND f.userAct=u.userAccount
-	ORDER BY fvTime DESC`
+	ORDER BY f.fvTime DESC`
 	rows, err := db.Query(sqlstr, userId)
 	if err != nil {
 		fmt.Printf("点赞query failed, err:%v\n", err)
@@ -235,16 +235,16 @@ func AddFollowInfo(useraccount int, account int) bool {
 	sqlstr := "insert into followTable (userAct,followAct) values (?,?)"
 	ret, err := db.Exec(sqlstr, useraccount, account)
 	if err != nil {
-		fmt.Printf("insert failed, err:%v\n", err)
+		fmt.Printf("关注信息insert failed, err:%v\n", err)
 		return false
 	}
 	// 操作影响的行数
 	n, err := ret.RowsAffected()
 	if err != nil {
-		fmt.Printf("收藏信息get RowsAffected failed, err:%v\n", err)
+		fmt.Printf("关注信息get RowsAffected failed, err:%v\n", err)
 		return false
 	}
-	fmt.Printf("收藏信息 delete success, affected rows:%d\n", n)
+	fmt.Printf("关注信息插入 success, affected rows:%d\n", n)
 	return true
 }
 
@@ -253,16 +253,16 @@ func DelFollowInfo(useraccount int, account int) bool {
 	sqlstr := "DELETE from followTable where userAct=? and followAct=?"
 	ret, err := db.Exec(sqlstr, useraccount, account)
 	if err != nil {
-		fmt.Printf("delete failed, err:%v\n", err)
+		fmt.Printf("关注信息delete failed, err:%v\n", err)
 		return false
 	}
 	// 操作影响的行数
 	n, err := ret.RowsAffected()
 	if err != nil {
-		fmt.Printf("收藏信息get RowsAffected failed, err:%v\n", err)
+		fmt.Printf("关注信息get RowsAffected failed, err:%v\n", err)
 		return false
 	}
-	fmt.Printf("收藏信息 delete success, affected rows:%d\n", n)
+	fmt.Printf("关注信息 delete success, affected rows:%d\n", n)
 	return true
 }
 

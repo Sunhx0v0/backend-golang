@@ -176,10 +176,15 @@ func FollowHandler(c *gin.Context) {
 			//将用户关注数加一
 			models.ChangeUserFollows(userId, 1)
 			//将被关注用户粉丝数加一
-			models.ChangeUserFans(userId, 1)
+			models.ChangeUserFans(id, 1)
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
 				"message": "关注成功！",
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code":    400,
+				"message": "关注失败！",
 			})
 		}
 	} else {
@@ -202,13 +207,18 @@ func CancelFollowHandler(c *gin.Context) {
 		//向数据库中删除关注信息
 		success = models.DelFollowInfo(userId, id)
 		if success {
-			//将用户关注数加一
+			//将用户关注数减一
 			models.ChangeUserFollows(userId, -1)
-			//将被关注用户粉丝数加一
-			models.ChangeUserFans(userId, -1)
+			//将被关注用户粉丝数减一
+			models.ChangeUserFans(id, -1)
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
 				"message": "取关成功！",
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code":    400,
+				"message": "取关失败！",
 			})
 		}
 	} else {

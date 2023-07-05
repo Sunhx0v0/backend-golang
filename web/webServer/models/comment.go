@@ -8,6 +8,7 @@ import (
 // 评论信息
 type Comment struct {
 	CommentatorID   int64    `json:"commentatorId"`   // 评论者账号
+	NoteID          int      `json:"noteId"`          //评论所在的笔记编号
 	CommentatorName string   `json:"commentatorName"` // 评论者
 	CommentID       int64    `json:"commentId"`       // 评论编号
 	CommentTime     string   `json:"commentTime"`     // 评论时间
@@ -55,12 +56,12 @@ func GetCommentInfo(Id, option int) (comments []Comment, totalState int, ok bool
 	ok = true
 	var sqlstr string
 	//笔记中获取评论
-	notesql := `SELECT c.commentId, c.commentatorId, c.content, c.commentTime, c.state, u.userName, u.portrait
+	notesql := `SELECT c.commentId, c.noteID, c.commentatorId, c.content, c.commentTime, c.state, u.userName, u.portrait
 	FROM commentInfo c, userInfo u
 	WHERE c.noteID = ? AND c.commentatorId = u.userAccount
 	ORDER BY commentTime DESC`
 	//消息列表中获取评论
-	messagesql := `SELECT c.commentId, c.commentatorId, c.content, c.commentTime, c.state, u.userName, u.portrait
+	messagesql := `SELECT c.commentId, c.noteID, c.commentatorId, c.content, c.commentTime, c.state, u.userName, u.portrait
 	FROM commentInfo c, userInfo u, noteInfo n
 	WHERE u.userAccount=? AND u.userAccount=n.creatorAccount AND c.noteID = n.noteId
 	ORDER BY commentTime DESC`
@@ -83,7 +84,7 @@ func GetCommentInfo(Id, option int) (comments []Comment, totalState int, ok bool
 	// 循环读取结果集中的数据
 	for rows.Next() {
 		var cmt Comment
-		err := rows.Scan(&cmt.CommentID, &cmt.CommentatorID, &cmt.Content, &cmt.CommentTime, &cmt.State, &cmt.CommentatorName, &cmt.Portrait)
+		err := rows.Scan(&cmt.CommentID, &cmt.NoteID, &cmt.CommentatorID, &cmt.Content, &cmt.CommentTime, &cmt.State, &cmt.CommentatorName, &cmt.Portrait)
 		if err != nil {
 			fmt.Printf("评论scan failed, err:%v\n", err)
 			ok = false

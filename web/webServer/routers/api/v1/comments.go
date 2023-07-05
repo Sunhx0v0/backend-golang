@@ -37,8 +37,6 @@ func GetComments(c *gin.Context) {
 
 // 发表评论
 func PostComment(c *gin.Context) {
-	// var success bool
-	// var success1 bool
 	noteId, _ := strconv.Atoi(c.Param("noteId"))
 	//获取前端传来的数据
 	var newComment models.Comment
@@ -55,7 +53,7 @@ func PostComment(c *gin.Context) {
 		cmtId, success := models.NewComment(newComment, noteId)
 		success1 := models.AddAtInfo(int(newComment.CommentatorID), cmtId, 0, newAt)
 		if success && success1 {
-			//将该笔记点赞数加一
+			//将该笔记评论数加一
 			models.ChangeNoteComments(noteId, 1)
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
@@ -84,7 +82,7 @@ func CancleComment(c *gin.Context) {
 		success = models.DeleteComment(int(comment.CommentID))
 		success1 := models.DeleteAtInfo(int(comment.CommentID))
 		if success && success1 {
-			//将该笔记点赞数加一
+			//将该笔记评论数减一
 			models.ChangeNoteComments(noteId, -1)
 			c.JSON(http.StatusOK, gin.H{
 				"code":    200,
