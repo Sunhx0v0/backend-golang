@@ -160,7 +160,7 @@ func ModifyNoP(c *gin.Context) {
 
 func ChangePassword(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Param("userId"))
-	flag := models.ModifyPassword(userID, c.PostForm("oldPassword"))
+	flag := models.ModifyPassword(userID, c.PostForm("oldPassword"), c.PostForm("newPassword"))
 	if flag { // 修改成功
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
