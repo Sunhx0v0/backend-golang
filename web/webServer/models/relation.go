@@ -171,7 +171,7 @@ func AddAtInfo(userId, noteId, state int, atinfos []AtInfo) bool {
 	//state字段表示是在正文还是评论，1表示在正文，0表示在评论
 	sqlstr := "INSERT INTO atTable (userAct, noteId, atUserName, atLocation, atState) VALUES (?,?,?,?,?)"
 	for _, atItem := range atinfos {
-		_, err := db.Exec(sqlstr, userId, noteId, atItem.AtName, atItem.AtLocation, atItem.AtState)
+		_, err := db.Exec(sqlstr, atItem.AtUserID, noteId, atItem.AtName, atItem.AtLocation, state)
 		if err != nil {
 			fmt.Printf("@信息insert failed, err:%v\n", err)
 			return false

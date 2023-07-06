@@ -28,7 +28,7 @@ type DetailNote struct {
 	UpdateTime string     `json:"updatetime" form:"updatetime"`
 	Tags       [11]string `json:"tags" form:"tags"`
 	Location   string     `json:"location" form:"location"`
-	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数  待定
+	LikedNum   int        `json:"likedNum" form:"likedNum"` // 点赞数
 	AtUserID   []int      `json:"atUserId" form:"atUserId"` //@人的账号
 	AtName     []string   `json:"atName" form:"atName"`
 	AtLocation []int      `json:"atLocation" form:"atLocation"`
@@ -188,7 +188,7 @@ func DeleteNoteInfo(ntid int) bool {
 func SpecificNote(noteid int) (fullNote, bool) {
 	var N fullNote
 	//先找笔记信息
-	sqlStr1 := `SELECT Noteid,CreatorAccount,Title,Body,NumOfPic,Cover,CreateTime,UpdateTime,Location,AtUserid 
+	sqlStr1 := `SELECT Noteid,CreatorAccount,Title,Body,NumOfPic,Cover,CreateTime,UpdateTime,Location
 	FROM noteInfo 
 	WHERE noteId = ?`
 	rows, err := db.Query(sqlStr1, noteid)
@@ -204,7 +204,7 @@ func SpecificNote(noteid int) (fullNote, bool) {
 	for rows.Next() {
 		var createTimestring string
 		var updateTimestring string
-		err := rows.Scan(&N.NoteInfo.NoteID, &N.NoteInfo.CreatorID, &N.NoteInfo.Title, &N.NoteInfo.Body, &N.NoteInfo.Picnum, &N.NoteInfo.Cover, &createTimestring, &updateTimestring, &N.NoteInfo.Location, &N.NoteInfo.AtUserID)
+		err := rows.Scan(&N.NoteInfo.NoteID, &N.NoteInfo.CreatorID, &N.NoteInfo.Title, &N.NoteInfo.Body, &N.NoteInfo.Picnum, &N.NoteInfo.Cover, &createTimestring, &updateTimestring, &N.NoteInfo.Location)
 		if err != nil {
 			fmt.Printf("笔记详情scan failed, err:%v\n", err)
 			var err fullNote

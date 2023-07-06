@@ -50,7 +50,7 @@ func InitRouter() *gin.Engine {
 		r.GET("/:userId/follow", v1.GetFollowUser)
 
 		// 获取用户界面的信息
-		r.GET("/:nowUser/:userId/PersonalView", v1.GetUserInfo)
+		r.GET("/:userId/:nowUser/PersonalView", v1.GetUserInfo)
 		// 用户修改个人信息
 		r.PUT("/:userId/PersonalView", v1.ModifyUserInfo)
 		// 用户修改个人信息

@@ -71,14 +71,17 @@ func NoteDetailHandler(c *gin.Context) {
 	var success1 bool
 	var success2 bool
 	var success3 bool
+	var temp bool
 	userid, _ := strconv.Atoi(c.Param("userId"))
 	noteid, _ := strconv.Atoi(c.Param("noteid"))
 	data, success := models.SpecificNote(noteid)
+	data.NoteInfo.AtName, data.NoteInfo.AtUserID, data.NoteInfo.AtLocation, temp = models.NewGetAtInfo(0, int(data.NoteInfo.NoteID))
 	data.NoteInfo.IsCollected, success1 = models.IsCollected(userid, noteid)
 	authorid := models.NoteToUser(noteid)
 	data.NoteInfo.IsFollowed, success2 = models.IsFollowed(userid, authorid)
+
 	data.NoteInfo.IsLiked, success3 = models.IsLiked(userid, noteid)
-	if success && success1 && success2 && success3 {
+	if success && success1 && success2 && success3 && temp {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
 			"message": "success",
